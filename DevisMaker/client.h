@@ -1,6 +1,6 @@
 #pragma once
-
 #include <string>
+#include "common.h"
 
 class Client 
 {
@@ -11,22 +11,24 @@ public:
 
     // Getters
     std::string getNom() const { return m_nom; }
-    std::string getAdresseDepart() const { return m_adresseDepart; }
-    std::string getAdresseArrivee() const { return m_adresseArrivee; }
+    const Adresse& getAdresseDepart() const { return m_depart; }
+    const Adresse& getAdresseArrivee() const { return m_livraison; }
     double getDistance() const { return m_distance; }
 
     // Setters
     void setNom(const std::string& nom) { m_nom = nom; }
-    void setAdresseDepart(const std::string& adresse) { m_adresseDepart = adresse; }
-    void setAdresseArrivee(const std::string& adresse) { m_adresseArrivee = adresse; }
+    void setPrenom(std::string_view prenom) { m_prenom = prenom; }
+    void setAdresseDepart(const std::string& adresse) { m_depart.m_rue = adresse; }
+    void setAdresseArrivee(const std::string& adresse) { m_livraison.m_rue = adresse; }
 
     // Méthodes
-    void calculerDistance();
+    //void calculerDistance();
 
 private:
 
     std::string m_nom;
-    std::string m_adresseDepart;
-    std::string m_adresseArrivee;
+    std::string m_prenom;
+    Adresse m_depart;
+    Adresse m_livraison;
     double m_distance;
 };

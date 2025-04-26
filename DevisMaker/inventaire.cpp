@@ -3,9 +3,6 @@
 #include <algorithm>
 #include <cctype>
 
-Inventaire::Inventaire() : m_volumeTotal(0.0) {
-    chargerDictionnaire();
-}
 
 /*void Inventaire::chargerDictionnaire() {
     // Ici, on chargera normalement depuis un fichier, mais pour simplifier
@@ -16,9 +13,10 @@ Inventaire::Inventaire() : m_volumeTotal(0.0) {
     m_dictionnaire["canapé"] = { "Canapé", 1.5 };
     m_dictionnaire["lit"] = { "Lit", 1.0 };
     m_dictionnaire["armoire"] = { "Armoire", 1.8 };
-    m_dictionnaire["télévision"] = { "Télévision", 0.2 };
-    m_dictionnaire["réfrigérateur"] = { "Réfrigérateur", 1.0 };
-    m_dictionnaire["machine à laver"] = { "Machine à laver", 0.6 };
+    m_dictionnaire["television"] = { "Television", 0.2 };
+    m_dictionnaire["refrigerateur"] = { "Refrigerateur", 1.0 };
+    m_dictionnaire["machine a laver"] = { "Machine a laver", 0.6 };
+
     // Etc...
 }*/
 

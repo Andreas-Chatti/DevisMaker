@@ -3,30 +3,34 @@
 #include <map>
 #include <vector>
 
-// Structure pour définir un objet de déménagement
-struct ObjetDemenagement {
+
+struct ObjetDemenagement 
+{
     std::string nom;
-    double volumeUnitaire;  // en m³
+    double volumeUnitaire;
 };
 
-class Inventaire {
-private:
-    std::map<std::string, ObjetDemenagement> m_dictionnaire;
-    std::vector<ObjetDemenagement> m_objets;
-    double m_volumeTotal;
+
+class Inventaire 
+{
 
 public:
-    Inventaire();
 
-    // Getters
+    Inventaire() = default;
+
     double getVolumeTotal() const { return m_volumeTotal; }
 
-    // Méthodes
+
     void ajouterObjet(const std::string& nom, int quantite = 1);
     void supprimerObjet(const std::string& nom);
     void viderInventaire();
     double analyser(const std::string& texteInventaire);
 
 private:
-    void chargerDictionnaire();  // Charge le dictionnaire d'objets standard
+
+    std::map<std::string, ObjetDemenagement> m_dictionnaire;
+    std::vector<ObjetDemenagement> m_objets;
+    double m_volumeTotal;
+
+    //void chargerDictionnaire();  // Charge le dictionnaire d'objets standard
 };

@@ -13,19 +13,9 @@ struct LigneDevis {
 };
 
 class Devis {
-private:
-    Client m_client;
-    Inventaire m_inventaire;
-    Tarification m_tarification;
-
-    std::string m_numero;          // Numéro unique du devis
-    std::string m_date;            // Date de création
-    std::vector<LigneDevis> m_lignes; // Lignes du devis
-    double m_totalHT;              // Montant total HT
-    double m_tauxTVA;              // Taux de TVA (en %)
-    double m_totalTTC;             // Montant total TTC
 
 public:
+
     Devis(const Client& client, const Inventaire& inventaire, const Tarification& tarif);
 
     // Getters
@@ -37,9 +27,24 @@ public:
     // Méthodes
     void calculer();
     bool genererPDF(const std::string& cheminFichier);
-    std::string toString() const;
+
 
 private:
+
+    Client m_client;
+    Inventaire m_inventaire;
+    Tarification m_tarification;
+
+    Prestation m_prestation;
+    Nature m_nature;
+
+    std::string m_numero;          // Numéro unique du devis
+    std::string m_date;            // Date de création
+    std::vector<LigneDevis> m_lignes; // Lignes du devis
+    double m_totalHT;              // Montant total HT
+    double m_tauxTVA;              // Taux de TVA (en %)
+    double m_totalTTC;             // Montant total TTC
+
     void genererNumero();      // Génère un numéro unique pour le devis
     std::string dateActuelle(); // Retourne la date actuelle formatée
 };

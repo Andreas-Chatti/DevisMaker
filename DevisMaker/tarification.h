@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TARIFICATION_H
+#define TARIFICATION_H
 
 class Tarification {
 private:
@@ -27,3 +28,5 @@ public:
     double calculerCoutMainOeuvre(double volume) const;
     double calculerCoutTransport(double distance) const;
 };
+
+#endif

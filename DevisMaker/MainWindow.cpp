@@ -32,7 +32,7 @@ void MainWindow::on_calculerButton_clicked()
     m_client.setAdresseArrivee(ui.adresseArriveeLineEdit->text().toStdString());
 
     // Calculer la distance
-    m_client.calculerDistance();
+    //m_client.calculerDistance();
 
     // Analyser l'inventaire
     double volume = m_inventaire.analyser(ui.inventaireTextEdit->toPlainText().toStdString());
@@ -43,10 +43,10 @@ void MainWindow::on_calculerButton_clicked()
     double total = coutMainOeuvre + coutTransport;
 
     // Afficher le résultat
-    ui.volumeResultatLabel->setText(QString::number(volume) + " m³");
+   /* ui.volumeResultatLabel->setText(QString::number(volume) + " m³");
     ui.coutMOResultatLabel->setText(QString::number(coutMainOeuvre) + " €");
     ui.coutTransportResultatLabel->setText(QString::number(coutTransport) + " €");
-    ui.totalResultatLabel->setText(QString::number(total) + " €");
+    ui.totalResultatLabel->setText(QString::number(total) + " €");*/
 }
 
 void MainWindow::on_genererDevisButton_clicked()

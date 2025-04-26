@@ -6,7 +6,7 @@ int main(int argc, char* argv[])
     QApplication app(argc, argv);
 
     MainWindow w;
-    w.setWindowTitle("DevisMaker - Générateur de Devis");
+    w.setWindowTitle("DevisMaker - Generateur de Devis");
     w.resize(800, 600);
     w.show();
 

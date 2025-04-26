@@ -46,29 +46,6 @@ bool Devis::genererPDF(const std::string& cheminFichier) {
     return true;
 }
 
-std::string Devis::toString() const {
-    std::ostringstream oss;
-
-    oss << "DEVIS N° " << m_numero << "\n";
-    oss << "Date: " << m_date << "\n\n";
-
-    oss << "CLIENT:\n";
-    oss << m_client.getNom() << "\n";
-    oss << "De: " << m_client.getAdresseDepart() << "\n";
-    oss << "À: " << m_client.getAdresseArrivee() << "\n";
-    oss << "Distance: " << m_client.getDistance() << " km\n\n";
-
-    oss << "PRESTATIONS:\n";
-    for (const auto& ligne : m_lignes) {
-        oss << ligne.description << ": " << ligne.montantHT << " € HT\n";
-    }
-
-    oss << "\nTotal HT: " << m_totalHT << " €\n";
-    oss << "TVA (" << m_tauxTVA << "%): " << (m_totalTTC - m_totalHT) << " €\n";
-    oss << "Total TTC: " << m_totalTTC << " €\n";
-
-    return oss.str();
-}
 
 void Devis::genererNumero() {
     // Génère un numéro simple basé sur la date et l'heure
