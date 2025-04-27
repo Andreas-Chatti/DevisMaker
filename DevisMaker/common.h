@@ -31,5 +31,4 @@ enum class Nature
 };
 
 
-
 #endif

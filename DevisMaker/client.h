@@ -9,19 +9,22 @@ public:
 
     Client() = default;
 
-    // Getters
+   
     std::string getNom() const { return m_nom; }
     const Adresse& getAdresseDepart() const { return m_depart; }
     const Adresse& getAdresseArrivee() const { return m_livraison; }
     double getDistance() const { return m_distance; }
 
-    // Setters
+ 
     void setNom(const std::string& nom) { m_nom = nom; }
-    void setPrenom(std::string_view prenom) { m_prenom = prenom; }
-    void setAdresseDepart(const std::string& adresse) { m_depart.m_rue = adresse; }
-    void setAdresseArrivee(const std::string& adresse) { m_livraison.m_rue = adresse; }
+    void setPrenom(const std::string& prenom) { m_prenom = prenom; }
+    void setAdresseDepart(const Adresse& adresse) { m_depart = adresse; }
+    void setAdresseArrivee(const Adresse& adresse) { m_livraison = adresse; }
+    void setDistance(double distance) { m_distance = distance; }
+    void setPrestation(Prestation prestation) { m_prestation = prestation; }
+    void setNature(Nature nature) { m_nature = nature; }
 
-    // Méthodes
+    
     //void calculerDistance();
 
 private:
@@ -30,5 +33,7 @@ private:
     std::string m_prenom;
     Adresse m_depart;
     Adresse m_livraison;
+    Prestation m_prestation;
+    Nature m_nature;
     double m_distance;
 };

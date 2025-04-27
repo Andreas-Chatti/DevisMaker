@@ -12,15 +12,25 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget* parent = nullptr);
-    ~MainWindow();
+
+    MainWindow(QWidget* parent = nullptr)
+        : QMainWindow(parent)
+    {
+        ui.setupUi(this);
+        setupConnections();
+    }
+
+
+    ~MainWindow() = default;
 
 private slots:
+
     void on_calculerButton_clicked();
     void on_genererDevisButton_clicked();
     void on_nouvelInventaireButton_clicked();
 
 private:
+
     Ui::MainWindowClass ui;
     Client m_client;
     Inventaire m_inventaire;

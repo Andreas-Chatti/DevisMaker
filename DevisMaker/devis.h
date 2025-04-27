@@ -7,24 +7,36 @@
 #include <vector>
 
 // Structure pour stocker les lignes du devis
-struct LigneDevis {
+struct LigneDevis 
+{
     std::string description;
     double montantHT;
 };
 
-class Devis {
+class Devis 
+{
 
 public:
 
-    Devis(const Client& client, const Inventaire& inventaire, const Tarification& tarif);
+    Devis(const Client& client, const Inventaire& inventaire, const Tarification& tarif)
+        : m_client(client)
+        , m_inventaire(inventaire)
+        , m_tarification(tarif)
+        , m_totalHT(0.0)
+        , m_tauxTVA(0.2)
+        , m_totalTTC(0.0)
+    {
+        genererNumero();
+        m_date = dateActuelle();
+    }
 
-    // Getters
+
     std::string getNumero() const { return m_numero; }
     std::string getDate() const { return m_date; }
     double getTotalHT() const { return m_totalHT; }
     double getTotalTTC() const { return m_totalTTC; }
 
-    // Méthodes
+
     void calculer();
     bool genererPDF(const std::string& cheminFichier);
 
@@ -34,9 +46,6 @@ private:
     Client m_client;
     Inventaire m_inventaire;
     Tarification m_tarification;
-
-    Prestation m_prestation;
-    Nature m_nature;
 
     std::string m_numero;          // Numéro unique du devis
     std::string m_date;            // Date de création

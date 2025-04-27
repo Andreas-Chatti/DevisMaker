@@ -18,12 +18,6 @@ public:
 
     Inventaire() = default;
 
-    double getVolumeTotal() const { return m_volumeTotal; }
-
-
-    void ajouterObjet(const std::string& nom, int quantite = 1);
-    void supprimerObjet(const std::string& nom);
-    void viderInventaire();
     double analyser(const std::string& texteInventaire);
 
 private:
@@ -31,6 +25,12 @@ private:
     std::map<std::string, ObjetDemenagement> m_dictionnaire;
     std::vector<ObjetDemenagement> m_objets;
     double m_volumeTotal;
+
+
+    void ajouterObjet(const std::string& nom, int quantite = 1);
+    void supprimerObjet(const std::string& nom);
+    void viderInventaire();
+    double getVolumeTotal() const { return m_volumeTotal; }
 
     //void chargerDictionnaire();  // Charge le dictionnaire d'objets standard
 };

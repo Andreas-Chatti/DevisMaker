@@ -1,32 +1,58 @@
 #ifndef TARIFICATION_H
 #define TARIFICATION_H
 
-class Tarification {
-private:
-    double m_tauxHoraireMO;     // Taux horaire de main d'œuvre en € HT
-    double m_coutKilometrique;   // Coût par km en € HT
-    double m_prixForfaitaireEmballage;  // Prix forfaitaire pour l'emballage en € HT
-    double m_volumeHeurePersonne;  // Volume traité par heure et par personne en m³
+class Tarification 
+{
 
 public:
-    Tarification();
 
-    // Getters
-    double getTauxHoraireMO() const { return m_tauxHoraireMO; }
+    Tarification()
+        : m_coutCamion{ 90.0 }
+        , m_coutKilometrique{ 1.3 }
+        , m_coutEmballage{0.5}
+        , m_prixTraction{100.0}
+        , m_prixLocMateriel{50.0}
+        , m_fraisRoute{70.0}
+        , m_coutMO{220.0}
+        , m_fraisStationnement{50.0}
+    {
+    }
+
+    
+    double getCoutCamion() const { return m_coutCamion; }
     double getCoutKilometrique() const { return m_coutKilometrique; }
-    double getPrixForfaitaireEmballage() const { return m_prixForfaitaireEmballage; }
-    double getVolumeHeurePersonne() const { return m_volumeHeurePersonne; }
+    double getCoutEmballage() const { return m_coutEmballage; }
+    double getPrixTraction() const { return m_prixTraction; }
+    double getPrixLocMateriel() const { return m_prixLocMateriel; }
+    double getFraisRoute() const { return m_fraisRoute; }
+    double getCoutMO() const { return m_coutMO; }
+    double getCoutFraisStationnement() const { return m_fraisStationnement; }
 
-    // Setters
-    void setTauxHoraireMO(double taux) { m_tauxHoraireMO = taux; }
-    void setCoutKilometrique(double cout) { m_coutKilometrique = cout; }
-    void setPrixForfaitaireEmballage(double prix) { m_prixForfaitaireEmballage = prix; }
-    void setVolumeHeurePersonne(double volume) { m_volumeHeurePersonne = volume; }
+    
+    void setCoutCamion(double coutCamion) { m_coutCamion = coutCamion; }
+    void setCoutKilometrique(double coutKilometrique) { m_coutKilometrique = coutKilometrique; }
+    void setCoutEmballage(double coutEmballage) { m_coutEmballage = coutEmballage; }
+    void setPrixTraction(double traction) { m_prixTraction = traction; }
+    void setPrixLocMateriel(double prixLocMateriel) { m_prixLocMateriel = prixLocMateriel; }
+    void setFraisRoute(double fraisRoute) { m_fraisRoute = fraisRoute; }
+    void setCoutMO(double coutMO) { m_coutMO = coutMO; }
+    void setCoutFraisStationnement(double fraisStationnement) { m_fraisStationnement = fraisStationnement; }
 
-    // Méthodes de calcul
+    
     double calculerHeuresNecessaires(double volume) const;
     double calculerCoutMainOeuvre(double volume) const;
     double calculerCoutTransport(double distance) const;
+
+private:
+
+    double m_coutCamion;
+    double m_coutKilometrique;
+    double m_coutEmballage;
+    double m_prixTraction;
+    double m_prixLocMateriel;
+    double m_fraisRoute;
+    double m_coutMO;
+    double m_fraisStationnement;
 };
 
 #endif
