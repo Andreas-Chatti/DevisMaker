@@ -17,17 +17,17 @@ public:
         : QMainWindow(parent)
     {
         ui.setupUi(this);
-        setupConnections();
+        //setupConnections();
     }
 
 
     ~MainWindow() = default;
 
-private slots:
+/*private slots:
 
     void on_calculerButton_clicked();
     void on_genererDevisButton_clicked();
-    void on_nouvelInventaireButton_clicked();
+    void on_nouvelInventaireButton_clicked();*/
 
 private:
 
@@ -36,5 +36,5 @@ private:
     Inventaire m_inventaire;
     Tarification m_tarification;
 
-    void setupConnections();
+    //void setupConnections();
 };

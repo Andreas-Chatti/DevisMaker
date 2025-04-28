@@ -1,5 +1,6 @@
 #ifndef TARIFICATION_H
 #define TARIFICATION_H
+#include "common.h"
 
 class Tarification 
 {
@@ -7,14 +8,14 @@ class Tarification
 public:
 
     Tarification()
-        : m_coutCamion{ 90.0 }
+        : m_coutCamion{ 75.0 }
         , m_coutKilometrique{ 1.3 }
-        , m_coutEmballage{0.5}
-        , m_prixTraction{100.0}
-        , m_prixLocMateriel{50.0}
-        , m_fraisRoute{70.0}
-        , m_coutMO{220.0}
-        , m_fraisStationnement{50.0}
+        , m_coutEmballage{ 5.0 }
+        , m_prixTraction{ 100.0 }
+        , m_prixLocMateriel{ 0.5 }
+        , m_fraisRoute{ 65.0 }
+        , m_coutMO{ 220.0 }
+        , m_fraisStationnement{ 50.0 }
     {
     }
 
@@ -42,6 +43,13 @@ public:
     double calculerHeuresNecessaires(double volume) const;
     double calculerCoutMainOeuvre(double volume) const;
     double calculerCoutTransport(double distance) const;
+
+
+    double calculerVolumeParPersonne(double volume, Prestation prestation) const;
+
+
+    // Calcule le nombre de jours nécessaires pour le déménagement
+    int calculerNombreCamion(double volume, Prestation prestation, Nature nature, double distance, bool accesComplexe = false, bool montageImportant = false) const;
 
 private:
 
