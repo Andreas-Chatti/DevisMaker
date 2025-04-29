@@ -25,7 +25,7 @@ enum class Prestation
 enum class Nature
 {
 	urbain,
-	route,
+	special,
 	groupage,
 	max_natures
 };

@@ -16,6 +16,7 @@ public:
         , m_fraisRoute{ 65.0 }
         , m_coutMO{ 220.0 }
         , m_fraisStationnement{ 50.0 }
+        , m_prixMetreCube{}
     {
     }
 
@@ -28,6 +29,7 @@ public:
     double getFraisRoute() const { return m_fraisRoute; }
     double getCoutMO() const { return m_coutMO; }
     double getCoutFraisStationnement() const { return m_fraisStationnement; }
+    double getPrixMetreCube() const { return m_prixMetreCube; }
 
     
     void setCoutCamion(double coutCamion) { m_coutCamion = coutCamion; }
@@ -38,29 +40,40 @@ public:
     void setFraisRoute(double fraisRoute) { m_fraisRoute = fraisRoute; }
     void setCoutMO(double coutMO) { m_coutMO = coutMO; }
     void setCoutFraisStationnement(double fraisStationnement) { m_fraisStationnement = fraisStationnement; }
-
-    
-    double calculerHeuresNecessaires(double volume) const;
-    double calculerCoutMainOeuvre(double volume) const;
-    double calculerCoutTransport(double distance) const;
+    void setPrixMetreCube(Prestation prestation, Nature nature, double distance);
 
 
     double calculerVolumeParPersonne(double volume, Prestation prestation) const;
 
 
-    // Calcule le nombre de jours nécessaires pour le déménagement
+    // Calcule le nombre de jour(s)/camion(s) nécessaire(s) pour le déménagement
     int calculerNombreCamion(double volume, Prestation prestation, Nature nature, double distance, bool accesComplexe = false, bool montageImportant = false) const;
+
+    int calculerNombreMO(double volume, Prestation prestation, Nature nature, int nombreCamions, bool monteMeuble, bool ascenseur, double distance) const;
+
+    double calculerCoutTotal(double volume) const { return volume * m_prixMetreCube; }
+
+    double calculerCoutCamionTotal(int nombreCamion) const { return m_coutCamion * nombreCamion; }
+
+    double calculerCoutKilometrageTotal(double distance) const { return distance * m_coutKilometrique; }
+
+    double calculerCoutMainOeuvreTotal(int nombreMO) const { return nombreMO * m_coutMO; }
+
+    double calculerCoutLocMaterielTotal(double volume) const { return volume * m_prixLocMateriel; }
+
+    double calculerCoutFraisRouteTotal(int nombreMO, int nombreCamion) const { return (nombreMO * m_fraisRoute) * (nombreCamion - 1); }
 
 private:
 
-    double m_coutCamion;
-    double m_coutKilometrique;
-    double m_coutEmballage;
-    double m_prixTraction;
-    double m_prixLocMateriel;
-    double m_fraisRoute;
-    double m_coutMO;
-    double m_fraisStationnement;
+    double m_coutCamion; // Coût unitaire par camion H.T.
+    double m_coutKilometrique; // Coût unitaire par kilomètre H.T.
+    double m_coutEmballage; // Coût unitaire emballage par m3 H.T.
+    double m_prixTraction; // Prix traction H.T.
+    double m_prixLocMateriel; // Coût unitaire par m3 H.T.
+    double m_fraisRoute; // Coût frais de route par personnel H.T.
+    double m_coutMO; // Coût unitaire main d'oeuvre H.T.
+    double m_fraisStationnement; // Coût frais stationnement par adresse H.T.
+    double m_prixMetreCube; // Prix du m3
 };
 
 #endif

@@ -12,7 +12,7 @@ double Tarification::calculerVolumeParPersonne(double volume, Prestation prestat
 
     case Prestation::standard: return volumeParPersonne = 8.0;  // 8m³ par personne en STANDARD
 
-    case Prestation::eco: [[fallthrough]]
+    case Prestation::eco: [[fallthrough]];
 
     case Prestation::ecoPlus: return volumeParPersonne = 10.0; // 10m³ par personne en ECO/ECO+
     }
@@ -42,7 +42,7 @@ int Tarification::calculerNombreCamion(double volume, Prestation prestation, Nat
 
 
     // Calcul pour déménagement national (route)
-    else if (nature == Nature::route)
+    else if (nature == Nature::special)
     {
         bool petitVolume{ volume <= 20.0 };
 
@@ -73,4 +73,130 @@ int Tarification::calculerNombreCamion(double volume, Prestation prestation, Nat
 
 
     return nombreJours;
+}
+
+
+void Tarification::setPrixMetreCube(Prestation prestation, Nature nature, double distance)
+{
+    if (nature == Nature::urbain)
+    {
+        switch (prestation)
+        {
+        case Prestation::eco:
+            m_prixMetreCube = 30.0;
+            return;
+        case Prestation::ecoPlus:
+            m_prixMetreCube = 35.0;
+            return;
+        case Prestation::standard:
+            m_prixMetreCube = 40.0;
+            return;
+        case Prestation::luxe:
+            m_prixMetreCube = 50.0;
+            return;
+        }
+    }
+
+    else if (nature == Nature::special)
+    {
+        if (distance >= 150 && distance <= 400)
+            m_prixMetreCube = 65.0;
+
+        else if (distance > 400 && distance <= 600)
+            m_prixMetreCube = 75.0;
+
+        else if (distance > 600 && distance <= 760)
+            m_prixMetreCube = 80.0;
+
+        else if (distance > 760 && distance <= 900)
+            m_prixMetreCube = 100.0;
+
+        else if (distance > 900)
+            m_prixMetreCube = 120.0;
+    }
+
+    else if (nature == Nature::groupage)
+    {
+        if (distance >= 150 && distance <= 400)
+            m_prixMetreCube = 65.0;
+
+        else if (distance > 400 && distance <= 600)
+            m_prixMetreCube = 75.0;
+
+        else if (distance > 600 && distance <= 760)
+            m_prixMetreCube = 80.0;
+
+        else if (distance > 760 && distance <= 900)
+            m_prixMetreCube = 100.0;
+
+        else if (distance > 900)
+            m_prixMetreCube = 120.0;
+    }
+}
+
+
+int Tarification::calculerNombreMO(double volume, Prestation prestation, Nature nature, int nombreCamions, bool monteMeuble, bool ascenseur, double distance) const 
+{
+    // 1. Utiliser la méthode existante pour déterminer le volume par personne
+    double volumeParPersonne{ calculerVolumeParPersonne(volume, prestation) };
+
+    // 2. Calculer le nombre de base de personnes pour le volume total
+    int nombrePersonnesBase{ static_cast<int>(std::ceil(volume / volumeParPersonne)) };
+
+    // 3. Ajuster selon le type de déménagement et le nombre de jours
+    int nombrePersonnesTotal{ nombrePersonnesBase };
+
+
+    if (nature == Nature::special)
+    {
+        // Pour la route, on a besoin du nombre de base pour le premier jour
+        // et ensuite 2 personnes par jour supplémentaire
+        if (nombreCamions > 1)
+        {
+            // Premier jour: nombre de base (mais au moins 2 personnes)
+            // Jours suivants: 2 personnes par camion
+            nombrePersonnesTotal = std::max(2, nombrePersonnesBase); // Premier jour
+            nombrePersonnesTotal += 2 * (nombreCamions - 1);         // Jours suivants
+        }
+
+        else
+            // Si un seul jour, prendre le maximum entre le nombre calculé et 2
+            nombrePersonnesTotal = std::max(2, nombrePersonnesBase);
+    }
+
+
+    else if (nature == Nature::urbain) 
+    {
+        // Pour l'urbain, répartir le personnel sur le nombre de jours
+        // avec un minimum de 2 personnes par jour
+        nombrePersonnesTotal = std::max(2, static_cast<int>(std::ceil(static_cast<double>(nombrePersonnesBase) / nombreCamions)));
+
+        // Multiplier par le nombre de jours pour avoir le total
+        nombrePersonnesTotal *= nombreCamions;
+    }
+
+
+    else if (nature == Nature::groupage) 
+    {
+        // Pour le groupage, généralement 2 personnes suffisent
+        nombrePersonnesTotal = 2 * nombreCamions;
+    }
+
+    // 4. Ajustements selon les conditions spécifiques
+
+    // Si monte-meuble et pas d'ascenseur, ajouter 1 personne par jour
+    if (monteMeuble && !ascenseur)
+        nombrePersonnesTotal += nombreCamions;
+
+
+    // Si ni monte-meuble ni ascenseur et volume important, ajouter des personnes
+    else if (!monteMeuble && !ascenseur && volume > 15.0) 
+    {
+        // 1 personne supplémentaire tous les 25m³ sans moyens de montée
+        int personnelSupplementaire = static_cast<int>(volume / 10.0);
+        nombrePersonnesTotal += personnelSupplementaire;
+    }
+
+
+    return nombrePersonnesTotal;
 }
