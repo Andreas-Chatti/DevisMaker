@@ -31,4 +31,11 @@ enum class Nature
 };
 
 
+enum class TypeAssurance
+{
+	contractuelle,
+	dommage,
+	max_types
+};
+
 #endif

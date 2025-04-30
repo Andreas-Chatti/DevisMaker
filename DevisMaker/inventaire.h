@@ -28,7 +28,7 @@ private:
 
 
     void ajouterObjet(const std::string& nom, int quantite = 1);
-    void supprimerObjet(const std::string& nom);
+    void supprimerObjet(const std::string& nom, int quantite = 1);
     void viderInventaire();
     double getVolumeTotal() const { return m_volumeTotal; }
 

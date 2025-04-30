@@ -97,25 +97,7 @@ void Tarification::setPrixMetreCube(Prestation prestation, Nature nature, double
         }
     }
 
-    else if (nature == Nature::special)
-    {
-        if (distance >= 150 && distance <= 400)
-            m_prixMetreCube = 65.0;
-
-        else if (distance > 400 && distance <= 600)
-            m_prixMetreCube = 75.0;
-
-        else if (distance > 600 && distance <= 760)
-            m_prixMetreCube = 80.0;
-
-        else if (distance > 760 && distance <= 900)
-            m_prixMetreCube = 100.0;
-
-        else if (distance > 900)
-            m_prixMetreCube = 120.0;
-    }
-
-    else if (nature == Nature::groupage)
+    else if (nature == Nature::special || nature == Nature::groupage)
     {
         if (distance >= 150 && distance <= 400)
             m_prixMetreCube = 65.0;
@@ -180,21 +162,6 @@ int Tarification::calculerNombreMO(double volume, Prestation prestation, Nature 
     {
         // Pour le groupage, généralement 2 personnes suffisent
         nombrePersonnesTotal = 2 * nombreCamions;
-    }
-
-    // 4. Ajustements selon les conditions spécifiques
-
-    // Si monte-meuble et pas d'ascenseur, ajouter 1 personne par jour
-    if (monteMeuble && !ascenseur)
-        nombrePersonnesTotal += nombreCamions;
-
-
-    // Si ni monte-meuble ni ascenseur et volume important, ajouter des personnes
-    else if (!monteMeuble && !ascenseur && volume > 15.0) 
-    {
-        // 1 personne supplémentaire tous les 25m³ sans moyens de montée
-        int personnelSupplementaire = static_cast<int>(volume / 10.0);
-        nombrePersonnesTotal += personnelSupplementaire;
     }
 
 

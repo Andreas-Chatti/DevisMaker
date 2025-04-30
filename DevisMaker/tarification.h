@@ -45,13 +45,11 @@ public:
 
     double calculerVolumeParPersonne(double volume, Prestation prestation) const;
 
-
-    // Calcule le nombre de jour(s)/camion(s) nécessaire(s) pour le déménagement
     int calculerNombreCamion(double volume, Prestation prestation, Nature nature, double distance, bool accesComplexe = false, bool montageImportant = false) const;
 
     int calculerNombreMO(double volume, Prestation prestation, Nature nature, int nombreCamions, bool monteMeuble, bool ascenseur, double distance) const;
 
-    double calculerCoutTotal(double volume) const { return volume * m_prixMetreCube; }
+    double calculerCoutTotalHT(double volume) const { return volume * m_prixMetreCube; }
 
     double calculerCoutCamionTotal(int nombreCamion) const { return m_coutCamion * nombreCamion; }
 
@@ -62,6 +60,15 @@ public:
     double calculerCoutLocMaterielTotal(double volume) const { return volume * m_prixLocMateriel; }
 
     double calculerCoutFraisRouteTotal(int nombreMO, int nombreCamion) const { return (nombreMO * m_fraisRoute) * (nombreCamion - 1); }
+
+    double calculerArrhes(double coutTotal) const { return coutTotal * 0.3; }
+
+    double calculerCoutAssurance(int valeurMobilier, TypeAssurance assurance) const 
+    { 
+        const double taux{ assurance == TypeAssurance::contractuelle ? 0.2 : 0.5 };
+
+        return (valeurMobilier * taux) / 100;
+    }
 
 private:
 
