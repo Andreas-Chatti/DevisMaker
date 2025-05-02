@@ -23,11 +23,9 @@ public:
 
     ~MainWindow() = default;
 
-/*private slots:
+private slots:
 
-    void on_calculerButton_clicked();
-    void on_genererDevisButton_clicked();
-    void on_nouvelInventaireButton_clicked();*/
+    void on_generateDevisButton_clicked();
 
 private:
 
