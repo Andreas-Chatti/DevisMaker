@@ -48,7 +48,7 @@
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="InformationsClient">
        <property name="enabled">
@@ -887,17 +887,17 @@
         <item row="0" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout_7">
           <item>
-           <widget class="QLabel" name="label_6">
+           <widget class="QLabel" name="prixCamionLabel">
             <property name="text">
              <string>Camion</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="lineEdit_2"/>
+           <widget class="QLineEdit" name="prixCamionLineEdit"/>
           </item>
           <item>
-           <widget class="QLabel" name="label_7">
+           <widget class="QLabel" name="htLabel0">
             <property name="text">
              <string>€ H.T.</string>
             </property>
@@ -908,17 +908,17 @@
         <item row="1" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout_8">
           <item>
-           <widget class="QLabel" name="label_8">
+           <widget class="QLabel" name="coutKmLabel">
             <property name="text">
              <string>Kilométrage</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="lineEdit_3"/>
+           <widget class="QLineEdit" name="coutKmLineEdit"/>
           </item>
           <item>
-           <widget class="QLabel" name="label_9">
+           <widget class="QLabel" name="htLabel1">
             <property name="text">
              <string>€ H.T.</string>
             </property>
@@ -929,17 +929,17 @@
         <item row="2" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout_12">
           <item>
-           <widget class="QLabel" name="label_16">
+           <widget class="QLabel" name="prixEmballageLabel">
             <property name="text">
              <string>Emballage</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="lineEdit_7"/>
+           <widget class="QLineEdit" name="prixEmballageLineEdit"/>
           </item>
           <item>
-           <widget class="QLabel" name="label_17">
+           <widget class="QLabel" name="htLabel2">
             <property name="text">
              <string>€ H.T.</string>
             </property>
@@ -950,17 +950,17 @@
         <item row="3" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout_9">
           <item>
-           <widget class="QLabel" name="label_10">
+           <widget class="QLabel" name="prixTractionLabel">
             <property name="text">
              <string>Traction</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="lineEdit_4"/>
+           <widget class="QLineEdit" name="prixTractionLineEdit"/>
           </item>
           <item>
-           <widget class="QLabel" name="label_11">
+           <widget class="QLabel" name="htLabel3">
             <property name="text">
              <string>€ H.T.</string>
             </property>
@@ -971,17 +971,17 @@
         <item row="4" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout_10">
           <item>
-           <widget class="QLabel" name="label_12">
+           <widget class="QLabel" name="prixLocMatLabel">
             <property name="text">
              <string>Location matériel</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="lineEdit_5"/>
+           <widget class="QLineEdit" name="prixLocMatLineEdit"/>
           </item>
           <item>
-           <widget class="QLabel" name="label_13">
+           <widget class="QLabel" name="htLabel4">
             <property name="text">
              <string>€ H.T.</string>
             </property>
@@ -992,17 +992,17 @@
         <item row="5" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout_13">
           <item>
-           <widget class="QLabel" name="label_18">
+           <widget class="QLabel" name="coutFraisRouteLabel_2">
             <property name="text">
              <string>Frais de route</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="lineEdit_8"/>
+           <widget class="QLineEdit" name="coutFraisRouteLineEdit"/>
           </item>
           <item>
-           <widget class="QLabel" name="label_19">
+           <widget class="QLabel" name="htLabel5">
             <property name="text">
              <string>€ H.T.</string>
             </property>
@@ -1013,17 +1013,17 @@
         <item row="6" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout_11">
           <item>
-           <widget class="QLabel" name="label_14">
+           <widget class="QLabel" name="moLabel">
             <property name="text">
              <string>Main d'oeuvre</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="lineEdit_6"/>
+           <widget class="QLineEdit" name="moLineEdit"/>
           </item>
           <item>
-           <widget class="QLabel" name="label_15">
+           <widget class="QLabel" name="htLabel6">
             <property name="text">
              <string>€ H.T.</string>
             </property>
@@ -1034,17 +1034,17 @@
         <item row="7" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout_25">
           <item>
-           <widget class="QLabel" name="label_35">
+           <widget class="QLabel" name="fraisStatLabel">
             <property name="text">
              <string>Frais stationnement</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="lineEdit_15"/>
+           <widget class="QLineEdit" name="fraisStatLineEdit"/>
           </item>
           <item>
-           <widget class="QLabel" name="label_36">
+           <widget class="QLabel" name="htLabel7">
             <property name="text">
              <string>€ H.T.</string>
             </property>

@@ -5,7 +5,7 @@
 struct Adresse
 {
 	std::string m_rue;
-	std::uint16_t m_etage;
+	int m_etage;
 	bool m_ascenseur;
 	bool m_monteMeubles;
 	bool m_autStationnement;

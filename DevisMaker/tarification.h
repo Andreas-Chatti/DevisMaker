@@ -61,7 +61,7 @@ public:
 
     double calculerCoutFraisRouteTotal(int nombreMO, int nombreCamion) const { return (nombreMO * m_fraisRoute) * (nombreCamion - 1); }
 
-    double calculerArrhes(double coutTotal) const { return coutTotal * 0.3; }
+    double calculerArrhes(double coutTotal) const { return (coutTotal * 1.2) * 0.3; }
 
     double calculerCoutAssurance(int valeurMobilier, TypeAssurance assurance) const 
     { 

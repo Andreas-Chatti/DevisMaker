@@ -14,6 +14,8 @@ public:
     const Adresse& getAdresseDepart() const { return m_depart; }
     const Adresse& getAdresseArrivee() const { return m_livraison; }
     double getDistance() const { return m_distance; }
+    double getVolume() const { return m_volume; }
+    bool getIsDE() const { return m_isDE; }
 
  
     void setNom(const std::string& nom) { m_nom = nom; }
@@ -23,6 +25,8 @@ public:
     void setDistance(double distance) { m_distance = distance; }
     void setPrestation(Prestation prestation) { m_prestation = prestation; }
     void setNature(Nature nature) { m_nature = nature; }
+    void setVolume(double volume) { m_volume = volume; }
+    void setIsDE(bool isDE) { m_isDE = isDE; }
 
     
     //void calculerDistance();
@@ -36,4 +40,6 @@ private:
     Prestation m_prestation;
     Nature m_nature;
     double m_distance;
+    double m_volume;
+    bool m_isDE;
 };
