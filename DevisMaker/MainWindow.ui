@@ -48,7 +48,7 @@
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="InformationsClient">
        <property name="enabled">
@@ -440,6 +440,15 @@
           </item>
           <item>
            <widget class="QComboBox" name="natureComboBox">
+            <property name="editable">
+             <bool>false</bool>
+            </property>
+            <property name="currentText">
+             <string>Urbain</string>
+            </property>
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
             <item>
              <property name="text">
               <string>Urbain</string>
@@ -447,12 +456,12 @@
             </item>
             <item>
              <property name="text">
-              <string>Groupage</string>
+              <string>Spécial</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>Spécial</string>
+              <string>Groupage</string>
              </property>
             </item>
            </widget>
@@ -738,7 +747,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>Valeur déclarée assurance</string>
+                <string>Coût assurance mobilier</string>
                </property>
               </widget>
              </item>

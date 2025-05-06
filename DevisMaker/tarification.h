@@ -49,7 +49,7 @@ public:
 
     int calculerNombreMO(double volume, Prestation prestation, Nature nature, int nombreCamions, bool monteMeuble, bool ascenseur, double distance) const;
 
-    double calculerCoutTotalHT(double volume) const { return volume * m_prixMetreCube; }
+    double calculerCoutTotalHT(double volume, double coutAssurance, double fraisStationnement) const { return volume * m_prixMetreCube + coutAssurance + fraisStationnement; }
 
     double calculerCoutCamionTotal(int nombreCamion) const { return m_coutCamion * nombreCamion; }
 
@@ -68,6 +68,17 @@ public:
         const double taux{ assurance == TypeAssurance::contractuelle ? 0.2 : 0.5 };
 
         return (valeurMobilier * taux) / 100;
+    }
+
+    double calculerPrixStationnement(bool autStatChargement, bool autStatLivraison) const
+    {
+        if (autStatChargement && autStatLivraison)
+            return m_fraisStationnement * 2;
+
+        else if (autStatChargement || autStatLivraison)
+            return m_fraisStationnement;
+
+        return 0.0;
     }
 
 private:

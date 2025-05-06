@@ -99,15 +99,7 @@ void MainWindow::on_generateDevisButton_clicked()
 
     double coutCamionTotal{ m_tarification.calculerCoutCamionTotal(nombreCamion) };
 
-    double coutAutStatTotal{};
-    if (autStatChargement && autStatLivraison)
-        coutAutStatTotal = m_tarification.getCoutFraisStationnement() * 2;
-
-    else if (autStatChargement || autStatLivraison)
-        coutAutStatTotal = m_tarification.getCoutFraisStationnement();
-
-    else
-        coutAutStatTotal = 0;
+    double coutAutStatTotal{ m_tarification.calculerPrixStationnement(autStatChargement, autStatLivraison) };
 
     double fraisRouteTotal{ m_tarification.calculerCoutFraisRouteTotal(nombreMO, nombreCamion) };
 
@@ -115,29 +107,27 @@ void MainWindow::on_generateDevisButton_clicked()
 
     m_tarification.setPrixMetreCube(prestation, nature, distance);
 
-    double prixTotalHT{ m_tarification.calculerCoutTotalHT(volume) };
+    double prixTotalHT{ m_tarification.calculerCoutTotalHT(volume, coutAssurance, coutAutStatTotal) };
 
     double arrhes{ m_tarification.calculerArrhes(prixTotalHT) };
 
 
     // 3. Afficher les résultats dans l'onglet "Résultats et Devis"
 
+    // Format pour le volume (m³)
+    ui.totalVolumeTextBrowser->setText(QString::number(volume, 'f', 2) + " m\u00B3");
 
-    ui.totalVolumeTextBrowser->setText(ui.volumelineEdit->text());
+    // Format pour les prix H.T. (2 décimales + symbole euro + H.T.)
+    ui.coutMOTextBrowser->setText(QString::number(coutMOTotal, 'f', 2) + " \u20AC H.T.");
+    ui.tractionTextBrowser->setText(QString::number(prixTraction, 'f', 2) + " \u20AC H.T.");
+    ui.coutCamionTextBrowser->setText(QString::number(coutCamionTotal, 'f', 2) + " \u20AC H.T.");
+    ui.coutASTextBrowser->setText(QString::number(coutAutStatTotal, 'f', 2) + " \u20AC H.T.");
+    ui.coutFraisRouteTextBrowser->setText(QString::number(fraisRouteTotal, 'f', 2) + " \u20AC H.T.");
+    ui.coutAssuranceTextBrowser->setText(QString::number(coutAssurance, 'f', 2) + " \u20AC H.T.");
 
-    ui.coutMOTextBrowser->setText(QString::number(coutMOTotal));
+    // Format pour le prix total H.T.
+    ui.totalPriceTextBrowser->setText(QString::number(prixTotalHT, 'f', 2) + " \u20AC H.T.");
 
-    ui.tractionTextBrowser->setText(ui.prixTractionLineEdit->text());
-
-    ui.coutCamionTextBrowser->setText(QString::number(coutCamionTotal));
-
-    ui.coutASTextBrowser->setText(QString::number(coutAutStatTotal));
-
-    ui.coutFraisRouteTextBrowser->setText(QString::number(fraisRouteTotal));
-
-    ui.coutAssuranceTextBrowser->setText(QString::number(coutAssurance));
-
-    ui.arrhesTextBrowser->setText(QString::number(arrhes));
-
-    ui.totalPriceTextBrowser->setText(QString::number(prixTotalHT));
+    // Format pour les arrhes (T.T.C.)
+    ui.arrhesTextBrowser->setText(QString::number(arrhes, 'f', 2) + " \u20AC T.T.C.");
 }
