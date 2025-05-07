@@ -24,6 +24,8 @@ public:
     void setAdresseArrivee(const Adresse& adresse) { m_livraison = adresse; }
     void setDistance(double distance) { m_distance = distance; }
     void setPrestation(Prestation prestation) { m_prestation = prestation; }
+    void setTypeAssurance(TypeAssurance type) { m_typeAssurance = type; }
+    void setValeurAssurance(double valeur) { m_valeurAssurance = valeur; }
     void setNature(Nature nature) { m_nature = nature; }
     void setVolume(double volume) { m_volume = volume; }
     void setIsDE(bool isDE) { m_isDE = isDE; }
@@ -39,6 +41,8 @@ private:
     Adresse m_livraison;
     Prestation m_prestation;
     Nature m_nature;
+    TypeAssurance m_typeAssurance;
+    double m_valeurAssurance;
     double m_distance;
     double m_volume;
     bool m_isDE;

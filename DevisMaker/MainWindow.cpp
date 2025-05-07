@@ -48,6 +48,16 @@ void MainWindow::on_generateDevisButton_clicked()
     m_client.setNature(nature);
 
 
+    // Récupérer le type d'assurance sélectionné
+    TypeAssurance typeAssurance{ ui.typeAssuranceComboBox->currentIndex() };
+    m_client.setTypeAssurance(typeAssurance);
+
+
+    // Récupérer la valeur déclarée
+    double valeurAssurance{ ui.valeurAssuranceLineEdit->text().toDouble() };
+    m_client.setValeurAssurance(valeurAssurance);
+
+
     // Récupérer la condition Déchetterie
     bool dechetterie{ ui.deCheckBox->isChecked() };
     m_client.setIsDE(dechetterie);
@@ -66,10 +76,6 @@ void MainWindow::on_generateDevisButton_clicked()
 
     double prixEmballage{ ui.prixEmballageLineEdit->text().toDouble() };
     m_tarification.setCoutEmballage(prixEmballage);
-
-
-    double prixTraction{ ui.prixTractionLineEdit->text().toDouble() };
-    m_tarification.setPrixTraction(prixTraction);
 
 
     double prixLocMateriel{ ui.prixLocMatLineEdit->text().toDouble() };
@@ -103,7 +109,7 @@ void MainWindow::on_generateDevisButton_clicked()
 
     double fraisRouteTotal{ m_tarification.calculerCoutFraisRouteTotal(nombreMO, nombreCamion) };
 
-    double coutAssurance{ m_tarification.calculerCoutAssurance(30000, TypeAssurance::contractuelle) }; // A réviser plus tard (mettre en place les champs de type d'assurance voulue ainsi que champ pour la valeur mobilier à mettre)
+    double coutAssurance{ m_tarification.calculerCoutAssurance(valeurAssurance, typeAssurance) };
 
     m_tarification.setPrixMetreCube(prestation, nature, distance);
 
@@ -119,7 +125,6 @@ void MainWindow::on_generateDevisButton_clicked()
 
     // Format pour les prix H.T. (2 décimales + symbole euro + H.T.)
     ui.coutMOTextBrowser->setText(QString::number(coutMOTotal, 'f', 2) + " \u20AC H.T.");
-    ui.tractionTextBrowser->setText(QString::number(prixTraction, 'f', 2) + " \u20AC H.T.");
     ui.coutCamionTextBrowser->setText(QString::number(coutCamionTotal, 'f', 2) + " \u20AC H.T.");
     ui.coutASTextBrowser->setText(QString::number(coutAutStatTotal, 'f', 2) + " \u20AC H.T.");
     ui.coutFraisRouteTextBrowser->setText(QString::number(fraisRouteTotal, 'f', 2) + " \u20AC H.T.");
