@@ -1,6 +1,8 @@
 #pragma once
 
 #include <QMainWindow>
+#include <qvalidator.h>
+#include <memory>
 #include "ui_MainWindow.h"
 #include "Client.h"
 #include "Inventaire.h"
@@ -17,7 +19,10 @@ public:
         : QMainWindow(parent)
     {
         ui.setupUi(this);
-        //setupConnections();
+
+        setupValidators();
+
+        //setupSettings(); // Mettre les paramètres de tarification dans les champs
     }
 
 
@@ -34,5 +39,8 @@ private:
     Inventaire m_inventaire;
     Tarification m_tarification;
 
-    //void setupConnections();
+
+    void setupValidators();
+
+    void setupSettings();
 };

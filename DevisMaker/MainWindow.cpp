@@ -1,8 +1,59 @@
 #include "MainWindow.h"
 #include <QMessageBox>
 
+void MainWindow::setupValidators()
+{
+    // Créer un validateur pour nombres décimaux (min, max, précision)
+    const auto doubleValidator{ new QDoubleValidator(0, 500, 2, this) };
+    doubleValidator->setNotation(QDoubleValidator::StandardNotation);
+
+    const auto intValidator{ new QIntValidator(0, 500, this) };
+
+    // Utiliser la locale française pour la virgule comme séparateur décimal
+    doubleValidator->setLocale(QLocale::French);
+    intValidator->setLocale(QLocale::French);
+
+    // Appliquer aux champs qui demandent des nombres décimaux
+    ui.distanceLineEdit->setValidator(intValidator);
+    ui.volumelineEdit->setValidator(doubleValidator);
+    ui.valeurAssuranceLineEdit->setValidator(intValidator);
+    ui.prixCamionLineEdit->setValidator(doubleValidator);
+    ui.coutKmLineEdit->setValidator(doubleValidator);
+    ui.prixEmballageLineEdit->setValidator(doubleValidator);
+    ui.prixLocMatLineEdit->setValidator(doubleValidator);
+    ui.coutFraisRouteLineEdit->setValidator(doubleValidator);
+    ui.moLineEdit->setValidator(doubleValidator);
+    ui.fraisStatLineEdit->setValidator(doubleValidator);
+}
+
+
 void MainWindow::on_generateDevisButton_clicked()
 {
+    // 0. Vérifier si tous les champs importants sont remplis avant de continuer
+
+
+    std::vector<QLineEdit*> champs{
+      ui.distanceLineEdit,
+      ui.volumelineEdit,
+      ui.valeurAssuranceLineEdit,
+      ui.prixCamionLineEdit,
+      ui.coutKmLineEdit,
+      ui.prixEmballageLineEdit,
+      ui.prixLocMatLineEdit,
+      ui.coutFraisRouteLineEdit,
+      ui.moLineEdit,
+      ui.fraisStatLineEdit,
+    };
+
+
+    for (const auto& e : champs)
+        if (e->text().isEmpty())
+        {
+            QMessageBox::warning(this, "Champs manquants ou invalides", "Veuillez remplir correctement les champs avant de g\u00E9n\u00E9rer le devis");
+            return;
+        }
+
+
     // 1. Mettre à jour toutes les variables de l'onglet CLIENT depuis les champs rentrés par l'utilisateur
 
 
@@ -135,4 +186,8 @@ void MainWindow::on_generateDevisButton_clicked()
 
     // Format pour les arrhes (T.T.C.)
     ui.arrhesTextBrowser->setText(QString::number(arrhes, 'f', 2) + " \u20AC T.T.C.");
+
+    // Afficher le nombre de déménageurs et de camion(s)
+    ui.nbPersonnelsTextBrowser->setText(QString::number(nombreMO) + " d\u00E9m\u00E9nageurs");
+    ui.nbCamionTextBrowser->setText(QString::number(nombreCamion) + " camion" + (nombreCamion > 1 ? "s" : ""));
 }

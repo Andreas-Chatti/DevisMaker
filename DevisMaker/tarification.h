@@ -17,6 +17,10 @@ public:
         , m_fraisStationnement{ 50.0 }
         , m_prixMetreCube{}
     {
+        // Vérifier si le fichier txt avec les paramètres existe
+        // Si il existe charger les paramètres, ex: m_coutCamion = paramètre écris dans la ligne X du fichier.txt
+        // sinon créer un fichier txt avec les paramètres par défaut ci-dessus
+        // puis ensuite les mettre dans les champs directement ex: ui.prixCamionLineEdit->setText(QString::number(m_coutCamion));
     }
 
     
