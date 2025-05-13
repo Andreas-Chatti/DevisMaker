@@ -22,11 +22,13 @@ public:
 
         setupValidators();
 
-        //setupSettings(); // Mettre les paramètres de tarification dans les champs
+        setupSettings();
     }
 
 
-    ~MainWindow() = default;
+    ~MainWindow()
+    {
+    }
 
 private slots:
 

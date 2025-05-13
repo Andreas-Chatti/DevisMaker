@@ -7,7 +7,7 @@ void MainWindow::setupValidators()
     const auto doubleValidator{ new QDoubleValidator(0, 500, 2, this) };
     doubleValidator->setNotation(QDoubleValidator::StandardNotation);
 
-    const auto intValidator{ new QIntValidator(0, 500, this) };
+    const auto intValidator{ new QIntValidator(0, 45000, this) };
 
     // Utiliser la locale française pour la virgule comme séparateur décimal
     doubleValidator->setLocale(QLocale::French);
@@ -24,6 +24,18 @@ void MainWindow::setupValidators()
     ui.coutFraisRouteLineEdit->setValidator(doubleValidator);
     ui.moLineEdit->setValidator(doubleValidator);
     ui.fraisStatLineEdit->setValidator(doubleValidator);
+}
+
+
+void MainWindow::setupSettings()
+{
+    ui.prixCamionLineEdit->setText(QString::number(m_tarification.getCoutCamion()));
+    ui.coutKmLineEdit->setText(QString::number(m_tarification.getCoutKilometrique()));
+    ui.prixEmballageLineEdit->setText(QString::number(m_tarification.getCoutEmballage()));
+    ui.prixLocMatLineEdit->setText(QString::number(m_tarification.getPrixLocMateriel()));
+    ui.coutFraisRouteLineEdit->setText(QString::number(m_tarification.getFraisRoute()));
+    ui.moLineEdit->setText(QString::number(m_tarification.getCoutMO()));
+    ui.fraisStatLineEdit->setText(QString::number(m_tarification.getCoutFraisStationnement()));
 }
 
 
@@ -190,4 +202,8 @@ void MainWindow::on_generateDevisButton_clicked()
     // Afficher le nombre de déménageurs et de camion(s)
     ui.nbPersonnelsTextBrowser->setText(QString::number(nombreMO) + " d\u00E9m\u00E9nageurs");
     ui.nbCamionTextBrowser->setText(QString::number(nombreCamion) + " camion" + (nombreCamion > 1 ? "s" : ""));
+
+
+
+    m_tarification.saveSettings();
 }

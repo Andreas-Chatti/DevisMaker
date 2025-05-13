@@ -1,6 +1,59 @@
 #include "Tarification.h"
 #include <cmath>
 
+void Tarification::loadSettings()
+{
+    // Définir le chemin du fichier de configuration
+    QString settingsPath{ QDir::homePath() + "/DevisMaker/config.ini" };
+    QFileInfo checkFile(settingsPath);
+
+    // Créer le dossier s'il n'existe pas
+    QDir().mkpath(QDir::homePath() + "/DevisMaker");
+
+    // Initialiser QSettings
+    QSettings settings(settingsPath, QSettings::IniFormat);
+
+    // Si le fichier existe, charger les paramètres
+    if (checkFile.exists() && checkFile.isFile()) 
+    {
+        settings.beginGroup("Tarification");
+        m_coutCamion = settings.value("CoutCamion", 75.0).toDouble();
+        m_coutKilometrique = settings.value("CoutKilometrique", 1.3).toDouble();
+        m_coutEmballage = settings.value("CoutEmballage", 5.0).toDouble();
+        m_prixLocMateriel = settings.value("PrixLocMateriel", 0.5).toDouble();
+        m_fraisRoute = settings.value("FraisRoute", 65.0).toDouble();
+        m_coutMO = settings.value("CoutMO", 220.0).toDouble();
+        m_fraisStationnement = settings.value("FraisStationnement", 50.0).toDouble();
+        settings.endGroup();
+    }
+
+    else 
+        // Sinon, créer le fichier avec les valeurs par défaut
+        saveSettings();
+}
+
+
+void Tarification::saveSettings() const
+{
+    // Définir le chemin du fichier de configuration
+    QString settingsPath{ QDir::homePath() + "/DevisMaker/config.ini" };
+
+    // Initialiser QSettings
+    QSettings settings{ settingsPath, QSettings::IniFormat };
+
+    // Sauvegarder les paramètres
+    settings.beginGroup("Tarification");
+    settings.setValue("CoutCamion", m_coutCamion);
+    settings.setValue("CoutKilometrique", m_coutKilometrique);
+    settings.setValue("CoutEmballage", m_coutEmballage);
+    settings.setValue("PrixLocMateriel", m_prixLocMateriel);
+    settings.setValue("FraisRoute", m_fraisRoute);
+    settings.setValue("CoutMO", m_coutMO);
+    settings.setValue("FraisStationnement", m_fraisStationnement);
+    settings.endGroup();
+}
+
+
 double Tarification::calculerVolumeParPersonne(double volume, Prestation prestation) const
 {
     double volumeParPersonne{ 8.0 };

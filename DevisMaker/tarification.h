@@ -1,5 +1,8 @@
 #ifndef TARIFICATION_H
 #define TARIFICATION_H
+#include <QSettings>
+#include <QDir>
+#include <QFileInfo>
 #include "common.h"
 
 class Tarification 
@@ -17,10 +20,7 @@ public:
         , m_fraisStationnement{ 50.0 }
         , m_prixMetreCube{}
     {
-        // Vérifier si le fichier txt avec les paramètres existe
-        // Si il existe charger les paramètres, ex: m_coutCamion = paramètre écris dans la ligne X du fichier.txt
-        // sinon créer un fichier txt avec les paramètres par défaut ci-dessus
-        // puis ensuite les mettre dans les champs directement ex: ui.prixCamionLineEdit->setText(QString::number(m_coutCamion));
+        loadSettings();
     }
 
     
@@ -82,6 +82,10 @@ public:
         return 0.0;
     }
 
+
+    void saveSettings() const;
+
+
 private:
 
     double m_coutCamion; // Coût unitaire par camion H.T.
@@ -92,6 +96,9 @@ private:
     double m_coutMO; // Coût unitaire main d'oeuvre H.T.
     double m_fraisStationnement; // Coût frais stationnement par adresse H.T.
     double m_prixMetreCube; // Prix du m3
+
+
+    void loadSettings();
 };
 
 #endif
