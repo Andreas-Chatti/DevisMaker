@@ -1,8 +1,18 @@
 #pragma once
-
 #include <QMainWindow>
 #include <qvalidator.h>
 #include <memory>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QUrlQuery>
+#include <QMessageBox>
+#include <QTimer>
+#include <cmath>
+#include "AddressCompleter.h"
 #include "ui_MainWindow.h"
 #include "Client.h"
 #include "Inventaire.h"
@@ -19,6 +29,14 @@ public:
         : QMainWindow(parent)
     {
         ui.setupUi(this);
+
+        m_departCompleter = new AddressCompleter(ui.adresseDepartLineEdit, this);
+        m_arriveeCompleter = new AddressCompleter(ui.adresseLivraisonLineEdit, this);
+
+
+        connect(ui.adresseDepartLineEdit, &QLineEdit::editingFinished, this, &MainWindow::calculateDistance);
+        connect(ui.adresseLivraisonLineEdit, &QLineEdit::editingFinished, this, &MainWindow::calculateDistance);
+
 
         setupValidators();
 
@@ -40,9 +58,19 @@ private:
     Client m_client;
     Inventaire m_inventaire;
     Tarification m_tarification;
+    QNetworkAccessManager* m_networkManager{ nullptr };
+
+
+    AddressCompleter* m_departCompleter{ nullptr };
+    AddressCompleter* m_arriveeCompleter{ nullptr };
 
 
     void setupValidators();
 
     void setupSettings();
+
+
+    void calculateDistance();
+    void handleDistanceReply(QNetworkReply* reply);
+    double calculateHaversineDistance(double lat1, double lon1, double lat2, double lon2);
 };
