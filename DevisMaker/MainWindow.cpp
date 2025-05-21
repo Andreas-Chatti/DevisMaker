@@ -44,165 +44,29 @@ void MainWindow::on_generateDevisButton_clicked()
     // 0. Vérifier si tous les champs importants sont remplis avant de continuer
 
 
-    std::vector<QLineEdit*> champs{
-      ui.distanceLineEdit,
-      ui.volumelineEdit,
-      ui.valeurAssuranceLineEdit,
-      ui.prixCamionLineEdit,
-      ui.coutKmLineEdit,
-      ui.prixEmballageLineEdit,
-      ui.prixLocMatLineEdit,
-      ui.coutFraisRouteLineEdit,
-      ui.moLineEdit,
-      ui.fraisStatLineEdit,
-    };
-
-
-    for (const auto& e : champs)
-        if (e->text().isEmpty())
-        {
-            QMessageBox::warning(this, "Champs manquants ou invalides", "Veuillez remplir correctement les champs avant de g\u00E9n\u00E9rer le devis");
-            return;
-        }
+    if (!areAllFieldCompleted())
+    {
+        QMessageBox::warning(this, "Champs manquants ou invalides", "Veuillez remplir correctement les champs avant de g\u00E9n\u00E9rer le devis");
+        return;
+    }
 
 
     // 1. Mettre à jour toutes les variables de l'onglet CLIENT depuis les champs rentrés par l'utilisateur
 
 
-    // Adresse Chargement
-    std::string rueChargement{ ui.adresseDepartLineEdit->text().toStdString() };
-    int etageChargement{ ui.etageDepartSpinBox->value() };
-    bool ascChargement{ ui.ascDepartCheckBox->isChecked() };
-    bool mmChargement{ ui.mmDepartCheckBox->isChecked() };
-    bool autStatChargement{ ui.asDepartCheckBox->isChecked() };
-
-    const Adresse A_Chargement{ rueChargement, etageChargement, ascChargement, mmChargement, autStatChargement };
-    m_client.setAdresseDepart(A_Chargement);
+    updateClientVariables();
 
 
-    // Adresse Livraison
-    std::string rueLivraison{ ui.adresseLivraisonLineEdit->text().toStdString() };
-    int etageLivraison{ ui.etageLivraisonSpinBox->value() };
-    bool ascLivraison{ ui.ascLivraisonCheckBox->isChecked() };
-    bool mmLivraison{ ui.mmLivraisonCheckBox->isChecked() };
-    bool autStatLivraison{ ui.asLivraisonCheckBox->isChecked() };
+    // 2. Mettre à jour toutes les variables de l'onglet PARAMETRES depuis les champs rentrés par l'utilisateur
 
-    const Adresse A_Livraison{ rueLivraison, etageLivraison, ascLivraison, mmLivraison, autStatLivraison };
-    m_client.setAdresseArrivee(A_Livraison);
-
-
-    // Récupérer la distance saisie
-    double distance{ ui.distanceLineEdit->text().toDouble() };
-    m_client.setDistance(distance);
-
-
-    // Récupérer le volume saisie
-    double volume{ ui.volumelineEdit->text().toDouble() };
-    m_client.setVolume(volume);
-
-
-    // Récupérer la prestation sélectionnée
-    Prestation prestation{ ui.prestationComboBox->currentIndex() };
-    m_client.setPrestation(prestation);
-
-
-    // Récupérer la nature sélectionnée
-    Nature nature{ ui.natureComboBox->currentIndex() };
-    m_client.setNature(nature);
-
-
-    // Récupérer le type d'assurance sélectionné
-    TypeAssurance typeAssurance{ ui.typeAssuranceComboBox->currentIndex() };
-    m_client.setTypeAssurance(typeAssurance);
-
-
-    // Récupérer la valeur déclarée
-    double valeurAssurance{ ui.valeurAssuranceLineEdit->text().toDouble() };
-    m_client.setValeurAssurance(valeurAssurance);
-
-
-    // Récupérer la condition Déchetterie
-    bool dechetterie{ ui.deCheckBox->isChecked() };
-    m_client.setIsDE(dechetterie);
-
-
-    // 1bis. Mettre à jour toutes les variables de l'onglet PARAMETRES depuis les champs rentrés par l'utilisateur
-
-
-    double prixCamion{ ui.prixCamionLineEdit->text().toDouble() };
-    m_tarification.setCoutCamion(prixCamion);
-
-
-    double prixKilometrage{ ui.coutKmLineEdit->text().toDouble() };
-    m_tarification.setCoutKilometrique(prixKilometrage);
-
-
-    double prixEmballage{ ui.prixEmballageLineEdit->text().toDouble() };
-    m_tarification.setCoutEmballage(prixEmballage);
-
-
-    double prixLocMateriel{ ui.prixLocMatLineEdit->text().toDouble() };
-    m_tarification.setPrixLocMateriel(prixLocMateriel);
-
-
-    double prixFraisRoute{ ui.coutFraisRouteLineEdit->text().toDouble() };
-    m_tarification.setFraisRoute(prixFraisRoute);
-
-
-    double prixMO{ ui.moLineEdit->text().toDouble() };
-    m_tarification.setCoutMO(prixMO);
-
-
-    double prixFraisStationnement{ ui.fraisStatLineEdit->text().toDouble() };
-    m_tarification.setCoutFraisStationnement(prixFraisStationnement);
-
-
-    // 2. Faire les calculs de tarification avec les variables qu'on a récupéré
-
-
-    double volumeParPersonne{ m_tarification.calculerVolumeParPersonne(volume, prestation) };
-    int nombreCamion{ m_tarification.calculerNombreCamion(volume, prestation, nature, distance) };
-    int nombreMO{ m_tarification.calculerNombreMO(volume, prestation, nature, nombreCamion, mmChargement || mmLivraison, ascChargement || ascLivraison, distance) };
-
-    double coutMOTotal{ m_tarification.calculerCoutMainOeuvreTotal(nombreMO) };
-
-    double coutCamionTotal{ m_tarification.calculerCoutCamionTotal(nombreCamion) };
-
-    double coutAutStatTotal{ m_tarification.calculerPrixStationnement(autStatChargement, autStatLivraison) };
-
-    double fraisRouteTotal{ m_tarification.calculerCoutFraisRouteTotal(nombreMO, nombreCamion) };
-
-    double coutAssurance{ m_tarification.calculerCoutAssurance(valeurAssurance, typeAssurance) };
-
-    m_tarification.setPrixMetreCube(prestation, nature, distance);
-
-    double prixTotalHT{ m_tarification.calculerCoutTotalHT(volume, coutAssurance, coutAutStatTotal) };
-
-    double arrhes{ m_tarification.calculerArrhes(prixTotalHT) };
+    
+    updateSettingsVariables();
 
 
     // 3. Afficher les résultats dans l'onglet "Résultats et Devis"
 
-    // Format pour le volume (m³)
-    ui.totalVolumeTextBrowser->setText(QString::number(volume, 'f', 2) + " m\u00B3");
 
-    // Format pour les prix H.T. (2 décimales + symbole euro + H.T.)
-    ui.coutMOTextBrowser->setText(QString::number(coutMOTotal, 'f', 2) + " \u20AC H.T.");
-    ui.coutCamionTextBrowser->setText(QString::number(coutCamionTotal, 'f', 2) + " \u20AC H.T.");
-    ui.coutASTextBrowser->setText(QString::number(coutAutStatTotal, 'f', 2) + " \u20AC H.T.");
-    ui.coutFraisRouteTextBrowser->setText(QString::number(fraisRouteTotal, 'f', 2) + " \u20AC H.T.");
-    ui.coutAssuranceTextBrowser->setText(QString::number(coutAssurance, 'f', 2) + " \u20AC H.T.");
-
-    // Format pour le prix total H.T.
-    ui.totalPriceTextBrowser->setText(QString::number(prixTotalHT, 'f', 2) + " \u20AC H.T.");
-
-    // Format pour les arrhes (T.T.C.)
-    ui.arrhesTextBrowser->setText(QString::number(arrhes, 'f', 2) + " \u20AC T.T.C.");
-
-    // Afficher le nombre de déménageurs et de camion(s)
-    ui.nbPersonnelsTextBrowser->setText(QString::number(nombreMO) + " d\u00E9m\u00E9nageurs");
-    ui.nbCamionTextBrowser->setText(QString::number(nombreCamion) + " camion" + (nombreCamion > 1 ? "s" : ""));
-
+    displayingResults();
 
 
     m_tarification.saveSettings();
@@ -338,4 +202,207 @@ double MainWindow::calculateHaversineDistance(double lat1, double lon1, double l
 
 
     return R * c;
+}
+
+
+void MainWindow::on_volumelineEdit_textChanged(const QString& text)
+{
+    constexpr double maxValeurAssurance{ 45000 };
+
+    // Vérifier si le texte est un nombre valide
+    const double volume{ text.toDouble() };
+
+    if (volume >= 0) 
+    {
+        // Calculer la valeur d'assurance (volume * 500)
+        double valeurAssurance{ volume * 500.0 };
+
+        if (valeurAssurance > maxValeurAssurance)
+            valeurAssurance = maxValeurAssurance;
+
+        // Mettre à jour le champ de valeur d'assurance
+        ui.valeurAssuranceLineEdit->setText(QString::number(valeurAssurance, 'f', 0));
+    }
+
+    else 
+        // Si le volume n'est pas valide, vider le champ d'assurance
+        ui.valeurAssuranceLineEdit->clear();
+}
+
+
+void MainWindow::on_distanceLineEdit_textChanged(const QString& text)
+{
+    constexpr double urbainMaxDistance{ 150.0 };
+
+    const double distance{ text.toDouble() };
+
+    if (distance <= urbainMaxDistance)
+        ui.natureComboBox->setCurrentIndex(0);
+
+    else if (distance > urbainMaxDistance)
+        ui.natureComboBox->setCurrentIndex(1);
+}
+
+
+bool MainWindow::areAllFieldCompleted()
+{
+    std::vector<QLineEdit*> champs{
+  ui.distanceLineEdit,
+  ui.volumelineEdit,
+  ui.valeurAssuranceLineEdit,
+  ui.prixCamionLineEdit,
+  ui.coutKmLineEdit,
+  ui.prixEmballageLineEdit,
+  ui.prixLocMatLineEdit,
+  ui.coutFraisRouteLineEdit,
+  ui.moLineEdit,
+  ui.fraisStatLineEdit,
+    };
+
+
+    for (const auto& e : champs)
+        if (e->text().isEmpty())
+            return false;
+
+    return true;
+}
+
+
+void MainWindow::updateClientVariables()
+{
+    // Adresse Chargement
+    std::string rueChargement{ ui.adresseDepartLineEdit->text().toStdString() };
+    int etageChargement{ ui.etageDepartSpinBox->value() };
+    bool ascChargement{ ui.ascDepartCheckBox->isChecked() };
+    bool mmChargement{ ui.mmDepartCheckBox->isChecked() };
+    bool autStatChargement{ ui.asDepartCheckBox->isChecked() };
+
+    const Adresse A_Chargement{ rueChargement, etageChargement, ascChargement, mmChargement, autStatChargement };
+    m_client.setAdresseDepart(A_Chargement);
+
+
+    // Adresse Livraison
+    std::string rueLivraison{ ui.adresseLivraisonLineEdit->text().toStdString() };
+    int etageLivraison{ ui.etageLivraisonSpinBox->value() };
+    bool ascLivraison{ ui.ascLivraisonCheckBox->isChecked() };
+    bool mmLivraison{ ui.mmLivraisonCheckBox->isChecked() };
+    bool autStatLivraison{ ui.asLivraisonCheckBox->isChecked() };
+
+    const Adresse A_Livraison{ rueLivraison, etageLivraison, ascLivraison, mmLivraison, autStatLivraison };
+    m_client.setAdresseArrivee(A_Livraison);
+
+
+    // Récupérer la distance saisie
+    double distance{ ui.distanceLineEdit->text().toDouble() };
+    m_client.setDistance(distance);
+
+
+    // Récupérer le volume saisie
+    double volume{ ui.volumelineEdit->text().toDouble() };
+    m_client.setVolume(volume);
+
+
+    // Récupérer la prestation sélectionnée
+    Prestation prestation{ ui.prestationComboBox->currentIndex() };
+    m_client.setPrestation(prestation);
+
+
+    // Récupérer la nature sélectionnée
+    Nature nature{ ui.natureComboBox->currentIndex() };
+    m_client.setNature(nature);
+
+
+    // Récupérer le type d'assurance sélectionné
+    TypeAssurance typeAssurance{ ui.typeAssuranceComboBox->currentIndex() };
+    m_client.setTypeAssurance(typeAssurance);
+
+
+    // Récupérer la valeur déclarée
+    double valeurAssurance{ ui.valeurAssuranceLineEdit->text().toDouble() };
+    m_client.setValeurAssurance(valeurAssurance);
+
+
+    // Récupérer la condition Déchetterie
+    bool dechetterie{ ui.deCheckBox->isChecked() };
+    m_client.setIsDE(dechetterie);
+}
+
+
+void MainWindow::updateSettingsVariables()
+{
+    double prixCamion{ ui.prixCamionLineEdit->text().toDouble() };
+    m_tarification.setCoutCamion(prixCamion);
+
+
+    double prixKilometrage{ ui.coutKmLineEdit->text().toDouble() };
+    m_tarification.setCoutKilometrique(prixKilometrage);
+
+
+    double prixEmballage{ ui.prixEmballageLineEdit->text().toDouble() };
+    m_tarification.setCoutEmballage(prixEmballage);
+
+
+    double prixLocMateriel{ ui.prixLocMatLineEdit->text().toDouble() };
+    m_tarification.setPrixLocMateriel(prixLocMateriel);
+
+
+    double prixFraisRoute{ ui.coutFraisRouteLineEdit->text().toDouble() };
+    m_tarification.setFraisRoute(prixFraisRoute);
+
+
+    double prixMO{ ui.moLineEdit->text().toDouble() };
+    m_tarification.setCoutMO(prixMO);
+
+
+    double prixFraisStationnement{ ui.fraisStatLineEdit->text().toDouble() };
+    m_tarification.setCoutFraisStationnement(prixFraisStationnement);
+}
+
+
+void MainWindow::displayingResults()
+{
+    // 1. Faire les calculs de tarification avec les variables qu'on a récupéré
+
+    double volumeParPersonne{ m_tarification.calculerVolumeParPersonne(m_client.getVolume(), m_client.getPrestation()) };
+    int nombreCamion{ m_tarification.calculerNombreCamion(m_client.getVolume(), m_client.getPrestation(), m_client.getNature(), m_client.getDistance()) };
+    int nombreMO{ m_tarification.calculerNombreMO(m_client.getVolume(), m_client.getPrestation(), m_client.getNature(), nombreCamion, m_client.getAdresseDepart().m_monteMeubles || m_client.getAdresseArrivee().m_monteMeubles, m_client.getAdresseDepart().m_ascenseur || m_client.getAdresseArrivee().m_ascenseur, m_client.getDistance()) };
+
+    double coutMOTotal{ m_tarification.calculerCoutMainOeuvreTotal(nombreMO) };
+
+    double coutCamionTotal{ m_tarification.calculerCoutCamionTotal(nombreCamion) };
+
+    double coutAutStatTotal{ m_tarification.calculerPrixStationnement(m_client.getAdresseDepart().m_autStationnement, m_client.getAdresseArrivee().m_autStationnement) };
+
+    double fraisRouteTotal{ m_tarification.calculerCoutFraisRouteTotal(nombreMO, nombreCamion) };
+
+    double coutAssurance{ m_tarification.calculerCoutAssurance(m_client.getValeurAssurance(), m_client.getTypeAssurance()) };
+
+    m_tarification.setPrixMetreCube(m_client.getPrestation(), m_client.getNature(), m_client.getDistance());
+
+    double prixTotalHT{ m_tarification.calculerCoutTotalHT(m_client.getVolume(), coutAssurance, coutAutStatTotal) };
+
+    double arrhes{ m_tarification.calculerArrhes(prixTotalHT) };
+
+
+    // 2. Afficher les résultats dans l'onglet "Résultats et Devis"
+
+    // Format pour le volume (m³)
+    ui.totalVolumeTextBrowser->setText(QString::number(m_client.getVolume(), 'f', 2) + " m\u00B3");
+
+    // Format pour les prix H.T. (2 décimales + symbole euro + H.T.)
+    ui.coutMOTextBrowser->setText(QString::number(coutMOTotal, 'f', 2) + " \u20AC H.T.");
+    ui.coutCamionTextBrowser->setText(QString::number(coutCamionTotal, 'f', 2) + " \u20AC H.T.");
+    ui.coutASTextBrowser->setText(QString::number(coutAutStatTotal, 'f', 2) + " \u20AC H.T.");
+    ui.coutFraisRouteTextBrowser->setText(QString::number(fraisRouteTotal, 'f', 2) + " \u20AC H.T.");
+    ui.coutAssuranceTextBrowser->setText(QString::number(coutAssurance, 'f', 2) + " \u20AC H.T.");
+
+    // Format pour le prix total H.T.
+    ui.totalPriceTextBrowser->setText(QString::number(prixTotalHT, 'f', 2) + " \u20AC H.T.");
+
+    // Format pour les arrhes (T.T.C.)
+    ui.arrhesTextBrowser->setText(QString::number(arrhes, 'f', 2) + " \u20AC T.T.C.");
+
+    // Afficher le nombre de déménageurs et de camion(s)
+    ui.nbPersonnelsTextBrowser->setText(QString::number(nombreMO) + " d\u00E9m\u00E9nageurs");
+    ui.nbCamionTextBrowser->setText(QString::number(nombreCamion) + " camion" + (nombreCamion > 1 ? "s" : ""));
 }

@@ -52,6 +52,10 @@ private slots:
 
     void on_generateDevisButton_clicked();
 
+    void on_volumelineEdit_textChanged(const QString& text);
+
+    void on_distanceLineEdit_textChanged(const QString& text);
+
 private:
 
     Ui::MainWindowClass ui;
@@ -68,6 +72,15 @@ private:
     void setupValidators();
 
     void setupSettings();
+
+
+    bool areAllFieldCompleted();
+
+    void updateClientVariables();
+
+    void updateSettingsVariables();
+
+    void displayingResults();
 
 
     void calculateDistance();

@@ -13,8 +13,12 @@ public:
     std::string getNom() const { return m_nom; }
     const Adresse& getAdresseDepart() const { return m_depart; }
     const Adresse& getAdresseArrivee() const { return m_livraison; }
+    const Prestation& getPrestation() const { return m_prestation; }
+    const Nature& getNature() const { return m_nature; }
+    const TypeAssurance& getTypeAssurance() const { return m_typeAssurance; }
     double getDistance() const { return m_distance; }
     double getVolume() const { return m_volume; }
+    double getValeurAssurance() const { return m_valeurAssurance; }
     bool getIsDE() const { return m_isDE; }
 
  

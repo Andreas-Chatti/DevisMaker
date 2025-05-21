@@ -39,15 +39,16 @@ AddressCompleter::AddressCompleter(QLineEdit* lineEdit, QObject* parent)
 
 void AddressCompleter::onTextChanged()
 {
-    QString text = m_lineEdit->text();
+    QString text{ m_lineEdit->text() };
 
-    if (text.length() < 3) return;
+    if (text.length() < 3)
+        return;
 
     // Vider la liste des suggestions en attente
     m_pendingSuggestions.clear();
 
     // 1. Créer la version avec virgule si nécessaire
-    QString textWithComma = text;
+    QString textWithComma{ text };
     QRegularExpression regexNumero("^(\\d+)\\s+(.+)$");
     QRegularExpressionMatch match = regexNumero.match(text);
 
@@ -91,7 +92,8 @@ void AddressCompleter::onTextChanged()
     m_networkManager->get(request1);
 
     // Important : ajouter un petit délai entre les requêtes pour respecter les limites d'API
-    QTimer::singleShot(200, this, [this, request2]() {
+    QTimer::singleShot(200, this, [this, request2]() 
+        {
         m_networkManager->get(request2);
         });
 
