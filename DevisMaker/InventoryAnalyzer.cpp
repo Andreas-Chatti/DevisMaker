@@ -23,8 +23,12 @@ RÈGLES:
 - Lave-linge/lave-vaisselle: 1 m³
 - Télévision: 0.5 m³
 - Commode: 1 m³
+- Carton standard: 0.1 m³
+- Carton livre: 0.05 m³
 
-RÉPONDS UNIQUEMENT AU FORMAT JSON:
+IMPORTANT: Les valeurs de volume doivent être des nombres purs, pas des expressions mathématiques. N'utilise pas de caractère d'échappement comme "/n".
+RÉPONDS UNIQUEMENT EN JSON PUR, SANS TEXTE EXPLICATIF AVANT OU APRÈS.
+RÉPONDS ABSOLUMENT UNIQUEMENT AU FORMAT JSON.
 {
   "items": [
     {"name": "Canapé 3 places", "volume": 2.0},
@@ -72,38 +76,45 @@ void InventoryAnalyzer::handleGrokResponse(QNetworkReply* reply)
     if (reply->error() == QNetworkReply::NoError) 
     {
         QByteArray data = reply->readAll();
-        qDebug() << "Réponse Grok reçue:" << data;
+        qDebug() << "Reponse Grok recue:" << data;
 
         QJsonDocument doc = QJsonDocument::fromJson(data);
         QJsonObject response = doc.object();
 
         // Extraire la réponse de Grok
-        if (response.contains("choices") && response["choices"].isArray()) {
+        if (response.contains("choices") && response["choices"].isArray()) 
+        {
             QJsonArray choices = response["choices"].toArray();
-            if (!choices.isEmpty()) {
-                QJsonObject firstChoice = choices[0].toObject();
-                QString responseText = firstChoice["message"].toObject()["content"].toString();
 
-                qDebug() << "Contenu de la réponse:" << responseText;
+            if (!choices.isEmpty()) 
+            {
+                QJsonObject firstChoice{ choices[0].toObject() };
+                QString responseText{ firstChoice["message"].toObject()["content"].toString() };
+
+                qDebug() << "Contenu de la reponse: " << responseText;
 
                 // Extraire le JSON de la réponse
                 // Chercher le début et la fin du JSON dans la réponse
                 int jsonStart = responseText.indexOf("{");
                 int jsonEnd = responseText.lastIndexOf("}") + 1;
 
-                if (jsonStart >= 0 && jsonEnd > jsonStart) {
+
+                if (jsonStart >= 0 && jsonEnd > jsonStart) 
+                {
                     QString jsonText = responseText.mid(jsonStart, jsonEnd - jsonStart);
 
                     QJsonDocument itemsDoc = QJsonDocument::fromJson(jsonText.toUtf8());
                     QJsonObject itemsObj = itemsDoc.object();
 
-                    if (itemsObj.contains("items") && itemsObj.contains("totalVolume")) {
+                    if (itemsObj.contains("items") && itemsObj.contains("totalVolume")) 
+                    {
                         // Extraire le volume total
                         double totalVolume = itemsObj["totalVolume"].toDouble();
 
                         // Extraire les éléments structurés
                         QStringList structuredItems;
                         QJsonArray items = itemsObj["items"].toArray();
+
                         for (const QJsonValue& item : items) {
                             QJsonObject itemObj = item.toObject();
                             QString name = itemObj["name"].toString();
@@ -123,11 +134,11 @@ void InventoryAnalyzer::handleGrokResponse(QNetworkReply* reply)
         }
 
         // Si nous arrivons ici, le format n'était pas correct
-        emit analysisError("Format de réponse Grok inattendu: " + response["error"].toObject()["message"].toString());
+        emit analysisError("Format de reponse Grok inattendu: " + response["error"].toObject()["message"].toString());
     }
-    else {
+
+    else
         emit analysisError("Erreur API Grok: " + reply->errorString());
-    }
 
     reply->deleteLater();
 }
