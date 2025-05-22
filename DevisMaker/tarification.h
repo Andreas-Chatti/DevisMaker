@@ -60,7 +60,7 @@ public:
 
     double calculerCoutLocMaterielTotal(double volume) const { return volume * m_prixLocMateriel; }
 
-    double calculerCoutFraisRouteTotal(int nombreMO, int nombreCamion) const { return (nombreMO * m_fraisRoute) * (nombreCamion - 1); }
+    double calculerCoutFraisRouteTotal(int nombreCamion) const { return (m_fraisRoute * (nombreCamion - 1)) * 2; }
 
     double calculerArrhes(double coutTotal) const { return (coutTotal * 1.2) * 0.3; }
 

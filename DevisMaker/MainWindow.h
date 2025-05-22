@@ -18,6 +18,7 @@
 #include "Inventaire.h"
 #include "Tarification.h"
 #include "Devis.h"
+#include "InventoryAnalyzer.h"
 
 class MainWindow : public QMainWindow
 {
@@ -32,6 +33,14 @@ public:
 
         m_departCompleter = new AddressCompleter(ui.adresseDepartLineEdit, this);
         m_arriveeCompleter = new AddressCompleter(ui.adresseLivraisonLineEdit, this);
+
+
+        // Initialiser l'analyseur IA
+        m_inventoryAnalyzer = new InventoryAnalyzer(this);
+
+        connect(m_inventoryAnalyzer, &InventoryAnalyzer::analysisComplete, this, &MainWindow::handleInventoryAnalysis);
+
+        connect(m_inventoryAnalyzer, &InventoryAnalyzer::analysisError, this, &MainWindow::handleInventoryAnalysisError);
 
 
         connect(ui.adresseDepartLineEdit, &QLineEdit::editingFinished, this, &MainWindow::calculateDistance);
@@ -56,6 +65,12 @@ private slots:
 
     void on_distanceLineEdit_textChanged(const QString& text);
 
+    void on_AnalyseInventoryPushButton_clicked();
+
+    void handleInventoryAnalysis(double totalVolume, const QStringList& structuredItems);
+
+    void handleInventoryAnalysisError(const QString& errorMessage);
+
 private:
 
     Ui::MainWindowClass ui;
@@ -63,6 +78,7 @@ private:
     Inventaire m_inventaire;
     Tarification m_tarification;
     QNetworkAccessManager* m_networkManager{ nullptr };
+    InventoryAnalyzer* m_inventoryAnalyzer;
 
 
     AddressCompleter* m_departCompleter{ nullptr };

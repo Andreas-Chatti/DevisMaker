@@ -373,7 +373,7 @@ void MainWindow::displayingResults()
 
     double coutAutStatTotal{ m_tarification.calculerPrixStationnement(m_client.getAdresseDepart().m_autStationnement, m_client.getAdresseArrivee().m_autStationnement) };
 
-    double fraisRouteTotal{ m_tarification.calculerCoutFraisRouteTotal(nombreMO, nombreCamion) };
+    double fraisRouteTotal{ m_tarification.calculerCoutFraisRouteTotal(nombreCamion) };
 
     double coutAssurance{ m_tarification.calculerCoutAssurance(m_client.getValeurAssurance(), m_client.getTypeAssurance()) };
 
@@ -405,4 +405,78 @@ void MainWindow::displayingResults()
     // Afficher le nombre de déménageurs et de camion(s)
     ui.nbPersonnelsTextBrowser->setText(QString::number(nombreMO) + " d\u00E9m\u00E9nageurs");
     ui.nbCamionTextBrowser->setText(QString::number(nombreCamion) + " camion" + (nombreCamion > 1 ? "s" : ""));
+}
+
+
+void MainWindow::on_AnalyseInventoryPushButton_clicked()
+{
+    // Récupérer le texte d'inventaire
+    QString inventoryText{ ui.inventaireTextEdit->toPlainText() };
+
+    if (inventoryText.isEmpty()) 
+    {
+        QMessageBox::warning(this, "Inventaire vide", "Veuillez saisir une liste d'objets avant d'analyser.");
+        return;
+    }
+
+    // Changer le texte du bouton pour indiquer le chargement
+    ui.AnalyseInventoryPushButton->setText("Analyse en cours...");
+    ui.AnalyseInventoryPushButton->setEnabled(false);
+
+    // Lancer l'analyse avec l'IA
+    m_inventoryAnalyzer->analyzeInventory(inventoryText);
+
+    qDebug() << "Lancement de l'analyse IA pour:" << inventoryText.left(50) + "...";
+}
+
+
+// Traitement du résultat d'analyse
+void MainWindow::handleInventoryAnalysis(double totalVolume, const QStringList& structuredItems)
+{
+    // Mettre à jour le champ de volume
+    ui.volumelineEdit->setText(QString::number(totalVolume, 'f', 2));
+
+    // Mettre à jour le tableau des éléments détectés
+    ui.tableWidget->setRowCount(structuredItems.size());
+    ui.tableWidget->setColumnCount(2);
+    ui.tableWidget->setHorizontalHeaderLabels({ "Objet", "Volume (m\u00B3)" });
+
+    for (int i = 0; i < structuredItems.size(); ++i) {
+        QString item = structuredItems[i];
+        QStringList parts = item.split(" - ");
+
+        if (parts.size() == 2) {
+            ui.tableWidget->setItem(i, 0, new QTableWidgetItem(parts[0]));
+            ui.tableWidget->setItem(i, 1, new QTableWidgetItem(parts[1]));
+        }
+    }
+
+    // Ajuster la largeur des colonnes
+    ui.tableWidget->resizeColumnsToContents();
+
+    // Restaurer le bouton
+    ui.AnalyseInventoryPushButton->setText("Analyser inventaire");
+    ui.AnalyseInventoryPushButton->setEnabled(true);
+
+    // Message de succès
+    QString titre = "Analyse terminee";
+    QString message = QString("Volume total calcule par l'IA: %1 m3, %2 objets detectes").arg(totalVolume).arg(structuredItems.size());
+    QMessageBox::information(this, titre, message);
+
+    qDebug() << "Analyse IA terminée avec succès. Volume:" << totalVolume;
+}
+
+// Gestion des erreurs
+void MainWindow::handleInventoryAnalysisError(const QString& errorMessage)
+{
+    // Restaurer le bouton
+    ui.AnalyseInventoryPushButton->setText("Analyser inventaire");
+    ui.AnalyseInventoryPushButton->setEnabled(true);
+
+    // Afficher l'erreur
+    QString titre = "Erreur d'analyse IA";
+    QString message = QString("L'analyse de l'inventaire a echoue: %1").arg(errorMessage);
+    QMessageBox::critical(this, titre, message);
+
+    qDebug() << "Erreur lors de l'analyse IA:" << errorMessage;
 }
