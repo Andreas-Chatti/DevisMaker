@@ -4,6 +4,11 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QString>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QFile>
+#include <QDebug>
 
 class InventoryAnalyzer : public QObject
 {
@@ -15,6 +20,8 @@ public:
         : QObject(parent)
     {
         m_networkManager = new QNetworkAccessManager(this);
+
+        loadVolumeReference();
 
         connect(m_networkManager, &QNetworkAccessManager::finished, this, &InventoryAnalyzer::handleGrokResponse);
     }
@@ -32,7 +39,11 @@ private slots:
 
 private:
 
+    void loadVolumeReference();
+
     QNetworkAccessManager* m_networkManager;
+
+    QJsonObject m_volumeReference;
 
     // Clé API directement dans le code pour simplicité (usage personnel)
     const QString m_apiKey = "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";

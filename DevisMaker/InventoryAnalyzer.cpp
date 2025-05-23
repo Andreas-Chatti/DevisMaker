@@ -1,58 +1,53 @@
-// InventoryAnalyzer.cpp
+Ôªø// InventoryAnalyzer.cpp
 #include "InventoryAnalyzer.h"
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QDebug>
 
 
 void InventoryAnalyzer::analyzeInventory(const QString& inventoryText)
 {
-    // Prompt optimisÈ pour Grok
+    // Convertir la r√©f√©rence JSON en string
+    QJsonDocument refDoc(m_volumeReference);  // ‚Üê Renomm√© en refDoc
+    QString jsonReference = refDoc.toJson(QJsonDocument::Compact);
+
+
     QString prompt = QString(R"(
-Analyse cette liste d'objets de dÈmÈnagement et calcule le volume total.
-Pour chaque objet, dÈtermine son volume approximatif en m≥.
+Tu dois analyser cet inventaire de d√©m√©nagement et calculer les volumes avec cette r√©f√©rence : %1
 
-R»GLES:
-- CanapÈ 2-3 places: 2 m≥
-- Lit simple: 1 m≥, Lit double: 1.5 m≥
-- Armoire 2 portes: 2 m≥, 3 portes: 3 m≥
-- Table ‡ manger: 1 m≥
-- Chaise: 0.3 m≥
-- RÈfrigÈrateur: 1.5 m≥
-- Lave-linge/lave-vaisselle: 1 m≥
-- TÈlÈvision: 0.5 m≥
-- Commode: 1 m≥
-- Carton standard: 0.1 m≥
-- Carton livre: 0.05 m≥
+R√àGLES IMPORTANTES:
+- Lis chaque ligne attentivement
+- Si tu vois "matelas ET sommiers" = ce sont 2 objets diff√©rents √† lister s√©par√©ment
+- Si tu vois "2 matelas et 2 sommiers" = 4 objets au total (2+2)
+- INTERDIT d'inventer des volumes ! Utilise OBLIGATOIREMENT les valeurs exactes de la r√©f√©rence fournie
+- Trouve l'objet le plus proche dans la r√©f√©rence si pas de correspondance exacte
+- Calcule: quantit√© √ó volume_unitaire_r√©f√©rence = volume_total
 
-IMPORTANT: Les valeurs de volume doivent Ítre des nombres purs, pas des expressions mathÈmatiques. N'utilise pas de caractËre d'Èchappement comme "/n".
-R…PONDS UNIQUEMENT EN JSON PUR, SANS TEXTE EXPLICATIF AVANT OU APR»S.
-R…PONDS ABSOLUMENT UNIQUEMENT AU FORMAT JSON.
+R√âPONSE OBLIGATOIRE: JSON pur uniquement, sans texte avant ou apr√®s.
+Commence par { et finis par }
+
+Format exact:
 {
   "items": [
-    {"name": "CanapÈ 3 places", "volume": 2.0},
-    {"name": "Table ‡ manger", "volume": 1.0}
+    {"name": "2 matelas 1 place", "volume": 1.0},
+    {"name": "2 sommiers", "volume": 1.0}
   ],
-  "totalVolume": 3.0
+  "totalVolume": 2.0
 }
 
-LISTE ¿ ANALYSER:
-%1
-)").arg(inventoryText);
+INVENTAIRE √Ä ANALYSER:
+%2
+)").arg(jsonReference, inventoryText);
 
 
-    // Construire la requÍte pour l'API Grok
+    // Construire la requ√™te pour l'API Grok
     QUrl url("https://api.groq.com/openai/v1/chat/completions");
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     request.setRawHeader("Authorization", ("Bearer " + m_apiKey).toUtf8());
 
-    // Corps de la requÍte JSON pour Grok
+    // Corps de la requ√™te JSON pour Grok
     QJsonObject jsonBody;
-    jsonBody["model"] = "llama-3.1-8b-instant";
-    jsonBody["max_tokens"] = 2000;
-    jsonBody["temperature"] = 0.1; // Faible tempÈrature pour plus de cohÈrence
+    jsonBody["model"] = "gemma2-9b-it";
+    jsonBody["max_tokens"] = 4000;
+    jsonBody["temperature"] = 0.1; // Faible temp√©rature pour plus de coh√©rence
 
     QJsonArray messages;
     QJsonObject userMessage;
@@ -62,11 +57,11 @@ LISTE ¿ ANALYSER:
 
     jsonBody["messages"] = messages;
 
-    QJsonDocument doc(jsonBody);
+    QJsonDocument doc(jsonBody);  // ‚Üê Celui-ci garde le nom "doc"
     QByteArray jsonData = doc.toJson();
 
-    // Envoyer la requÍte
-    qDebug() << "Envoi de la requÍte ‡ Grok...";
+    // Envoyer la requ√™te
+    qDebug() << "Envoi de la requ√™te √† Grok...";
     m_networkManager->post(request, jsonData);
 }
 
@@ -81,7 +76,7 @@ void InventoryAnalyzer::handleGrokResponse(QNetworkReply* reply)
         QJsonDocument doc = QJsonDocument::fromJson(data);
         QJsonObject response = doc.object();
 
-        // Extraire la rÈponse de Grok
+        // Extraire la r√©ponse de Grok
         if (response.contains("choices") && response["choices"].isArray()) 
         {
             QJsonArray choices = response["choices"].toArray();
@@ -93,8 +88,8 @@ void InventoryAnalyzer::handleGrokResponse(QNetworkReply* reply)
 
                 qDebug() << "Contenu de la reponse: " << responseText;
 
-                // Extraire le JSON de la rÈponse
-                // Chercher le dÈbut et la fin du JSON dans la rÈponse
+                // Extraire le JSON de la r√©ponse
+                // Chercher le d√©but et la fin du JSON dans la r√©ponse
                 int jsonStart = responseText.indexOf("{");
                 int jsonEnd = responseText.lastIndexOf("}") + 1;
 
@@ -111,7 +106,7 @@ void InventoryAnalyzer::handleGrokResponse(QNetworkReply* reply)
                         // Extraire le volume total
                         double totalVolume = itemsObj["totalVolume"].toDouble();
 
-                        // Extraire les ÈlÈments structurÈs
+                        // Extraire les √©l√©ments structur√©s
                         QStringList structuredItems;
                         QJsonArray items = itemsObj["items"].toArray();
 
@@ -122,10 +117,10 @@ void InventoryAnalyzer::handleGrokResponse(QNetworkReply* reply)
                             structuredItems.append(QString("%1 - %2 m\u00B3").arg(name).arg(volume));
                         }
 
-                        // …mettre le signal de complÈtion
+                        // √âmettre le signal de compl√©tion
                         emit analysisComplete(totalVolume, structuredItems);
 
-                        qDebug() << "Analyse Grok rÈussie. Volume total:" << totalVolume;
+                        qDebug() << "Analyse Grok r√©ussie. Volume total:" << totalVolume;
                         reply->deleteLater();
                         return;
                     }
@@ -133,7 +128,7 @@ void InventoryAnalyzer::handleGrokResponse(QNetworkReply* reply)
             }
         }
 
-        // Si nous arrivons ici, le format n'Ètait pas correct
+        // Si nous arrivons ici, le format n'√©tait pas correct
         emit analysisError("Format de reponse Grok inattendu: " + response["error"].toObject()["message"].toString());
     }
 
@@ -141,4 +136,23 @@ void InventoryAnalyzer::handleGrokResponse(QNetworkReply* reply)
         emit analysisError("Erreur API Grok: " + reply->errorString());
 
     reply->deleteLater();
+}
+
+
+void InventoryAnalyzer::loadVolumeReference() 
+{
+    QFile file("volumes_reference.json");
+
+    if (!file.open(QIODevice::ReadOnly)) 
+    {
+        qDebug() << "Impossible d'ouvrir le fichier de r√©f√©rence";
+        return;
+    }
+
+    QByteArray data = file.readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(data);
+    m_volumeReference = doc.object();
+    file.close();
+
+    qDebug() << "R√©f√©rence de volumes charg√©e avec succ√®s";
 }
