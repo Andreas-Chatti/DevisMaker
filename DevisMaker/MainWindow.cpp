@@ -3,15 +3,9 @@
 
 void MainWindow::setupValidators()
 {
-    // Créer un validateur pour nombres décimaux (min, max, précision)
     const auto doubleValidator{ new QDoubleValidator(0, 500, 2, this) };
-    doubleValidator->setNotation(QDoubleValidator::StandardNotation);
 
     const auto intValidator{ new QIntValidator(0, 45000, this) };
-
-    // Utiliser la locale française pour la virgule comme séparateur décimal
-    doubleValidator->setLocale(QLocale::French);
-    intValidator->setLocale(QLocale::French);
 
     // Appliquer aux champs qui demandent des nombres décimaux
     ui.distanceLineEdit->setValidator(intValidator);

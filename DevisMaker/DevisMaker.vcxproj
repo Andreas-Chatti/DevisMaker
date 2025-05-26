@@ -99,6 +99,7 @@
   <ItemGroup>
     <ClCompile Include="addressCompleter.cpp" />
     <ClCompile Include="devis.cpp" />
+    <ClCompile Include="IA.cpp" />
     <ClCompile Include="InventoryAnalyzer.cpp" />
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="tarification.cpp" />
@@ -112,6 +113,7 @@
     <ClInclude Include="client.h" />
     <ClInclude Include="common.h" />
     <ClInclude Include="devis.h" />
+    <ClInclude Include="IA.h" />
     <ClInclude Include="inventaire.h" />
     <QtMoc Include="MainWindow.h" />
     <QtMoc Include="InventoryAnalyzer.h" />

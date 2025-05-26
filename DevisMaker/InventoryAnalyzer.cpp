@@ -5,63 +5,18 @@
 void InventoryAnalyzer::analyzeInventory(const QString& inventoryText)
 {
     // Convertir la référence JSON en string
-    QJsonDocument refDoc(m_volumeReference);  // ← Renommé en refDoc
+    QJsonDocument refDoc(m_volumeReference);
     QString jsonReference = refDoc.toJson(QJsonDocument::Compact);
 
+    // Utiliser la classe IA pour construire la requête
+    QNetworkRequest request{ m_ia->buildRequest(inventoryText, jsonReference) };
+    QByteArray jsonData{ request.attribute(QNetworkRequest::User).toByteArray() };
 
-    QString prompt = QString(R"(
-Tu dois analyser cet inventaire de déménagement et calculer les volumes avec cette référence : %1
-
-RÈGLES IMPORTANTES:
-- Lis chaque ligne attentivement
-- Si tu vois "matelas ET sommiers" = ce sont 2 objets différents à lister séparément
-- Si tu vois "2 matelas et 2 sommiers" = 4 objets au total (2+2)
-- INTERDIT d'inventer des volumes ! Utilise OBLIGATOIREMENT les valeurs exactes de la référence fournie
-- Trouve l'objet le plus proche dans la référence si pas de correspondance exacte
-- Calcule: quantité × volume_unitaire_référence = volume_total
-
-RÉPONSE OBLIGATOIRE: JSON pur uniquement, sans texte avant ou après.
-Commence par { et finis par }
-
-Format exact:
-{
-  "items": [
-    {"name": "2 matelas 1 place", "volume": 1.0},
-    {"name": "2 sommiers", "volume": 1.0}
-  ],
-  "totalVolume": 2.0
-}
-
-INVENTAIRE À ANALYSER:
-%2
-)").arg(jsonReference, inventoryText);
-
-
-    // Construire la requête pour l'API Grok
-    QUrl url("https://api.groq.com/openai/v1/chat/completions");
-    QNetworkRequest request(url);
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-    request.setRawHeader("Authorization", ("Bearer " + m_apiKey).toUtf8());
-
-    // Corps de la requête JSON pour Grok
-    QJsonObject jsonBody;
-    jsonBody["model"] = "gemma2-9b-it";
-    jsonBody["max_tokens"] = 4000;
-    jsonBody["temperature"] = 0.1; // Faible température pour plus de cohérence
-
-    QJsonArray messages;
-    QJsonObject userMessage;
-    userMessage["role"] = "user";
-    userMessage["content"] = prompt;
-    messages.append(userMessage);
-
-    jsonBody["messages"] = messages;
-
-    QJsonDocument doc(jsonBody);  // ← Celui-ci garde le nom "doc"
-    QByteArray jsonData = doc.toJson();
+    // Supprimer l'attribut temporaire
+    request.setAttribute(QNetworkRequest::User, QVariant());
 
     // Envoyer la requête
-    qDebug() << "Envoi de la requête à Grok...";
+    qDebug() << "Envoi de la requête avec modèle:" << m_ia->getCurrentModel();
     m_networkManager->post(request, jsonData);
 }
 
@@ -73,8 +28,8 @@ void InventoryAnalyzer::handleGrokResponse(QNetworkReply* reply)
         QByteArray data = reply->readAll();
         qDebug() << "Reponse Grok recue:" << data;
 
-        QJsonDocument doc = QJsonDocument::fromJson(data);
-        QJsonObject response = doc.object();
+        QJsonDocument doc{ QJsonDocument::fromJson(data) };
+        QJsonObject response{ doc.object() };
 
         // Extraire la réponse de Grok
         if (response.contains("choices") && response["choices"].isArray()) 

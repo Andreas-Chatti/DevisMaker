@@ -1,0 +1,23 @@
+Tu dois analyser cet inventaire de d�m�nagement et calculer les volumes avec cette r�f�rence : %1
+
+R�GLES IMPORTANTES:
+- Lis chaque ligne attentivement
+- Si tu vois "matelas ET sommiers" = ce sont 2 objets diff�rents � lister s�par�ment
+- Si tu vois "2 matelas et 2 sommiers" = 4 objets au total (2+2)
+- Utilise UNIQUEMENT les volumes de la r�f�rence fournie
+- CALCULE le r�sultat final : 6 valises = 6 � 0.3 = 1.8 (pas "6 * 0.3" !)
+- Les volumes doivent �tre des NOMBRES PURS uniquement
+
+R�PONSE OBLIGATOIRE: JSON pur uniquement, sans texte avant ou apr�s.
+INTERDICTION ABSOLUE d'expressions math�matiques dans les valeurs !
+
+Format exact:
+{
+  "items": [
+    {"name": "6 valises", "volume": 1.8}
+  ],
+  "totalVolume": 1.8
+}
+
+INVENTAIRE � ANALYSER:
+%2

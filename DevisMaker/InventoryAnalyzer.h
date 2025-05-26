@@ -9,6 +9,7 @@
 #include <QJsonArray>
 #include <QFile>
 #include <QDebug>
+#include "IA.h"
 
 class InventoryAnalyzer : public QObject
 {
@@ -20,6 +21,8 @@ public:
         : QObject(parent)
     {
         m_networkManager = new QNetworkAccessManager(this);
+
+        m_ia = new IA{};
 
         loadVolumeReference();
 
@@ -45,6 +48,5 @@ private:
 
     QJsonObject m_volumeReference;
 
-    // Clé API directement dans le code pour simplicité (usage personnel)
-    const QString m_apiKey = "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";
+    IA* m_ia;
 };
