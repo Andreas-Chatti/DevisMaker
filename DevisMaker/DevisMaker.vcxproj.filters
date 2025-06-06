@@ -55,6 +55,9 @@
     <ClCompile Include="IA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="streetMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="client.h">
@@ -73,6 +76,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="streetMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
