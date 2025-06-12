@@ -118,7 +118,7 @@
     <ClInclude Include="inventaire.h" />
     <QtMoc Include="MainWindow.h" />
     <QtMoc Include="InventoryAnalyzer.h" />
-    <ClInclude Include="streetMap.h" />
+    <QtMoc Include="streetMap.h" />
     <ClInclude Include="tarification.h" />
   </ItemGroup>
   <ItemGroup>

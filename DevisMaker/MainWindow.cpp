@@ -178,6 +178,7 @@ void MainWindow::handleDistanceReply(QNetworkReply* reply)
     reply->deleteLater();
 }
 
+
 double MainWindow::calculateHaversineDistance(double lat1, double lon1, double lat2, double lon2)
 {
     // Rayon de la Terre en km

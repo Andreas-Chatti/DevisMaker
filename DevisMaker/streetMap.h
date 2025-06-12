@@ -4,12 +4,19 @@
 #include <QString>
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
+#include <QMessageBox>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 
-class OpenStreetMap
+class OpenStreetMap : public QObject
 {
+	Q_OBJECT
+
 public:
 
-	OpenStreetMap()
+	OpenStreetMap(QObject* parent)
+		: QObject{ parent }
 	{
 		m_networkManager = new QNetworkAccessManager(this);
 	}
@@ -22,7 +29,7 @@ private:
 
 	const QUrl m_url{ "https://nominatim.openstreetmap.org/search" };
 
-	void handleDistanceReply(QNetworkReply* reply);
+	void handleDistanceReply(QNetworkReply* reply, Ui::MainWindowClass ui, Client client);
 
 	QNetworkAccessManager* m_networkManager;
 };

@@ -19,6 +19,8 @@
 #include "Tarification.h"
 #include "Devis.h"
 #include "InventoryAnalyzer.h"
+#include "streetMap.h"
+
 
 class MainWindow : public QMainWindow
 {
@@ -34,6 +36,8 @@ public:
         m_departCompleter = new AddressCompleter(ui.adresseDepartLineEdit, this);
         m_arriveeCompleter = new AddressCompleter(ui.adresseLivraisonLineEdit, this);
 
+        m_openStreetMap = new OpenStreetMap(this);
+
 
         // Initialiser l'analyseur IA
         m_inventoryAnalyzer = new InventoryAnalyzer(this);
@@ -43,7 +47,7 @@ public:
         connect(m_inventoryAnalyzer, &InventoryAnalyzer::analysisError, this, &MainWindow::handleInventoryAnalysisError);
 
 
-        connect(ui.adresseDepartLineEdit, &QLineEdit::editingFinished, this, &MainWindow::calculateDistance);
+        connect(ui.adresseDepartLineEdit, &QLineEdit::editingFinished, this, &OpenStreetMap::calculateDistance);
         connect(ui.adresseLivraisonLineEdit, &QLineEdit::editingFinished, this, &MainWindow::calculateDistance);
 
 
@@ -79,6 +83,7 @@ private:
     Tarification m_tarification;
     QNetworkAccessManager* m_networkManager{ nullptr };
     InventoryAnalyzer* m_inventoryAnalyzer;
+    OpenStreetMap* m_openStreetMap;
 
 
     AddressCompleter* m_departCompleter{ nullptr };
