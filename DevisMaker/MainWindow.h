@@ -36,19 +36,18 @@ public:
         m_departCompleter = new AddressCompleter(ui.adresseDepartLineEdit, this);
         m_arriveeCompleter = new AddressCompleter(ui.adresseLivraisonLineEdit, this);
 
+
         m_openStreetMap = new OpenStreetMap(this);
+        connect(ui.adresseDepartLineEdit, &QLineEdit::editingFinished, m_openStreetMap, &OpenStreetMap::calculateDistance);
+        connect(ui.adresseLivraisonLineEdit, &QLineEdit::editingFinished, m_openStreetMap, &OpenStreetMap::calculateDistance);
+        connect(m_openStreetMap, &OpenStreetMap::distanceCalculated, this, &MainWindow::onDistanceCalculated);
+        connect(m_openStreetMap, &OpenStreetMap::calculationError, this, &MainWindow::onDistanceError);
 
 
         // Initialiser l'analyseur IA
         m_inventoryAnalyzer = new InventoryAnalyzer(this);
-
         connect(m_inventoryAnalyzer, &InventoryAnalyzer::analysisComplete, this, &MainWindow::handleInventoryAnalysis);
-
         connect(m_inventoryAnalyzer, &InventoryAnalyzer::analysisError, this, &MainWindow::handleInventoryAnalysisError);
-
-
-        connect(ui.adresseDepartLineEdit, &QLineEdit::editingFinished, this, &OpenStreetMap::calculateDistance);
-        connect(ui.adresseLivraisonLineEdit, &QLineEdit::editingFinished, this, &MainWindow::calculateDistance);
 
 
         setupValidators();
@@ -74,6 +73,9 @@ private slots:
     void handleInventoryAnalysis(double totalVolume, const QStringList& structuredItems);
 
     void handleInventoryAnalysisError(const QString& errorMessage);
+
+    void onDistanceCalculated(double distance);
+    void onDistanceError(const QString& errorMessage);
 
 private:
 
@@ -102,9 +104,4 @@ private:
     void updateSettingsVariables();
 
     void displayingResults();
-
-
-    void calculateDistance();
-    void handleDistanceReply(QNetworkReply* reply);
-    double calculateHaversineDistance(double lat1, double lon1, double lat2, double lon2);
 };

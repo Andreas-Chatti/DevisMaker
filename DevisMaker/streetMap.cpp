@@ -1,27 +1,22 @@
 #include "streetMap.h"
 
+
 void OpenStreetMap::calculateDistance(const QString& adresseDepart, const QString& adresseArrivee)
 {
-
-    if (adresseDepart.isEmpty() || adresseArrivee.isEmpty())
-        return;
-
-    qDebug() << "Calcul de distance entre: " << adresseDepart << " et " << adresseArrivee;
-
-    // Initialiser si nécessaire
-    if (!m_networkManager)
+    if (adresseDepart.isEmpty() || adresseArrivee.isEmpty()) 
     {
-        m_networkManager = new QNetworkAccessManager(this);
-        connect(m_networkManager, &QNetworkAccessManager::finished, this, &OpenStreetMap::handleDistanceReply);
+        emit calculationError("Adresses vides");
+        return;
     }
 
+    qDebug() << "Calcul de distance entre:" << adresseDepart << " et " << adresseArrivee;
+
     // Première requête: géocoder l'adresse de départ
-    QUrl url("https://nominatim.openstreetmap.org/search");
+    QUrl url(m_baseUrl);
     QUrlQuery query;
     query.addQueryItem("format", "json");
     query.addQueryItem("q", adresseDepart);
     query.addQueryItem("limit", "1");
-
     url.setQuery(query);
 
     QNetworkRequest request(url);
@@ -33,33 +28,13 @@ void OpenStreetMap::calculateDistance(const QString& adresseDepart, const QStrin
 }
 
 
-double OpenStreetMap::calculateHaversineDistance(double lat1, double lon1, double lat2, double lon2)
+void OpenStreetMap::handleDistanceReply(QNetworkReply* reply)
 {
-    // Rayon de la Terre en km
-    constexpr double R{ 6371.0 };
+    reply->deleteLater();
 
-    // Convertir en radians
-    double dLat{ (lat2 - lat1) * M_PI / 180.0 };
-    double dLon{ (lon2 - lon1) * M_PI / 180.0 };
-
-    // Formule haversine
-    double a{ sin(dLat / 2) * sin(dLat / 2) +
-        cos(lat1 * M_PI / 180.0) * cos(lat2 * M_PI / 180.0) *
-        sin(dLon / 2) * sin(dLon / 2) };
-
-    double c{ 2 * atan2(sqrt(a), sqrt(1 - a)) };
-
-
-    return R * c;
-}
-
-
-void OpenStreetMap::handleDistanceReply(QNetworkReply* reply, Ui::MainWindowClass ui, Client client)
-{
-    if (reply->error() != QNetworkReply::NoError)
+    if (reply->error() != QNetworkReply::NoError) 
     {
-        QMessageBox::warning(this, "Erreur", "Erreur réseau: " + reply->errorString());
-        reply->deleteLater();
+        emit calculationError("Erreur réseau: " + reply->errorString());
         return;
     }
 
@@ -68,14 +43,13 @@ void OpenStreetMap::handleDistanceReply(QNetworkReply* reply, Ui::MainWindowClas
     QJsonDocument doc{ QJsonDocument::fromJson(data) };
     QJsonArray array{ doc.array() };
 
-    if (array.isEmpty())
+    if (array.isEmpty()) 
     {
-        QMessageBox::warning(this, "Adress not found", "Cannot find specified adress");
-        reply->deleteLater();
+        emit calculationError("Adresse non trouvee");
         return;
     }
 
-    if (requestType == "geocodeDepart")
+    if (requestType == "geocodeDepart") 
     {
         // Obtenir les coordonnées de l'adresse de départ
         QJsonObject obj = array.at(0).toObject();
@@ -83,47 +57,55 @@ void OpenStreetMap::handleDistanceReply(QNetworkReply* reply, Ui::MainWindowClas
         QString lon = obj["lon"].toString();
 
         // Géocoder l'adresse d'arrivée
-        QString adresseArrivee{ reply->property("adresseArrivee").toString() };
+        QString adresseArrivee = reply->property("adresseArrivee").toString();
 
-        QUrl url("https://nominatim.openstreetmap.org/search");
+        QUrl url(m_baseUrl);
         QUrlQuery query;
         query.addQueryItem("format", "json");
         query.addQueryItem("q", adresseArrivee);
         query.addQueryItem("limit", "1");
-
         url.setQuery(query);
 
         QNetworkRequest request(url);
         request.setHeader(QNetworkRequest::UserAgentHeader, "DevisMaker/1.0");
 
-        QNetworkReply* newReply{ m_networkManager->get(request) };
+        QNetworkReply* newReply = m_networkManager->get(request);
         newReply->setProperty("departLat", lat);
         newReply->setProperty("departLon", lon);
         newReply->setProperty("requestType", "geocodeArrivee");
     }
 
-    else if (requestType == "geocodeArrivee")
+    else if (requestType == "geocodeArrivee") 
     {
         // Obtenir les coordonnées de l'adresse d'arrivée
-        QJsonObject obj = array.at(0).toObject();
-        QString arriveeLat = obj["lat"].toString();
-        QString arriveeLon = obj["lon"].toString();
+        QJsonObject obj{ array.at(0).toObject() };
+        QString arriveeLat{ obj["lat"].toString() };
+        QString arriveeLon{ obj["lon"].toString() };
 
         // Récupérer les coordonnées de départ
         QString departLat = reply->property("departLat").toString();
         QString departLon = reply->property("departLon").toString();
 
         // Calculer la distance
-        double distance = calculateHaversineDistance(departLat.toDouble(), departLon.toDouble(), arriveeLat.toDouble(), arriveeLon.toDouble());
+        double distance{ calculateHaversineDistance(departLat.toDouble(), departLon.toDouble(), arriveeLat.toDouble(), arriveeLon.toDouble()) };
 
-        // Afficher la distance calculée
-        ui.distanceLineEdit->setText(QString::number(distance, 'f', 1));
+        qDebug() << "Distance calculée:" << distance << "km";
 
-        // Mettre à jour le modèle client
-        client.setDistance(distance);
-
-        qDebug() << "Distance calculée: " << distance << " km";
+        // ÉMETTRE LE SIGNAL au lieu de modifier directement l'UI
+        emit distanceCalculated(distance);
     }
+}
 
-    reply->deleteLater();
+double OpenStreetMap::calculateHaversineDistance(double lat1, double lon1, double lat2, double lon2)
+{
+    constexpr double R{ 6371.0 };
+    double dLat{ (lat2 - lat1) * M_PI / 180.0 };
+    double dLon{ (lon2 - lon1) * M_PI / 180.0 };
+
+    double a{ sin(dLat / 2) * sin(dLat / 2) +
+        cos(lat1 * M_PI / 180.0) * cos(lat2 * M_PI / 180.0) *
+        sin(dLon / 2) * sin(dLon / 2) };
+
+    double c{ 2 * atan2(sqrt(a), sqrt(1 - a)) };
+    return R * c;
 }
