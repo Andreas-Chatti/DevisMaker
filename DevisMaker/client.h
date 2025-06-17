@@ -34,8 +34,6 @@ public:
     void setVolume(double volume) { m_volume = volume; }
     void setIsDE(bool isDE) { m_isDE = isDE; }
 
-    
-    //void calculerDistance();
 
 private:
 

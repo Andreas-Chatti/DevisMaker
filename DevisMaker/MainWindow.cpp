@@ -18,6 +18,8 @@ void MainWindow::setupValidators()
     ui.coutFraisRouteLineEdit->setValidator(doubleValidator);
     ui.moLineEdit->setValidator(doubleValidator);
     ui.fraisStatLineEdit->setValidator(doubleValidator);
+    ui.MMeublesLineEdit->setValidator(doubleValidator);
+    ui.deLineEdit->setValidator(doubleValidator);
 }
 
 
@@ -30,6 +32,8 @@ void MainWindow::setupSettings()
     ui.coutFraisRouteLineEdit->setText(QString::number(m_tarification.getFraisRoute()));
     ui.moLineEdit->setText(QString::number(m_tarification.getCoutMO()));
     ui.fraisStatLineEdit->setText(QString::number(m_tarification.getCoutFraisStationnement()));
+    ui.MMeublesLineEdit->setText(QString::number(m_tarification.getCoutMonteMeubles()));
+    ui.deLineEdit->setText(QString::number(m_tarification.getPrixDechetterie()));
 }
 
 
@@ -218,6 +222,14 @@ void MainWindow::updateSettingsVariables()
 
     double prixFraisStationnement{ ui.fraisStatLineEdit->text().toDouble() };
     m_tarification.setCoutFraisStationnement(prixFraisStationnement);
+
+
+    double prixMonteMeubles{ ui.MMeublesLineEdit->text().toDouble() };
+    m_tarification.setCoutMonteMeubles(prixMonteMeubles);
+
+
+    double prixDechetterie{ ui.deLineEdit->text().toDouble() };
+    m_tarification.setPrixDechetterie(prixDechetterie);
 }
 
 
@@ -241,7 +253,11 @@ void MainWindow::displayingResults()
 
     m_tarification.setPrixMetreCube(m_client.getPrestation(), m_client.getNature(), m_client.getDistance());
 
-    double prixTotalHT{ m_tarification.calculerCoutTotalHT(m_client.getVolume(), coutAssurance, coutAutStatTotal) };
+    double fraisMMeubles{ m_tarification.calculerSupplementMM(m_client.getAdresseDepart(), m_client.getAdresseArrivee()) };
+
+    double prixDechetterie{ m_client.getIsDE() ? m_tarification.getPrixDechetterie() : 0 };
+
+    double prixTotalHT{ m_tarification.calculerCoutTotalHT(m_client.getVolume(), coutAssurance, coutAutStatTotal, fraisMMeubles, prixDechetterie) };
 
     double arrhes{ m_tarification.calculerArrhes(prixTotalHT) };
 
@@ -257,6 +273,8 @@ void MainWindow::displayingResults()
     ui.coutASTextBrowser->setText(QString::number(coutAutStatTotal, 'f', 2) + " \u20AC H.T.");
     ui.coutFraisRouteTextBrowser->setText(QString::number(fraisRouteTotal, 'f', 2) + " \u20AC H.T.");
     ui.coutAssuranceTextBrowser->setText(QString::number(coutAssurance, 'f', 2) + " \u20AC H.T.");
+    ui.coutMMTextBrowser->setText(QString::number(fraisMMeubles, 'f', 2) + " \u20AC H.T.");
+    ui.deTextBrowser->setText(QString::number(prixDechetterie, 'f', 2) + " \u20AC H.T.");
 
     // Format pour le prix total H.T.
     ui.totalPriceTextBrowser->setText(QString::number(prixTotalHT, 'f', 2) + " \u20AC H.T.");

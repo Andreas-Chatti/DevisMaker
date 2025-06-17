@@ -1,5 +1,4 @@
 #include "Tarification.h"
-#include <cmath>
 
 void Tarification::loadSettings()
 {
@@ -24,6 +23,8 @@ void Tarification::loadSettings()
         m_fraisRoute = settings.value("FraisRoute", 65.0).toDouble();
         m_coutMO = settings.value("CoutMO", 220.0).toDouble();
         m_fraisStationnement = settings.value("FraisStationnement", 50.0).toDouble();
+        m_prixMonteMeubles = settings.value("PrixMM", 250.0).toDouble();
+        m_prixDechetterie = settings.value("PrixDechetterie", 200.0).toDouble();
         settings.endGroup();
     }
 
@@ -50,6 +51,8 @@ void Tarification::saveSettings() const
     settings.setValue("FraisRoute", m_fraisRoute);
     settings.setValue("CoutMO", m_coutMO);
     settings.setValue("FraisStationnement", m_fraisStationnement);
+    settings.setValue("PrixMM", m_prixMonteMeubles);
+    settings.setValue("PrixDechetterie", m_prixDechetterie);
     settings.endGroup();
 }
 

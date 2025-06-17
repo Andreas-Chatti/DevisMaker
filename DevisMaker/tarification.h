@@ -3,6 +3,8 @@
 #include <QSettings>
 #include <QDir>
 #include <QFileInfo>
+#include <array>
+#include <cmath>
 #include "common.h"
 
 class Tarification 
@@ -19,6 +21,8 @@ public:
         , m_coutMO{ 220.0 }
         , m_fraisStationnement{ 50.0 }
         , m_prixMetreCube{}
+        , m_prixMonteMeubles{ 250.0 }
+        , m_prixDechetterie{ 200.0 }
     {
         loadSettings();
     }
@@ -32,6 +36,8 @@ public:
     double getCoutMO() const { return m_coutMO; }
     double getCoutFraisStationnement() const { return m_fraisStationnement; }
     double getPrixMetreCube() const { return m_prixMetreCube; }
+    double getCoutMonteMeubles() const { return m_prixMonteMeubles; }
+    double getPrixDechetterie() const { return m_prixDechetterie; }
 
     
     void setCoutCamion(double coutCamion) { m_coutCamion = coutCamion; }
@@ -42,6 +48,8 @@ public:
     void setCoutMO(double coutMO) { m_coutMO = coutMO; }
     void setCoutFraisStationnement(double fraisStationnement) { m_fraisStationnement = fraisStationnement; }
     void setPrixMetreCube(Prestation prestation, Nature nature, double distance);
+    void setCoutMonteMeubles(double prixMM) { m_prixMonteMeubles = prixMM; }
+    void setPrixDechetterie(double prixDechetterie) { m_prixDechetterie = prixDechetterie; }
 
 
     double calculerVolumeParPersonne(double volume, Prestation prestation) const;
@@ -50,7 +58,7 @@ public:
 
     int calculerNombreMO(double volume, Prestation prestation, Nature nature, int nombreCamions, bool monteMeuble, bool ascenseur, double distance) const;
 
-    double calculerCoutTotalHT(double volume, double coutAssurance, double fraisStationnement) const { return volume * m_prixMetreCube + coutAssurance + fraisStationnement; }
+    double calculerCoutTotalHT(double volume, double coutAssurance, double fraisStationnement, double fraisMonteMeubles, double prixDechetterie) const { return volume * m_prixMetreCube + coutAssurance + fraisStationnement + fraisMonteMeubles + prixDechetterie; }
 
     double calculerCoutCamionTotal(int nombreCamion) const { return m_coutCamion * nombreCamion; }
 
@@ -71,15 +79,33 @@ public:
         return (valeurMobilier * taux) / 100;
     }
 
+
     double calculerPrixStationnement(bool autStatChargement, bool autStatLivraison) const
     {
-        if (autStatChargement && autStatLivraison)
-            return m_fraisStationnement * 2;
+        double fraisStationnement{};
 
-        else if (autStatChargement || autStatLivraison)
-            return m_fraisStationnement;
+        for (const auto autStat : std::array<bool, 2>{ autStatChargement, autStatLivraison })
+        {
+            if (autStat)
+                fraisStationnement += m_fraisStationnement;
+        }
 
-        return 0.0;
+        return fraisStationnement;
+    }
+
+
+    double calculerSupplementMM(const Adresse& aChargement, const Adresse& aLivraison) const
+    {
+        double supplement{};
+
+        for (const auto& adresse : std::array<const Adresse, 2>{ aChargement, aLivraison })
+        {
+            if (adresse.m_monteMeubles || (!adresse.m_ascenseur && !adresse.m_monteMeubles && adresse.m_etage >= 3))
+                supplement += m_prixMonteMeubles;
+            
+        }
+
+        return supplement;
     }
 
 
@@ -96,6 +122,8 @@ private:
     double m_coutMO; // Coût unitaire main d'oeuvre H.T.
     double m_fraisStationnement; // Coût frais stationnement par adresse H.T.
     double m_prixMetreCube; // Prix du m3
+    double m_prixMonteMeubles; // Prix d'un monte-meuble en demi-journée PAR adresse
+    double m_prixDechetterie; // Prix mise en déchetterie
 
 
     void loadSettings();
