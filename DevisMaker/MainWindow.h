@@ -38,8 +38,31 @@ public:
 
 
         m_openStreetMap = new OpenStreetMap(this);
-        connect(ui.adresseDepartLineEdit, &QLineEdit::editingFinished, m_openStreetMap, &OpenStreetMap::calculateDistance);
-        connect(ui.adresseLivraisonLineEdit, &QLineEdit::editingFinished, m_openStreetMap, &OpenStreetMap::calculateDistance);
+
+
+        // Calculer la distance après modification du champ d'adresse départ
+        connect(ui.adresseDepartLineEdit, &QLineEdit::editingFinished, [this]() {
+            QString depart{ ui.adresseDepartLineEdit->text() };
+            QString arrivee{ ui.adresseLivraisonLineEdit->text() };
+
+            if (!depart.isEmpty() && !arrivee.isEmpty())
+            {
+                m_openStreetMap->calculateDistance(depart, arrivee);
+            }
+            });
+
+
+        // Calculer la distance après modification du champ d'adresse d'arrivée
+        connect(ui.adresseLivraisonLineEdit, &QLineEdit::editingFinished, [this]() {
+            QString depart{ ui.adresseDepartLineEdit->text() };
+            QString arrivee{ ui.adresseLivraisonLineEdit->text() };
+
+            if (!depart.isEmpty() && !arrivee.isEmpty())
+            {
+                m_openStreetMap->calculateDistance(depart, arrivee);
+            }
+            });
+
         connect(m_openStreetMap, &OpenStreetMap::distanceCalculated, this, &MainWindow::onDistanceCalculated);
         connect(m_openStreetMap, &OpenStreetMap::calculationError, this, &MainWindow::onDistanceError);
 
