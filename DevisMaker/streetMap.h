@@ -19,7 +19,20 @@ public:
         : QObject(parent)
     {
         m_networkManager = new QNetworkAccessManager(this);
-        connect(m_networkManager, &QNetworkAccessManager::finished, this, &OpenStreetMap::handleDistanceReply);
+
+        connect(m_networkManager, &QNetworkAccessManager::finished,
+            this, [this](QNetworkReply* reply) {
+                QString requestType{ reply->property("requestType").toString() };
+
+                if (requestType == "routeCalculation")
+                {
+                    handleRouteResponse(reply);
+                }
+                else
+                {
+                    handleDistanceReply(reply);
+                }
+            });
     }
 
 
@@ -44,7 +57,8 @@ private slots:
 
 private:
 
-    double calculateHaversineDistance(double lat1, double lon1, double lat2, double lon2);
+    void requestRouteDistance(const QString& startCoords, const QString& endCoords);
+    void handleRouteResponse(QNetworkReply* reply);
 
     QNetworkAccessManager* m_networkManager;
     const QUrl m_baseUrl{ "https://nominatim.openstreetmap.org/search" };

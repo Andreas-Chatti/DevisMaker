@@ -56,7 +56,6 @@ void OpenStreetMap::handleDistanceReply(QNetworkReply* reply)
         QString lat = obj["lat"].toString();
         QString lon = obj["lon"].toString();
 
-        // Géocoder l'adresse d'arrivée
         QString adresseArrivee = reply->property("adresseArrivee").toString();
 
         QUrl url(m_baseUrl);
@@ -87,25 +86,56 @@ void OpenStreetMap::handleDistanceReply(QNetworkReply* reply)
         QString departLon = reply->property("departLon").toString();
 
         // Calculer la distance
-        double distance{ calculateHaversineDistance(departLat.toDouble(), departLon.toDouble(), arriveeLat.toDouble(), arriveeLon.toDouble()) };
-
-        qDebug() << "Distance calculée:" << distance << "km";
-
-        // ÉMETTRE LE SIGNAL au lieu de modifier directement l'UI
-        emit distanceCalculated(distance);
+        QString startCoords{ departLon + "," + departLat };  // Format OSRM : lon,lat
+        QString endCoords{ arriveeLon + "," + arriveeLat };
+        qDebug() << "Appel OSRM avec coordonnées:" << startCoords << "vers" << endCoords;
+        requestRouteDistance(startCoords, endCoords);
     }
 }
 
-double OpenStreetMap::calculateHaversineDistance(double lat1, double lon1, double lat2, double lon2)
+
+void OpenStreetMap::requestRouteDistance(const QString& startCoords, const QString& endCoords)
 {
-    constexpr double R{ 6371.0 };
-    double dLat{ (lat2 - lat1) * M_PI / 180.0 };
-    double dLon{ (lon2 - lon1) * M_PI / 180.0 };
+    QString osrmUrl{ QString("http://router.project-osrm.org/route/v1/driving/%1;%2?overview=false&geometries=geojson").arg(startCoords, endCoords) };
 
-    double a{ sin(dLat / 2) * sin(dLat / 2) +
-        cos(lat1 * M_PI / 180.0) * cos(lat2 * M_PI / 180.0) *
-        sin(dLon / 2) * sin(dLon / 2) };
+    QNetworkRequest request(osrmUrl);
+    request.setHeader(QNetworkRequest::UserAgentHeader, "DevisMaker/1.0");
 
-    double c{ 2 * atan2(sqrt(a), sqrt(1 - a)) };
-    return R * c;
+    QNetworkReply* reply{ m_networkManager->get(request) };
+    reply->setProperty("requestType", "routeCalculation");
+
+    qDebug() << "Requete OSRM: " << osrmUrl;
+}
+
+void OpenStreetMap::handleRouteResponse(QNetworkReply* reply)
+{
+    reply->deleteLater();
+
+    if (reply->error() != QNetworkReply::NoError)
+    {
+        emit calculationError("Erreur calcul itinéraire: " + reply->errorString());
+        return;
+    }
+
+    QByteArray data{ reply->readAll() };
+    QJsonDocument doc{ QJsonDocument::fromJson(data) };
+    QJsonObject response{ doc.object() };
+
+    if (response.contains("routes") && response["routes"].isArray())
+    {
+        QJsonArray routes{ response["routes"].toArray() };
+
+        if (!routes.isEmpty())
+        {
+            QJsonObject route{ routes[0].toObject() };
+            double distanceMeters{ route["distance"].toDouble() };
+            double distanceKm{ distanceMeters / 1000.0 };
+
+            qDebug() << "Distance routiere OSRM: " << distanceKm << " km";
+            emit distanceCalculated(distanceKm);
+            return;
+        }
+    }
+
+    emit calculationError("Impossible de calculer l'itineraire");
 }

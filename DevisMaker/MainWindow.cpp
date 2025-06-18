@@ -299,7 +299,7 @@ void MainWindow::displayingResults()
 
     double coutAutStatTotal{ m_tarification.calculerPrixStationnement(m_client.getAdresseDepart().m_autStationnement, m_client.getAdresseArrivee().m_autStationnement) };
 
-    double fraisRouteTotal{ m_tarification.calculerCoutFraisRouteTotal(nombreCamion) };
+    double fraisRouteTotal{ m_client.getNature() != Nature::urbain ? m_tarification.calculerCoutFraisRouteTotal(nombreCamion) : 0 };
 
     double coutAssurance{ m_tarification.calculerCoutAssurance(m_client.getValeurAssurance(), m_client.getTypeAssurance()) };
 
@@ -309,7 +309,7 @@ void MainWindow::displayingResults()
 
     double prixDechetterie{ m_client.getIsDE() ? m_tarification.getPrixDechetterie() : 0 };
 
-    double prixTotalHT{ m_tarification.calculerCoutTotalHT(m_client.getVolume(), coutAssurance, coutAutStatTotal, fraisMMeubles, prixDechetterie) };
+    double prixTotalHT{ m_tarification.calculerCoutTotalHT(m_client.getVolume(), coutAssurance, coutAutStatTotal, fraisMMeubles, prixDechetterie, fraisRouteTotal) };
 
     double arrhes{ m_tarification.calculerArrhes(prixTotalHT) };
 

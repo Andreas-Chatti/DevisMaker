@@ -58,7 +58,8 @@ public:
 
     int calculerNombreMO(double volume, Prestation prestation, Nature nature, int nombreCamions, bool monteMeuble, bool ascenseur, double distance) const;
 
-    double calculerCoutTotalHT(double volume, double coutAssurance, double fraisStationnement, double fraisMonteMeubles, double prixDechetterie) const { return volume * m_prixMetreCube + coutAssurance + fraisStationnement + fraisMonteMeubles + prixDechetterie; }
+    double calculerCoutTotalHT(double volume, double coutAssurance, double fraisStationnement, double fraisMonteMeubles, double prixDechetterie, double fraisRoute) const 
+    { return volume * m_prixMetreCube + coutAssurance + fraisStationnement + fraisMonteMeubles + prixDechetterie + fraisRoute; }
 
     double calculerCoutCamionTotal(int nombreCamion) const { return m_coutCamion * nombreCamion; }
 
