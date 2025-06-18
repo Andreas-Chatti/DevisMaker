@@ -223,3 +223,40 @@ int Tarification::calculerNombreMO(double volume, Prestation prestation, Nature 
 
     return nombrePersonnesTotal;
 }
+
+
+double Tarification::calculerCoutAssurance(int valeurMobilier, TypeAssurance assurance) const
+{
+    const double taux{ assurance == TypeAssurance::contractuelle ? 0.2 : 0.5 };
+
+    return (valeurMobilier * taux) / 100;
+}
+
+
+double Tarification::calculerPrixStationnement(bool autStatChargement, bool autStatLivraison) const
+{
+    double fraisStationnement{};
+
+    for (const auto autStat : std::array<bool, 2>{ autStatChargement, autStatLivraison })
+    {
+        if (autStat)
+            fraisStationnement += m_fraisStationnement;
+    }
+
+    return fraisStationnement;
+}
+
+
+double Tarification::calculerSupplementMM(const Adresse& aChargement, const Adresse& aLivraison) const
+{
+    double supplement{};
+
+    for (const auto& adresse : std::array<const Adresse, 2>{ aChargement, aLivraison })
+    {
+        if (adresse.m_monteMeubles || (!adresse.m_ascenseur && !adresse.m_monteMeubles && adresse.m_etage >= 3))
+            supplement += m_prixMonteMeubles;
+
+    }
+
+    return supplement;
+}

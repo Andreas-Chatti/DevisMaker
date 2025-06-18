@@ -61,7 +61,8 @@ bool IA::savePrompt(const QString& promptContent)
     return true;
 }
 
-QString IA::getDefaultPrompt() {
+QString IA::getDefaultPrompt() 
+{
     return R"(Tu dois analyser cet inventaire de déménagement et calculer les volumes avec cette référence : %1
 
 RÈGLES IMPORTANTES:

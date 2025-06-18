@@ -2,6 +2,19 @@
 #include "InventoryAnalyzer.h"
 
 
+InventoryAnalyzer::InventoryAnalyzer(QObject* parent)
+    : QObject(parent)
+{
+    m_networkManager = new QNetworkAccessManager(this);
+
+    m_ia = new IA{};
+
+    loadVolumeReference();
+
+    connect(m_networkManager, &QNetworkAccessManager::finished, this, &InventoryAnalyzer::handleGrokResponse);
+}
+
+
 void InventoryAnalyzer::analyzeInventory(const QString& inventoryText)
 {
     // Convertir la référence JSON en string

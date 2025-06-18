@@ -16,8 +16,7 @@ AddressCompleter::AddressCompleter(QLineEdit* lineEdit, QObject* parent)
 
     // Créer le gestionnaire réseau
     m_networkManager = new QNetworkAccessManager(this);
-    connect(m_networkManager, &QNetworkAccessManager::finished,
-        this, &AddressCompleter::handleNetworkReply);
+    connect(m_networkManager, &QNetworkAccessManager::finished, this, &AddressCompleter::handleNetworkReply);
 
     // Réduire le délai à 300ms pour plus de réactivité
     m_debounceTimer = new QTimer(this);
@@ -27,8 +26,9 @@ AddressCompleter::AddressCompleter(QLineEdit* lineEdit, QObject* parent)
 
     // Connecter à CHAQUE changement de texte
     connect(m_lineEdit, &QLineEdit::textEdited, this, [this](const QString& text) {
-        if (text.length() >= 3) {
-            qDebug() << "Texte modifié, démarrage du timer:" << text;
+        if (text.length() >= 3) 
+        {
+            qDebug() << "Texte modifié, démarrage du timer: " << text;
             m_debounceTimer->start();
         }
         });
@@ -52,7 +52,8 @@ void AddressCompleter::onTextChanged()
     QRegularExpression regexNumero("^(\\d+)\\s+(.+)$");
     QRegularExpressionMatch match = regexNumero.match(text);
 
-    if (match.hasMatch()) {
+    if (match.hasMatch()) 
+    {
         QString numero = match.captured(1);
         QString rue = match.captured(2);
         textWithComma = numero + ", " + rue;
@@ -97,37 +98,37 @@ void AddressCompleter::onTextChanged()
         m_networkManager->get(request2);
         });
 
-    qDebug() << "Requêtes envoyées pour:" << text << "et" << textWithComma;
+    qDebug() << "Requetes envoyees pour: " << text << " et " << textWithComma;
 }
 
 
 void AddressCompleter::handleNetworkReply(QNetworkReply* reply)
 {
-    if (reply->error() == QNetworkReply::NoError) {
+    if (reply->error() == QNetworkReply::NoError) 
+    {
         QByteArray data = reply->readAll();
         QJsonDocument doc = QJsonDocument::fromJson(data);
         QJsonArray array = doc.array();
 
         // Traiter les résultats comme avant
         QStringList suggestions;
-        for (const QJsonValue& value : array) {
+        for (const QJsonValue& value : array) 
+        {
             QJsonObject obj = value.toObject();
 
             // Format simplifié
             QString formattedAddress;
 
-            if (obj.contains("address")) {
-                QJsonObject address = obj["address"].toObject();
+            if (obj.contains("address")) 
+            {
+                QJsonObject address{ obj["address"].toObject() };
 
                 // Numéro, rue, code postal, ville
-                QString houseNumber = address.contains("house_number") ?
-                    address["house_number"].toString() : "";
+                QString houseNumber{ address.contains("house_number") ? address["house_number"].toString() : "" };
 
-                QString road = address.contains("road") ?
-                    address["road"].toString() : "";
+                QString road{ address.contains("road") ? address["road"].toString() : "" };
 
-                QString postcode = address.contains("postcode") ?
-                    address["postcode"].toString() : "";
+                QString postcode{ address.contains("postcode") ? address["postcode"].toString() : "" };
 
                 QString city;
                 if (address.contains("city"))
@@ -153,7 +154,8 @@ void AddressCompleter::handleNetworkReply(QNetworkReply* reply)
                 if (!city.isEmpty())
                     formattedAddress += city;
 
-                if (!formattedAddress.isEmpty()) {
+                if (!formattedAddress.isEmpty()) 
+                {
                     suggestions.append(formattedAddress);
                     continue;
                 }
@@ -166,10 +168,10 @@ void AddressCompleter::handleNetworkReply(QNetworkReply* reply)
         }
 
         // Ajouter ces suggestions à celles en attente
-        for (const QString& suggestion : suggestions) {
-            if (!m_pendingSuggestions.contains(suggestion)) {
+        for (const QString& suggestion : suggestions) 
+        {
+            if (!m_pendingSuggestions.contains(suggestion)) 
                 m_pendingSuggestions.append(suggestion);
-            }
         }
 
         // Mettre à jour le modèle avec toutes les suggestions accumulées

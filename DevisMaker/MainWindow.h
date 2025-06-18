@@ -28,60 +28,9 @@ class MainWindow : public QMainWindow
 
 public:
 
-    MainWindow(QWidget* parent = nullptr)
-        : QMainWindow(parent)
-    {
-        ui.setupUi(this);
+    MainWindow(QWidget* parent = nullptr);
 
-        m_departCompleter = new AddressCompleter(ui.adresseDepartLineEdit, this);
-        m_arriveeCompleter = new AddressCompleter(ui.adresseLivraisonLineEdit, this);
-
-
-        m_openStreetMap = new OpenStreetMap(this);
-
-
-        // Calculer la distance après modification du champ d'adresse départ
-        connect(ui.adresseDepartLineEdit, &QLineEdit::editingFinished, [this]() {
-            QString depart{ ui.adresseDepartLineEdit->text() };
-            QString arrivee{ ui.adresseLivraisonLineEdit->text() };
-
-            if (!depart.isEmpty() && !arrivee.isEmpty())
-            {
-                m_openStreetMap->calculateDistance(depart, arrivee);
-            }
-            });
-
-
-        // Calculer la distance après modification du champ d'adresse d'arrivée
-        connect(ui.adresseLivraisonLineEdit, &QLineEdit::editingFinished, [this]() {
-            QString depart{ ui.adresseDepartLineEdit->text() };
-            QString arrivee{ ui.adresseLivraisonLineEdit->text() };
-
-            if (!depart.isEmpty() && !arrivee.isEmpty())
-            {
-                m_openStreetMap->calculateDistance(depart, arrivee);
-            }
-            });
-
-        connect(m_openStreetMap, &OpenStreetMap::distanceCalculated, this, &MainWindow::onDistanceCalculated);
-        connect(m_openStreetMap, &OpenStreetMap::calculationError, this, &MainWindow::onDistanceError);
-
-
-        // Initialiser l'analyseur IA
-        m_inventoryAnalyzer = new InventoryAnalyzer(this);
-        connect(m_inventoryAnalyzer, &InventoryAnalyzer::analysisComplete, this, &MainWindow::handleInventoryAnalysis);
-        connect(m_inventoryAnalyzer, &InventoryAnalyzer::analysisError, this, &MainWindow::handleInventoryAnalysisError);
-
-
-        setupValidators();
-
-        setupSettings();
-    }
-
-
-    ~MainWindow()
-    {
-    }
+    ~MainWindow() = default;
 
 private slots:
 
@@ -118,7 +67,6 @@ private:
     void setupValidators();
 
     void setupSettings();
-
 
     bool areAllFieldCompleted();
 

@@ -1,6 +1,58 @@
 #include "MainWindow.h"
 #include <QMessageBox>
 
+
+MainWindow::MainWindow(QWidget* parent)
+    : QMainWindow(parent)
+{
+    ui.setupUi(this);
+
+    m_departCompleter = new AddressCompleter(ui.adresseDepartLineEdit, this);
+    m_arriveeCompleter = new AddressCompleter(ui.adresseLivraisonLineEdit, this);
+
+
+    m_openStreetMap = new OpenStreetMap(this);
+
+
+    // Calculer la distance après modification du champ d'adresse départ
+    connect(ui.adresseDepartLineEdit, &QLineEdit::editingFinished, [this]() {
+        QString depart{ ui.adresseDepartLineEdit->text() };
+        QString arrivee{ ui.adresseLivraisonLineEdit->text() };
+
+        if (!depart.isEmpty() && !arrivee.isEmpty())
+        {
+            m_openStreetMap->calculateDistance(depart, arrivee);
+        }
+        });
+
+
+    // Calculer la distance après modification du champ d'adresse d'arrivée
+    connect(ui.adresseLivraisonLineEdit, &QLineEdit::editingFinished, [this]() {
+        QString depart{ ui.adresseDepartLineEdit->text() };
+        QString arrivee{ ui.adresseLivraisonLineEdit->text() };
+
+        if (!depart.isEmpty() && !arrivee.isEmpty())
+        {
+            m_openStreetMap->calculateDistance(depart, arrivee);
+        }
+        });
+
+    connect(m_openStreetMap, &OpenStreetMap::distanceCalculated, this, &MainWindow::onDistanceCalculated);
+    connect(m_openStreetMap, &OpenStreetMap::calculationError, this, &MainWindow::onDistanceError);
+
+
+    // Initialiser l'analyseur IA
+    m_inventoryAnalyzer = new InventoryAnalyzer(this);
+    connect(m_inventoryAnalyzer, &InventoryAnalyzer::analysisComplete, this, &MainWindow::handleInventoryAnalysis);
+    connect(m_inventoryAnalyzer, &InventoryAnalyzer::analysisError, this, &MainWindow::handleInventoryAnalysisError);
+
+
+    setupValidators();
+
+    setupSettings();
+}
+
+
 void MainWindow::setupValidators()
 {
     const auto doubleValidator{ new QDoubleValidator(0, 500, 2, this) };
@@ -318,21 +370,53 @@ void MainWindow::handleInventoryAnalysis(double totalVolume, const QStringList& 
 
     // Mettre à jour le tableau des éléments détectés
     ui.tableWidget->setRowCount(structuredItems.size());
-    ui.tableWidget->setColumnCount(2);
-    ui.tableWidget->setHorizontalHeaderLabels({ "Objet", "Volume (m\u00B3)" });
+    ui.tableWidget->setColumnCount(3);
 
-    for (int i = 0; i < structuredItems.size(); ++i) {
-        QString item = structuredItems[i];
-        QStringList parts = item.split(" - ");
 
-        if (parts.size() == 2) {
-            ui.tableWidget->setItem(i, 0, new QTableWidgetItem(parts[0]));
-            ui.tableWidget->setItem(i, 1, new QTableWidgetItem(parts[1]));
+    ui.tableWidget->setHorizontalHeaderLabels({
+        "Quantite",
+        "Objet",
+        "Volume - Total: " + QString::number(totalVolume, 'f', 2) + " m\u00B3"
+        });
+
+    for (int i{}; i < structuredItems.size(); ++i)
+    {
+        QString item{ structuredItems[i] };
+        QStringList parts{ item.split(" - ") };
+
+        if (parts.size() == 2)
+        {
+            QString fullName{ parts[0] };     // Ex: "2 matelas 1 place"
+            QString volumeText{ parts[1] };   // Ex: "1.0 m³"
+
+
+            QStringList words{ fullName.split(" ") };
+            QString quantity{ "1" };  // Par défaut
+            QString cleanName{ fullName };
+
+            if (!words.isEmpty())
+            {
+                bool ok{};
+                int qty{ words.first().toInt(&ok) };
+                if (ok && qty > 0)
+                {
+                    quantity = QString::number(qty);
+                    words.removeFirst();
+                    cleanName = words.join(" ");
+                }
+            }
+
+            // Remplir les 3 colonnes (même logique que parts[0] et parts[1])
+            ui.tableWidget->setItem(i, 0, new QTableWidgetItem(quantity));
+            ui.tableWidget->setItem(i, 1, new QTableWidgetItem(cleanName));
+            ui.tableWidget->setItem(i, 2, new QTableWidgetItem(volumeText));
         }
     }
 
-    // Ajuster la largeur des colonnes
-    ui.tableWidget->resizeColumnsToContents();
+    QHeaderView* header = ui.tableWidget->horizontalHeader();
+    header->setSectionResizeMode(0, QHeaderView::ResizeToContents); // Quantitée : contenu
+    header->setSectionResizeMode(1, QHeaderView::ResizeToContents);  // Objet : contenu
+    header->setSectionResizeMode(2, QHeaderView::Stretch);           // Volume : étirement
 
     // Restaurer le bouton
     ui.AnalyseInventoryPushButton->setText("Analyser inventaire");

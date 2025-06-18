@@ -17,17 +17,7 @@ class InventoryAnalyzer : public QObject
 
 public:
 
-    InventoryAnalyzer(QObject* parent)
-        : QObject(parent)
-    {
-        m_networkManager = new QNetworkAccessManager(this);
-
-        m_ia = new IA{};
-
-        loadVolumeReference();
-
-        connect(m_networkManager, &QNetworkAccessManager::finished, this, &InventoryAnalyzer::handleGrokResponse);
-    }
+    InventoryAnalyzer(QObject* parent = nullptr);
 
     void analyzeInventory(const QString& inventoryText);
 
