@@ -25,6 +25,7 @@ void Tarification::loadSettings()
         m_fraisStationnement = settings.value("FraisStationnement", 50.0).toDouble();
         m_prixMonteMeubles = settings.value("PrixMM", 250.0).toDouble();
         m_prixDechetterie = settings.value("PrixDechetterie", 200.0).toDouble();
+        m_prixSuppAdresse = settings.value("PrixSuppAdresse", 75.0).toDouble();
         settings.endGroup();
     }
 
@@ -53,6 +54,7 @@ void Tarification::saveSettings() const
     settings.setValue("FraisStationnement", m_fraisStationnement);
     settings.setValue("PrixMM", m_prixMonteMeubles);
     settings.setValue("PrixDechetterie", m_prixDechetterie);
+    settings.setValue("PrixSuppAdresse", m_prixSuppAdresse);
     settings.endGroup();
 }
 

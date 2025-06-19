@@ -49,6 +49,8 @@ private slots:
     void onDistanceCalculated(double distance);
     void onDistanceError(const QString& errorMessage);
 
+    void on_suppAdresseCheckBox_toggled(bool isChecked);
+
 private:
 
     Ui::MainWindowClass ui;
@@ -75,4 +77,12 @@ private:
     void updateSettingsVariables();
 
     void displayingResults();
+
+    void setupDevisTable();
+
+    void populateDevisTable(double volumeParPersonne, int nombreCamion, int nombreMO,
+        double coutMOTotal, double coutCamionTotal, double coutAutStatTotal,
+        double fraisRouteTotal, double coutAssurance, double fraisMMeubles,
+        double prixDechetterie, double prixSuppAdresse, double prixTotalHT,
+        double arrhes);
 };

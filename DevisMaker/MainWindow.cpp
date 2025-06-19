@@ -1,4 +1,4 @@
-#include "MainWindow.h"
+ï»¿#include "MainWindow.h"
 #include <QMessageBox>
 
 
@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget* parent)
     m_openStreetMap = new OpenStreetMap(this);
 
 
-    // Calculer la distance après modification du champ d'adresse départ
+    // Calculer la distance aprÃ¨s modification du champ d'adresse dÃ©part
     connect(ui.adresseDepartLineEdit, &QLineEdit::editingFinished, [this]() {
         QString depart{ ui.adresseDepartLineEdit->text() };
         QString arrivee{ ui.adresseLivraisonLineEdit->text() };
@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget* parent)
         });
 
 
-    // Calculer la distance après modification du champ d'adresse d'arrivée
+    // Calculer la distance aprÃ¨s modification du champ d'adresse d'arrivÃ©e
     connect(ui.adresseLivraisonLineEdit, &QLineEdit::editingFinished, [this]() {
         QString depart{ ui.adresseDepartLineEdit->text() };
         QString arrivee{ ui.adresseLivraisonLineEdit->text() };
@@ -59,7 +59,7 @@ void MainWindow::setupValidators()
 
     const auto intValidator{ new QIntValidator(0, 45000, this) };
 
-    // Appliquer aux champs qui demandent des nombres décimaux
+    // Appliquer aux champs qui demandent des nombres dÃ©cimaux
     ui.distanceLineEdit->setValidator(intValidator);
     ui.volumelineEdit->setValidator(doubleValidator);
     ui.valeurAssuranceLineEdit->setValidator(intValidator);
@@ -72,6 +72,7 @@ void MainWindow::setupValidators()
     ui.fraisStatLineEdit->setValidator(doubleValidator);
     ui.MMeublesLineEdit->setValidator(doubleValidator);
     ui.deLineEdit->setValidator(doubleValidator);
+    ui.suppAdresseLineEdit->setValidator(doubleValidator);
 }
 
 
@@ -86,12 +87,13 @@ void MainWindow::setupSettings()
     ui.fraisStatLineEdit->setText(QString::number(m_tarification.getCoutFraisStationnement()));
     ui.MMeublesLineEdit->setText(QString::number(m_tarification.getCoutMonteMeubles()));
     ui.deLineEdit->setText(QString::number(m_tarification.getPrixDechetterie()));
+    ui.suppAdresseLineEdit->setText(QString::number(m_tarification.getPrixSuppAdresse()));
 }
 
 
 void MainWindow::on_generateDevisButton_clicked()
 {
-    // 0. Vérifier si tous les champs importants sont remplis avant de continuer
+    // 0. VÃ©rifier si tous les champs importants sont remplis avant de continuer
 
 
     if (!areAllFieldCompleted())
@@ -101,19 +103,19 @@ void MainWindow::on_generateDevisButton_clicked()
     }
 
 
-    // 1. Mettre à jour toutes les variables de l'onglet CLIENT depuis les champs rentrés par l'utilisateur
+    // 1. Mettre Ã  jour toutes les variables de l'onglet CLIENT depuis les champs rentrÃ©s par l'utilisateur
 
 
     updateClientVariables();
 
 
-    // 2. Mettre à jour toutes les variables de l'onglet PARAMETRES depuis les champs rentrés par l'utilisateur
+    // 2. Mettre Ã  jour toutes les variables de l'onglet PARAMETRES depuis les champs rentrÃ©s par l'utilisateur
 
     
     updateSettingsVariables();
 
 
-    // 3. Afficher les résultats dans l'onglet "Résultats et Devis"
+    // 3. Afficher les rÃ©sultats dans l'onglet "RÃ©sultats et Devis"
 
 
     displayingResults();
@@ -127,7 +129,7 @@ void MainWindow::on_volumelineEdit_textChanged(const QString& text)
 {
     constexpr double maxValeurAssurance{ 45000 };
 
-    // Vérifier si le texte est un nombre valide
+    // VÃ©rifier si le texte est un nombre valide
     const double volume{ text.toDouble() };
 
     if (volume >= 0) 
@@ -138,7 +140,7 @@ void MainWindow::on_volumelineEdit_textChanged(const QString& text)
         if (valeurAssurance > maxValeurAssurance)
             valeurAssurance = maxValeurAssurance;
 
-        // Mettre à jour le champ de valeur d'assurance
+        // Mettre Ã  jour le champ de valeur d'assurance
         ui.valeurAssuranceLineEdit->setText(QString::number(valeurAssurance, 'f', 0));
     }
 
@@ -210,37 +212,37 @@ void MainWindow::updateClientVariables()
     m_client.setAdresseArrivee(A_Livraison);
 
 
-    // Récupérer la distance saisie
+    // RÃ©cupÃ©rer la distance saisie
     double distance{ ui.distanceLineEdit->text().toDouble() };
     m_client.setDistance(distance);
 
 
-    // Récupérer le volume saisie
+    // RÃ©cupÃ©rer le volume saisie
     double volume{ ui.volumelineEdit->text().toDouble() };
     m_client.setVolume(volume);
 
 
-    // Récupérer la prestation sélectionnée
+    // RÃ©cupÃ©rer la prestation sÃ©lectionnÃ©e
     Prestation prestation{ ui.prestationComboBox->currentIndex() };
     m_client.setPrestation(prestation);
 
 
-    // Récupérer la nature sélectionnée
+    // RÃ©cupÃ©rer la nature sÃ©lectionnÃ©e
     Nature nature{ ui.natureComboBox->currentIndex() };
     m_client.setNature(nature);
 
 
-    // Récupérer le type d'assurance sélectionné
+    // RÃ©cupÃ©rer le type d'assurance sÃ©lectionnÃ©
     TypeAssurance typeAssurance{ ui.typeAssuranceComboBox->currentIndex() };
     m_client.setTypeAssurance(typeAssurance);
 
 
-    // Récupérer la valeur déclarée
+    // RÃ©cupÃ©rer la valeur dÃ©clarÃ©e
     double valeurAssurance{ ui.valeurAssuranceLineEdit->text().toDouble() };
     m_client.setValeurAssurance(valeurAssurance);
 
 
-    // Récupérer la condition Déchetterie
+    // RÃ©cupÃ©rer la condition DÃ©chetterie
     bool dechetterie{ ui.deCheckBox->isChecked() };
     m_client.setIsDE(dechetterie);
 }
@@ -282,12 +284,16 @@ void MainWindow::updateSettingsVariables()
 
     double prixDechetterie{ ui.deLineEdit->text().toDouble() };
     m_tarification.setPrixDechetterie(prixDechetterie);
+
+
+    double prixSuppAdresse{ ui.suppAdresseLineEdit->text().toDouble() };
+    m_tarification.setPrixSuppAdresse(prixSuppAdresse);
 }
 
 
 void MainWindow::displayingResults()
 {
-    // 1. Faire les calculs de tarification avec les variables qu'on a récupéré
+    // 1. Faire les calculs de tarification avec les variables qu'on a rÃ©cupÃ©rÃ©
 
     double volumeParPersonne{ m_tarification.calculerVolumeParPersonne(m_client.getVolume(), m_client.getPrestation()) };
     int nombreCamion{ m_tarification.calculerNombreCamion(m_client.getVolume(), m_client.getPrestation(), m_client.getNature(), m_client.getDistance()) };
@@ -309,40 +315,26 @@ void MainWindow::displayingResults()
 
     double prixDechetterie{ m_client.getIsDE() ? m_tarification.getPrixDechetterie() : 0 };
 
-    double prixTotalHT{ m_tarification.calculerCoutTotalHT(m_client.getVolume(), coutAssurance, coutAutStatTotal, fraisMMeubles, prixDechetterie, fraisRouteTotal) };
+    double prixSuppAdresse{ ui.suppAdresseCheckBox->isChecked() ? ui.suppAdresseSpinBox->value() * m_tarification.getPrixSuppAdresse() : 0};
+
+    double prixTotalHT{ m_tarification.calculerCoutTotalHT(m_client.getVolume(), coutAssurance, coutAutStatTotal, fraisMMeubles, prixDechetterie, fraisRouteTotal, prixSuppAdresse) };
 
     double arrhes{ m_tarification.calculerArrhes(prixTotalHT) };
 
 
-    // 2. Afficher les résultats dans l'onglet "Résultats et Devis"
+    // 2. Afficher les rÃ©sultats dans l'onglet "RÃ©sultats et Devis"
 
-    // Format pour le volume (m³)
-    ui.totalVolumeTextBrowser->setText(QString::number(m_client.getVolume(), 'f', 2) + " m\u00B3");
-
-    // Format pour les prix H.T. (2 décimales + symbole euro + H.T.)
-    ui.coutMOTextBrowser->setText(QString::number(coutMOTotal, 'f', 2) + " \u20AC H.T.");
-    ui.coutCamionTextBrowser->setText(QString::number(coutCamionTotal, 'f', 2) + " \u20AC H.T.");
-    ui.coutASTextBrowser->setText(QString::number(coutAutStatTotal, 'f', 2) + " \u20AC H.T.");
-    ui.coutFraisRouteTextBrowser->setText(QString::number(fraisRouteTotal, 'f', 2) + " \u20AC H.T.");
-    ui.coutAssuranceTextBrowser->setText(QString::number(coutAssurance, 'f', 2) + " \u20AC H.T.");
-    ui.coutMMTextBrowser->setText(QString::number(fraisMMeubles, 'f', 2) + " \u20AC H.T.");
-    ui.deTextBrowser->setText(QString::number(prixDechetterie, 'f', 2) + " \u20AC H.T.");
-
-    // Format pour le prix total H.T.
-    ui.totalPriceTextBrowser->setText(QString::number(prixTotalHT, 'f', 2) + " \u20AC H.T.");
-
-    // Format pour les arrhes (T.T.C.)
-    ui.arrhesTextBrowser->setText(QString::number(arrhes, 'f', 2) + " \u20AC T.T.C.");
-
-    // Afficher le nombre de déménageurs et de camion(s)
-    ui.nbPersonnelsTextBrowser->setText(QString::number(nombreMO) + " d\u00E9m\u00E9nageurs");
-    ui.nbCamionTextBrowser->setText(QString::number(nombreCamion) + " camion" + (nombreCamion > 1 ? "s" : ""));
+    setupDevisTable();
+    populateDevisTable(volumeParPersonne, nombreCamion, nombreMO,
+        coutMOTotal, coutCamionTotal, coutAutStatTotal,
+        fraisRouteTotal, coutAssurance, fraisMMeubles,
+        prixDechetterie, prixSuppAdresse, prixTotalHT, arrhes);
 }
 
 
 void MainWindow::on_AnalyseInventoryPushButton_clicked()
 {
-    // Récupérer le texte d'inventaire
+    // RÃ©cupÃ©rer le texte d'inventaire
     QString inventoryText{ ui.inventaireTextEdit->toPlainText() };
 
     if (inventoryText.isEmpty()) 
@@ -362,13 +354,13 @@ void MainWindow::on_AnalyseInventoryPushButton_clicked()
 }
 
 
-// Traitement du résultat d'analyse
+// Traitement du rÃ©sultat d'analyse
 void MainWindow::handleInventoryAnalysis(double totalVolume, const QStringList& structuredItems)
 {
-    // Mettre à jour le champ de volume
+    // Mettre Ã  jour le champ de volume
     ui.volumelineEdit->setText(QString::number(totalVolume, 'f', 2));
 
-    // Mettre à jour le tableau des éléments détectés
+    // Mettre Ã  jour le tableau des Ã©lÃ©ments dÃ©tectÃ©s
     ui.tableWidget->setRowCount(structuredItems.size());
     ui.tableWidget->setColumnCount(3);
 
@@ -387,11 +379,11 @@ void MainWindow::handleInventoryAnalysis(double totalVolume, const QStringList& 
         if (parts.size() == 2)
         {
             QString fullName{ parts[0] };     // Ex: "2 matelas 1 place"
-            QString volumeText{ parts[1] };   // Ex: "1.0 m³"
+            QString volumeText{ parts[1] };   // Ex: "1.0 mÂ³"
 
 
             QStringList words{ fullName.split(" ") };
-            QString quantity{ "1" };  // Par défaut
+            QString quantity{ "1" };  // Par dÃ©faut
             QString cleanName{ fullName };
 
             if (!words.isEmpty())
@@ -406,7 +398,7 @@ void MainWindow::handleInventoryAnalysis(double totalVolume, const QStringList& 
                 }
             }
 
-            // Remplir les 3 colonnes (même logique que parts[0] et parts[1])
+            // Remplir les 3 colonnes (mÃªme logique que parts[0] et parts[1])
             ui.tableWidget->setItem(i, 0, new QTableWidgetItem(quantity));
             ui.tableWidget->setItem(i, 1, new QTableWidgetItem(cleanName));
             ui.tableWidget->setItem(i, 2, new QTableWidgetItem(volumeText));
@@ -414,20 +406,20 @@ void MainWindow::handleInventoryAnalysis(double totalVolume, const QStringList& 
     }
 
     QHeaderView* header = ui.tableWidget->horizontalHeader();
-    header->setSectionResizeMode(0, QHeaderView::ResizeToContents); // Quantitée : contenu
+    header->setSectionResizeMode(0, QHeaderView::ResizeToContents); // QuantitÃ©e : contenu
     header->setSectionResizeMode(1, QHeaderView::ResizeToContents);  // Objet : contenu
-    header->setSectionResizeMode(2, QHeaderView::Stretch);           // Volume : étirement
+    header->setSectionResizeMode(2, QHeaderView::Stretch);           // Volume : Ã©tirement
 
     // Restaurer le bouton
     ui.AnalyseInventoryPushButton->setText("Analyser inventaire");
     ui.AnalyseInventoryPushButton->setEnabled(true);
 
-    // Message de succès
+    // Message de succÃ¨s
     QString titre = "Analyse terminee";
     QString message = QString("Volume total calcule par l'IA: %1 m3, %2 objets detectes").arg(totalVolume).arg(structuredItems.size());
     QMessageBox::information(this, titre, message);
 
-    qDebug() << "Analyse IA terminée avec succès. Volume:" << totalVolume;
+    qDebug() << "Analyse IA terminÃ©e avec succÃ¨s. Volume:" << totalVolume;
 }
 
 // Gestion des erreurs
@@ -456,4 +448,128 @@ void MainWindow::onDistanceCalculated(double distance)
 void MainWindow::onDistanceError(const QString& errorMessage) 
 {
     QMessageBox::warning(this, "Erreur", errorMessage);
+}
+
+
+void MainWindow::on_suppAdresseCheckBox_toggled(bool isChecked)
+{
+    ui.suppAdresseSpinBox->setEnabled(isChecked);
+}
+
+
+void MainWindow::setupDevisTable()
+{
+    // Configuration du tableau (une seule fois)
+    ui.devisTableWidget->setRowCount(0);  // Vider
+    ui.devisTableWidget->setColumnCount(2);
+
+    // En-tÃªtes de colonnes
+    ui.devisTableWidget->setHorizontalHeaderLabels({ "Poste", "Montant" });
+
+    // CONFIGURATION DU REDIMENSIONNEMENT DES COLONNES
+    QHeaderView* header{ ui.devisTableWidget->horizontalHeader() };
+    header->setSectionResizeMode(0, QHeaderView::ResizeToContents);  // Colonne "Poste" â†’ s'adapte au contenu
+    header->setSectionResizeMode(1, QHeaderView::Stretch);           // Colonne "Montant" â†’ prend le reste
+
+    // Configuration esthÃ©tique
+    ui.devisTableWidget->setAlternatingRowColors(true);
+    ui.devisTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui.devisTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+}
+
+
+void MainWindow::populateDevisTable(double volumeParPersonne, int nombreCamion, int nombreMO,
+    double coutMOTotal, double coutCamionTotal, double coutAutStatTotal,
+    double fraisRouteTotal, double coutAssurance, double fraisMMeubles,
+    double prixDechetterie, double prixSuppAdresse, double prixTotalHT,
+    double arrhes)
+{
+    QVector<QPair<QString, QString>> devisItems{
+        // â•â•â• SECTION INFORMATIONS GÃ‰NÃ‰RALES â•â•â•
+        {"Volume total", QString::number(m_client.getVolume(), 'f', 2) + " mÂ³"},
+        {"Personnel affectÃ©", QString::number(nombreMO) + " dÃ©mÃ©nageur" + (nombreMO > 1 ? "s" : "")},
+        {"Nombre camion(s)", QString::number(nombreCamion) + " camion" + (nombreCamion > 1 ? "s" : "")},
+
+        // â•â•â• SECTION COÃ›TS PRINCIPAUX â•â•â•
+        {"Main d'Å“uvre", QString::number(coutMOTotal, 'f', 2) + " â‚¬ H.T."},
+        {"Camion(s)", QString::number(coutCamionTotal, 'f', 2) + " â‚¬ H.T."},
+        {"Assurance mobilier", QString::number(coutAssurance, 'f', 2) + " â‚¬ H.T."}
+    };
+
+    // AJOUTER conditionnellement (SANS sÃ©parateurs vides)
+    if (fraisRouteTotal > 0)
+        devisItems.push_back({ "Frais de route", QString::number(fraisRouteTotal, 'f', 2) + " â‚¬ H.T." });
+
+    // SECTION SUPPLÃ‰MENTS
+    if (coutAutStatTotal > 0)
+        devisItems.push_back({ "Autorisation de stationnement", QString::number(coutAutStatTotal, 'f', 2) + " â‚¬ H.T." });
+
+    if (fraisMMeubles > 0)
+        devisItems.push_back({ "Monte-meubles", QString::number(fraisMMeubles, 'f', 2) + " â‚¬ H.T." });
+
+    if (prixDechetterie > 0)
+        devisItems.push_back({ "DÃ©chetterie", QString::number(prixDechetterie, 'f', 2) + " â‚¬ H.T." });
+
+    if (prixSuppAdresse > 0)
+    {
+        QString nbAdresses{ QString::number(ui.suppAdresseSpinBox->value()) };
+        devisItems.push_back({ "SupplÃ©ment adresse (" + nbAdresses + ")", QString::number(prixSuppAdresse, 'f', 2) + " â‚¬ H.T." });
+    }
+
+    // SECTION TOTAUX
+    devisItems.push_back({ "Arrhes (30%)", QString::number(arrhes, 'f', 2) + " â‚¬ T.T.C." });
+    devisItems.push_back({ "TOTAL H.T.", QString::number(prixTotalHT, 'f', 2) + " â‚¬ H.T." });
+
+    // â•â•â• REMPLISSAGE DU TABLEAU â•â•â•
+    ui.devisTableWidget->setRowCount(devisItems.size());
+
+    for (int i{}; i < devisItems.size(); ++i)
+    {
+        // Colonne "Poste"
+        QTableWidgetItem* posteItem{ new QTableWidgetItem(devisItems[i].first) };
+        ui.devisTableWidget->setItem(i, 0, posteItem);
+
+        // Colonne "Montant"
+        QTableWidgetItem* montantItem{ new QTableWidgetItem(devisItems[i].second) };
+        montantItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        ui.devisTableWidget->setItem(i, 1, montantItem);
+
+        // â•â•â• STYLES CONDITIONNELS (SANS gestion lignes vides) â•â•â•
+
+        // Total principal (gras + fond vert) - MAINTENANT EN DERNIER
+        if (devisItems[i].first.contains("TOTAL H.T."))
+        {
+            QFont boldFont{};
+            boldFont.setBold(true);
+            boldFont.setPointSize(11);  // Un peu plus gros
+            posteItem->setFont(boldFont);
+            montantItem->setFont(boldFont);
+            posteItem->setBackground(QColor(200, 255, 200));  // Vert clair
+            montantItem->setBackground(QColor(200, 255, 200));
+        }
+
+        // Arrhes (important) - MAINTENANT AVANT LE TOTAL
+        else if (devisItems[i].first.contains("Arrhes"))
+        {
+            QFont boldFont{};
+            boldFont.setBold(true);
+            posteItem->setFont(boldFont);
+            montantItem->setFont(boldFont);
+            posteItem->setBackground(QColor(255, 255, 200));  // Jaune clair
+            montantItem->setBackground(QColor(255, 255, 200));
+        }
+
+        // Informations gÃ©nÃ©rales (en-tÃªte)
+        else if (devisItems[i].first.contains("Volume total") ||
+            devisItems[i].first.contains("Personnel") ||
+            devisItems[i].first.contains("MatÃ©riel"))
+        {
+            QFont headerFont{};
+            headerFont.setBold(true);
+            posteItem->setFont(headerFont);
+            montantItem->setFont(headerFont);
+            posteItem->setBackground(QColor(240, 240, 240));  // Gris clair
+            montantItem->setBackground(QColor(240, 240, 240));
+        }
+    }
 }
