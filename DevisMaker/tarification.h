@@ -7,6 +7,7 @@
 #include <cmath>
 #include "common.h"
 
+
 class Tarification 
 {
 
@@ -55,6 +56,8 @@ public:
     void setPrixSuppAdresse(double prixSuppAdresse) { m_prixSuppAdresse = prixSuppAdresse; }
 
 
+    // Méthodes de calcul individuelles
+
     double calculerVolumeParPersonne(double volume, Prestation prestation) const;
 
     int calculerNombreCamion(double volume, Prestation prestation, Nature nature, double distance, bool accesComplexe = false, bool montageImportant = false) const;
@@ -85,6 +88,7 @@ public:
     double calculerSuppAdresse(double nbAdresse) { return m_prixSuppAdresse * nbAdresse; }
 
 
+    // Sauvegarde des paramètres de tarification dans un fichier .ini
     void saveSettings() const;
 
 
@@ -103,6 +107,11 @@ private:
     double m_prixSuppAdresse; // Prix supplément PAR adresse
 
 
+    /*
+    Charger les paramètres depuis le fichier.ini
+    OU
+    Créer un nouveau fichier .ini avec les paramètres par défaut si celui-ci n'existe pas
+    */
     void loadSettings();
 };
 

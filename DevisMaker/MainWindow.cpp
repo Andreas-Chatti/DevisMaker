@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget* parent)
     m_departCompleter = new AddressCompleter(ui.adresseDepartLineEdit, this);
     m_arriveeCompleter = new AddressCompleter(ui.adresseLivraisonLineEdit, this);
 
+    m_calculateurDevis = new CalculateurDevis(m_client, m_tarification, this);
 
     m_openStreetMap = new OpenStreetMap(this);
 
@@ -245,6 +246,10 @@ void MainWindow::updateClientVariables()
     // Récupérer la condition Déchetterie
     bool dechetterie{ ui.deCheckBox->isChecked() };
     m_client.setIsDE(dechetterie);
+
+
+    // Déterminer le prix du mètre cube en fonctions des paramètres actuels
+    m_tarification.setPrixMetreCube(prestation, nature, m_client.getDistance());
 }
 
 
@@ -291,44 +296,16 @@ void MainWindow::updateSettingsVariables()
 }
 
 
+/* 
+Affiche les résultats de chaques ligne du devis
+*/
 void MainWindow::displayingResults()
 {
-    // 1. Faire les calculs de tarification avec les variables qu'on a récupéré
-
-    double volumeParPersonne{ m_tarification.calculerVolumeParPersonne(m_client.getVolume(), m_client.getPrestation()) };
-    int nombreCamion{ m_tarification.calculerNombreCamion(m_client.getVolume(), m_client.getPrestation(), m_client.getNature(), m_client.getDistance()) };
-    int nombreMO{ m_tarification.calculerNombreMO(m_client.getVolume(), m_client.getPrestation(), m_client.getNature(), nombreCamion, m_client.getAdresseDepart().m_monteMeubles || m_client.getAdresseArrivee().m_monteMeubles, m_client.getAdresseDepart().m_ascenseur || m_client.getAdresseArrivee().m_ascenseur, m_client.getDistance()) };
-
-    double coutMOTotal{ m_tarification.calculerCoutMainOeuvreTotal(nombreMO) };
-
-    double coutCamionTotal{ m_tarification.calculerCoutCamionTotal(nombreCamion) };
-
-    double coutAutStatTotal{ m_tarification.calculerPrixStationnement(m_client.getAdresseDepart().m_autStationnement, m_client.getAdresseArrivee().m_autStationnement) };
-
-    double fraisRouteTotal{ m_client.getNature() != Nature::urbain ? m_tarification.calculerCoutFraisRouteTotal(nombreCamion) : 0 };
-
-    double coutAssurance{ m_tarification.calculerCoutAssurance(m_client.getValeurAssurance(), m_client.getTypeAssurance()) };
-
-    m_tarification.setPrixMetreCube(m_client.getPrestation(), m_client.getNature(), m_client.getDistance());
-
-    double fraisMMeubles{ m_tarification.calculerSupplementMM(m_client.getAdresseDepart(), m_client.getAdresseArrivee()) };
-
-    double prixDechetterie{ m_client.getIsDE() ? m_tarification.getPrixDechetterie() : 0 };
-
-    double prixSuppAdresse{ ui.suppAdresseCheckBox->isChecked() ? ui.suppAdresseSpinBox->value() * m_tarification.getPrixSuppAdresse() : 0};
-
-    double prixTotalHT{ m_tarification.calculerCoutTotalHT(m_client.getVolume(), coutAssurance, coutAutStatTotal, fraisMMeubles, prixDechetterie, fraisRouteTotal, prixSuppAdresse) };
-
-    double arrhes{ m_tarification.calculerArrhes(prixTotalHT) };
-
-
-    // 2. Afficher les résultats dans l'onglet "Résultats et Devis"
-
     setupDevisTable();
-    populateDevisTable(volumeParPersonne, nombreCamion, nombreMO,
-        coutMOTotal, coutCamionTotal, coutAutStatTotal,
-        fraisRouteTotal, coutAssurance, fraisMMeubles,
-        prixDechetterie, prixSuppAdresse, prixTotalHT, arrhes);
+
+    ResultatsDevis result{ calculerResultatsDevis() };
+
+    populateDevisTable(result);
 }
 
 
@@ -478,47 +455,43 @@ void MainWindow::setupDevisTable()
 }
 
 
-void MainWindow::populateDevisTable(double volumeParPersonne, int nombreCamion, int nombreMO,
-    double coutMOTotal, double coutCamionTotal, double coutAutStatTotal,
-    double fraisRouteTotal, double coutAssurance, double fraisMMeubles,
-    double prixDechetterie, double prixSuppAdresse, double prixTotalHT,
-    double arrhes)
+void MainWindow::populateDevisTable(ResultatsDevis resultat)
 {
     QVector<QPair<QString, QString>> devisItems{
         // ═══ SECTION INFORMATIONS GÉNÉRALES ═══
         {"Volume total", QString::number(m_client.getVolume(), 'f', 2) + " m³"},
-        {"Personnel affecté", QString::number(nombreMO) + " déménageur" + (nombreMO > 1 ? "s" : "")},
-        {"Nombre camion(s)", QString::number(nombreCamion) + " camion" + (nombreCamion > 1 ? "s" : "")},
+        {"Personnel affecté", QString::number(resultat.nombreMO) + " déménageur" + (resultat.nombreMO > 1 ? "s" : "")},
+        {"Nombre camion(s)", QString::number(resultat.nombreCamion) + " camion" + (resultat.nombreCamion > 1 ? "s" : "")},
 
         // ═══ SECTION COÛTS PRINCIPAUX ═══
-        {"Main d'œuvre", QString::number(coutMOTotal, 'f', 2) + " € H.T."},
-        {"Camion(s)", QString::number(coutCamionTotal, 'f', 2) + " € H.T."},
-        {"Assurance mobilier", QString::number(coutAssurance, 'f', 2) + " € H.T."}
+        {"Main d'œuvre", QString::number(resultat.coutMainOeuvre, 'f', 2) + " € H.T."},
+        {"Camion(s)", QString::number(resultat.coutCamion, 'f', 2) + " € H.T."},
+        {"Assurance mobilier", QString::number(resultat.coutAssurance, 'f', 2) + " € H.T."}
     };
 
     // AJOUTER conditionnellement (SANS séparateurs vides)
-    if (fraisRouteTotal > 0)
-        devisItems.push_back({ "Frais de route", QString::number(fraisRouteTotal, 'f', 2) + " € H.T." });
+    if (resultat.fraisRoute > 0)
+        devisItems.push_back({ "Frais de route", QString::number(resultat.fraisRoute, 'f', 2) + " € H.T." });
 
     // SECTION SUPPLÉMENTS
-    if (coutAutStatTotal > 0)
-        devisItems.push_back({ "Autorisation de stationnement", QString::number(coutAutStatTotal, 'f', 2) + " € H.T." });
+    if (resultat.coutStationnement > 0)
+        devisItems.push_back({ "Autorisation de stationnement", QString::number(resultat.coutStationnement, 'f', 2) + " € H.T." });
 
-    if (fraisMMeubles > 0)
-        devisItems.push_back({ "Monte-meubles", QString::number(fraisMMeubles, 'f', 2) + " € H.T." });
+    if (resultat.fraisMonteMeubles > 0)
+        devisItems.push_back({ "Monte-meubles", QString::number(resultat.fraisMonteMeubles, 'f', 2) + " € H.T." });
 
-    if (prixDechetterie > 0)
-        devisItems.push_back({ "Déchetterie", QString::number(prixDechetterie, 'f', 2) + " € H.T." });
+    if (resultat.prixDechetterie > 0)
+        devisItems.push_back({ "Déchetterie", QString::number(resultat.prixDechetterie, 'f', 2) + " € H.T." });
 
-    if (prixSuppAdresse > 0)
+    if (resultat.prixSuppAdresse > 0)
     {
         QString nbAdresses{ QString::number(ui.suppAdresseSpinBox->value()) };
-        devisItems.push_back({ "Supplément adresse (" + nbAdresses + ")", QString::number(prixSuppAdresse, 'f', 2) + " € H.T." });
+        devisItems.push_back({ "Supplément adresse (" + nbAdresses + ")", QString::number(resultat.prixSuppAdresse, 'f', 2) + " € H.T." });
     }
 
     // SECTION TOTAUX
-    devisItems.push_back({ "Arrhes (30%)", QString::number(arrhes, 'f', 2) + " € T.T.C." });
-    devisItems.push_back({ "TOTAL H.T.", QString::number(prixTotalHT, 'f', 2) + " € H.T." });
+    devisItems.push_back({ "Arrhes (30%)", QString::number(resultat.arrhes, 'f', 2) + " € T.T.C." });
+    devisItems.push_back({ "TOTAL H.T.", QString::number(resultat.prixTotalHT, 'f', 2) + " € H.T." });
 
     // ═══ REMPLISSAGE DU TABLEAU ═══
     ui.devisTableWidget->setRowCount(devisItems.size());
@@ -572,4 +545,36 @@ void MainWindow::populateDevisTable(double volumeParPersonne, int nombreCamion, 
             montantItem->setBackground(QColor(240, 240, 240));
         }
     }
+}
+
+
+ResultatsDevis MainWindow::calculerResultatsDevis()
+{   
+    double volumeParPersonne{ m_tarification.calculerVolumeParPersonne(m_client.getVolume(), m_client.getPrestation()) };
+    int nombreCamion{ m_tarification.calculerNombreCamion(m_client.getVolume(), m_client.getPrestation(), m_client.getNature(), m_client.getDistance()) };
+    int nombreMO{ m_tarification.calculerNombreMO(m_client.getVolume(), m_client.getPrestation(), m_client.getNature(), nombreCamion, m_client.getAdresseDepart().m_monteMeubles || m_client.getAdresseArrivee().m_monteMeubles, m_client.getAdresseDepart().m_ascenseur || m_client.getAdresseArrivee().m_ascenseur, m_client.getDistance()) };
+
+    double coutMOTotal{ m_tarification.calculerCoutMainOeuvreTotal(nombreMO) };
+
+    double coutCamionTotal{ m_tarification.calculerCoutCamionTotal(nombreCamion) };
+
+    double coutAutStatTotal{ m_tarification.calculerPrixStationnement(m_client.getAdresseDepart().m_autStationnement, m_client.getAdresseArrivee().m_autStationnement) };
+
+    double fraisRouteTotal{ m_client.getNature() != Nature::urbain ? m_tarification.calculerCoutFraisRouteTotal(nombreCamion) : 0 };
+
+    double coutAssurance{ m_tarification.calculerCoutAssurance(m_client.getValeurAssurance(), m_client.getTypeAssurance()) };
+
+    double fraisMMeubles{ m_tarification.calculerSupplementMM(m_client.getAdresseDepart(), m_client.getAdresseArrivee()) };
+
+    double prixDechetterie{ m_client.getIsDE() ? m_tarification.getPrixDechetterie() : 0 };
+
+    double prixSuppAdresse{ ui.suppAdresseCheckBox->isChecked() ? ui.suppAdresseSpinBox->value() * m_tarification.getPrixSuppAdresse() : 0 };
+
+    double prixTotalHT{ m_tarification.calculerCoutTotalHT(m_client.getVolume(), coutAssurance, coutAutStatTotal, fraisMMeubles, prixDechetterie, fraisRouteTotal, prixSuppAdresse) };
+
+    double arrhes{ m_tarification.calculerArrhes(prixTotalHT) };
+
+
+    return ResultatsDevis{ volumeParPersonne, nombreCamion, nombreMO, coutMOTotal, coutCamionTotal, 
+        coutAutStatTotal, fraisRouteTotal, coutAssurance, fraisMMeubles, prixDechetterie, prixSuppAdresse, prixTotalHT, arrhes };
 }

@@ -36,7 +36,7 @@
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
-    <QtInstall>6.9.0_msvc2022_64</QtInstall>
+    <QtInstall>msvc2022_64</QtInstall>
     <QtModules>core;gui;widgets;network</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
@@ -98,6 +98,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="addressCompleter.cpp" />
+    <ClCompile Include="calculateurDevis.cpp" />
     <ClCompile Include="devis.cpp" />
     <ClCompile Include="IA.cpp" />
     <ClCompile Include="InventoryAnalyzer.cpp" />
@@ -111,6 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="addressCompleter.h" />
+    <ClInclude Include="calculateurDevis.h" />
     <ClInclude Include="client.h" />
     <ClInclude Include="common.h" />
     <ClInclude Include="devis.h" />
@@ -119,6 +121,7 @@
     <QtMoc Include="MainWindow.h" />
     <QtMoc Include="InventoryAnalyzer.h" />
     <QtMoc Include="streetMap.h" />
+    <ClInclude Include="resultatDevis.h" />
     <ClInclude Include="tarification.h" />
   </ItemGroup>
   <ItemGroup>

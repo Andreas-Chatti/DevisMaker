@@ -20,6 +20,8 @@
 #include "Devis.h"
 #include "InventoryAnalyzer.h"
 #include "streetMap.h"
+#include "calculateurDevis.h"
+
 
 
 class MainWindow : public QMainWindow
@@ -60,11 +62,14 @@ private:
     QNetworkAccessManager* m_networkManager{ nullptr };
     InventoryAnalyzer* m_inventoryAnalyzer;
     OpenStreetMap* m_openStreetMap;
+    CalculateurDevis* m_calculateurDevis;
 
 
     AddressCompleter* m_departCompleter{ nullptr };
     AddressCompleter* m_arriveeCompleter{ nullptr };
 
+
+    ResultatsDevis calculerResultatsDevis();
 
     void setupValidators();
 
@@ -80,9 +85,5 @@ private:
 
     void setupDevisTable();
 
-    void populateDevisTable(double volumeParPersonne, int nombreCamion, int nombreMO,
-        double coutMOTotal, double coutCamionTotal, double coutAutStatTotal,
-        double fraisRouteTotal, double coutAssurance, double fraisMMeubles,
-        double prixDechetterie, double prixSuppAdresse, double prixTotalHT,
-        double arrhes);
+    void populateDevisTable(ResultatsDevis resultat);
 };
