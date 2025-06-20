@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget* parent)
     m_departCompleter = new AddressCompleter(ui.adresseDepartLineEdit, this);
     m_arriveeCompleter = new AddressCompleter(ui.adresseLivraisonLineEdit, this);
 
-    m_calculateurDevis = new CalculateurDevis(m_client, m_tarification, this);
+    m_calculateurDevis = new CalculateurDevis(m_client, m_tarification);
 
     m_openStreetMap = new OpenStreetMap(this);
 
@@ -303,7 +303,9 @@ void MainWindow::displayingResults()
 {
     setupDevisTable();
 
-    ResultatsDevis result{ calculerResultatsDevis() };
+    bool suppAdresseEnabled{ ui.suppAdresseCheckBox->isChecked() };
+    int suppAdresseValue{ ui.suppAdresseSpinBox->value() };
+    ResultatsDevis result{ m_calculateurDevis->calculate(suppAdresseEnabled, suppAdresseValue) };
 
     populateDevisTable(result);
 }
@@ -545,36 +547,4 @@ void MainWindow::populateDevisTable(ResultatsDevis resultat)
             montantItem->setBackground(QColor(240, 240, 240));
         }
     }
-}
-
-
-ResultatsDevis MainWindow::calculerResultatsDevis()
-{   
-    double volumeParPersonne{ m_tarification.calculerVolumeParPersonne(m_client.getVolume(), m_client.getPrestation()) };
-    int nombreCamion{ m_tarification.calculerNombreCamion(m_client.getVolume(), m_client.getPrestation(), m_client.getNature(), m_client.getDistance()) };
-    int nombreMO{ m_tarification.calculerNombreMO(m_client.getVolume(), m_client.getPrestation(), m_client.getNature(), nombreCamion, m_client.getAdresseDepart().m_monteMeubles || m_client.getAdresseArrivee().m_monteMeubles, m_client.getAdresseDepart().m_ascenseur || m_client.getAdresseArrivee().m_ascenseur, m_client.getDistance()) };
-
-    double coutMOTotal{ m_tarification.calculerCoutMainOeuvreTotal(nombreMO) };
-
-    double coutCamionTotal{ m_tarification.calculerCoutCamionTotal(nombreCamion) };
-
-    double coutAutStatTotal{ m_tarification.calculerPrixStationnement(m_client.getAdresseDepart().m_autStationnement, m_client.getAdresseArrivee().m_autStationnement) };
-
-    double fraisRouteTotal{ m_client.getNature() != Nature::urbain ? m_tarification.calculerCoutFraisRouteTotal(nombreCamion) : 0 };
-
-    double coutAssurance{ m_tarification.calculerCoutAssurance(m_client.getValeurAssurance(), m_client.getTypeAssurance()) };
-
-    double fraisMMeubles{ m_tarification.calculerSupplementMM(m_client.getAdresseDepart(), m_client.getAdresseArrivee()) };
-
-    double prixDechetterie{ m_client.getIsDE() ? m_tarification.getPrixDechetterie() : 0 };
-
-    double prixSuppAdresse{ ui.suppAdresseCheckBox->isChecked() ? ui.suppAdresseSpinBox->value() * m_tarification.getPrixSuppAdresse() : 0 };
-
-    double prixTotalHT{ m_tarification.calculerCoutTotalHT(m_client.getVolume(), coutAssurance, coutAutStatTotal, fraisMMeubles, prixDechetterie, fraisRouteTotal, prixSuppAdresse) };
-
-    double arrhes{ m_tarification.calculerArrhes(prixTotalHT) };
-
-
-    return ResultatsDevis{ volumeParPersonne, nombreCamion, nombreMO, coutMOTotal, coutCamionTotal, 
-        coutAutStatTotal, fraisRouteTotal, coutAssurance, fraisMMeubles, prixDechetterie, prixSuppAdresse, prixTotalHT, arrhes };
 }

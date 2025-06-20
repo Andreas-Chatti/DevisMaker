@@ -1,6 +1,6 @@
 #include "calculateurDevis.h"
 
-ResultatsDevis CalculateurDevis::calculate() const
+ResultatsDevis CalculateurDevis::calculate(bool suppAdresseEnabled, int suppAdresseValue) const
 {
     double volumeParPersonne{ m_tarification.calculerVolumeParPersonne(m_client.getVolume(), m_client.getPrestation()) };
     int nombreCamion{ m_tarification.calculerNombreCamion(m_client.getVolume(), m_client.getPrestation(), m_client.getNature(), m_client.getDistance()) };
@@ -20,7 +20,7 @@ ResultatsDevis CalculateurDevis::calculate() const
 
     double prixDechetterie{ m_client.getIsDE() ? m_tarification.getPrixDechetterie() : 0 };
 
-    double prixSuppAdresse{ calculerPrixSuppAdresse() };
+    double prixSuppAdresse{ calculerPrixSuppAdresse(suppAdresseEnabled, suppAdresseValue) };
 
     double prixTotalHT{ m_tarification.calculerCoutTotalHT(m_client.getVolume(), coutAssurance, coutAutStatTotal, fraisMMeubles, prixDechetterie, fraisRouteTotal, prixSuppAdresse) };
 
@@ -44,7 +44,7 @@ double CalculateurDevis::calculerFraisDechetterie() const
 }
 
 
-double CalculateurDevis::calculerPrixSuppAdresse() const
+double CalculateurDevis::calculerPrixSuppAdresse(bool suppAdresseEnabled, int suppAdresseValue) const
 {
-    return  m_ui.suppAdresseCheckBox->isChecked() ? m_ui.suppAdresseSpinBox->value() * m_tarification.getPrixSuppAdresse() : 0;
+    return  suppAdresseEnabled ? suppAdresseValue * m_tarification.getPrixSuppAdresse() : 0;
 }

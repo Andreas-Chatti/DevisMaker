@@ -69,8 +69,6 @@ private:
     AddressCompleter* m_arriveeCompleter{ nullptr };
 
 
-    ResultatsDevis calculerResultatsDevis();
-
     void setupValidators();
 
     void setupSettings();
