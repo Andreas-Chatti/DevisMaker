@@ -11,15 +11,19 @@ public:
 	CalculateurDevis(const Client& client, const Tarification& tarification)
 		: m_client{ client }
 		, m_tarification{ tarification }
+		, m_lastResults{}
 	{
 	}
 
-	ResultatsDevis calculate(bool suppAdresseEnabled, int suppAdresseValue) const;
+	const ResultatsDevis& calculate(bool suppAdresseEnabled, int suppAdresseValue);
+
+	const ResultatsDevis& getLastResults() const { return m_lastResults; }
 
 private:
 
 	const Client& m_client;
 	const Tarification& m_tarification;
+	ResultatsDevis m_lastResults;
 
 
 	double calculerFraisRouteTotal(double nombreCamion) const;

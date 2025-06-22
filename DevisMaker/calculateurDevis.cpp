@@ -1,6 +1,6 @@
 #include "calculateurDevis.h"
 
-ResultatsDevis CalculateurDevis::calculate(bool suppAdresseEnabled, int suppAdresseValue) const
+const ResultatsDevis& CalculateurDevis::calculate(bool suppAdresseEnabled, int suppAdresseValue)
 {
     double volumeParPersonne{ m_tarification.calculerVolumeParPersonne(m_client.getVolume(), m_client.getPrestation()) };
     int nombreCamion{ m_tarification.calculerNombreCamion(m_client.getVolume(), m_client.getPrestation(), m_client.getNature(), m_client.getDistance()) };
@@ -26,9 +26,11 @@ ResultatsDevis CalculateurDevis::calculate(bool suppAdresseEnabled, int suppAdre
 
     double arrhes{ m_tarification.calculerArrhes(prixTotalHT) };
 
-
-    return ResultatsDevis{ volumeParPersonne, nombreCamion, nombreMO, coutMOTotal, coutCamionTotal,
+    m_lastResults = { volumeParPersonne, nombreCamion, nombreMO, coutMOTotal, coutCamionTotal,
         coutAutStatTotal, fraisRouteTotal, coutAssurance, fraisMMeubles, prixDechetterie, prixSuppAdresse, prixTotalHT, arrhes };
+
+
+    return m_lastResults;
 }
 
 

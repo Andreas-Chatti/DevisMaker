@@ -14,28 +14,28 @@ MainWindow::MainWindow(QWidget* parent)
 
     m_openStreetMap = new OpenStreetMap(this);
 
+    m_PDFGenerator = new PDFGenerator();
+
 
     // Calculer la distance après modification du champ d'adresse départ
     connect(ui.adresseDepartLineEdit, &QLineEdit::editingFinished, [this]() {
+
         QString depart{ ui.adresseDepartLineEdit->text() };
         QString arrivee{ ui.adresseLivraisonLineEdit->text() };
 
         if (!depart.isEmpty() && !arrivee.isEmpty())
-        {
             m_openStreetMap->calculateDistance(depart, arrivee);
-        }
         });
 
 
     // Calculer la distance après modification du champ d'adresse d'arrivée
     connect(ui.adresseLivraisonLineEdit, &QLineEdit::editingFinished, [this]() {
+
         QString depart{ ui.adresseDepartLineEdit->text() };
         QString arrivee{ ui.adresseLivraisonLineEdit->text() };
 
         if (!depart.isEmpty() && !arrivee.isEmpty())
-        {
             m_openStreetMap->calculateDistance(depart, arrivee);
-        }
         });
 
     connect(m_openStreetMap, &OpenStreetMap::distanceCalculated, this, &MainWindow::onDistanceCalculated);
@@ -56,24 +56,39 @@ MainWindow::MainWindow(QWidget* parent)
 
 void MainWindow::setupValidators()
 {
-    const auto doubleValidator{ new QDoubleValidator(0, 500, 2, this) };
+    const auto doubleRegexValidator{ new QRegularExpressionValidator(QRegularExpression("^\\d{0,6}(\\.\\d{0,2})?$"), this) };
+
+    QList<QLineEdit*> doubleFields{
+        ui.volumelineEdit,
+        ui.prixCamionLineEdit,
+        ui.coutKmLineEdit,
+        ui.prixEmballageLineEdit,
+        ui.prixLocMatLineEdit,
+        ui.coutFraisRouteLineEdit,
+        ui.moLineEdit,
+        ui.fraisStatLineEdit,
+        ui.MMeublesLineEdit,
+        ui.deLineEdit,
+        ui.suppAdresseLineEdit,
+    };
+
+    for (auto* field : doubleFields)
+    {
+        field->setValidator(doubleRegexValidator);
+    }
+
 
     const auto intValidator{ new QIntValidator(0, 45000, this) };
 
-    // Appliquer aux champs qui demandent des nombres décimaux
-    ui.distanceLineEdit->setValidator(intValidator);
-    ui.volumelineEdit->setValidator(doubleValidator);
-    ui.valeurAssuranceLineEdit->setValidator(intValidator);
-    ui.prixCamionLineEdit->setValidator(doubleValidator);
-    ui.coutKmLineEdit->setValidator(doubleValidator);
-    ui.prixEmballageLineEdit->setValidator(doubleValidator);
-    ui.prixLocMatLineEdit->setValidator(doubleValidator);
-    ui.coutFraisRouteLineEdit->setValidator(doubleValidator);
-    ui.moLineEdit->setValidator(doubleValidator);
-    ui.fraisStatLineEdit->setValidator(doubleValidator);
-    ui.MMeublesLineEdit->setValidator(doubleValidator);
-    ui.deLineEdit->setValidator(doubleValidator);
-    ui.suppAdresseLineEdit->setValidator(doubleValidator);
+    QList<QLineEdit*> intFields{
+        ui.distanceLineEdit,
+        ui.valeurAssuranceLineEdit,
+    };
+
+    for (auto* field : intFields)
+    {
+        field->setValidator(intValidator);
+    }
 }
 
 
@@ -120,6 +135,10 @@ void MainWindow::on_generateDevisButton_clicked()
 
 
     displayingResults();
+
+
+    if (!ui.generatePdfButton->isEnabled())
+        ui.generatePdfButton->setEnabled(true);
 
 
     m_tarification.saveSettings();
@@ -191,6 +210,10 @@ bool MainWindow::areAllFieldCompleted()
 
 void MainWindow::updateClientVariables()
 {
+    // Nom, prénom du client
+    m_client.setNom(ui.nomLineEdit->text());
+    m_client.setPrenom(ui.prenomLineEdit->text());
+
     // Adresse Chargement
     std::string rueChargement{ ui.adresseDepartLineEdit->text().toStdString() };
     int etageChargement{ ui.etageDepartSpinBox->value() };
@@ -547,4 +570,27 @@ void MainWindow::populateDevisTable(ResultatsDevis resultat)
             montantItem->setBackground(QColor(240, 240, 240));
         }
     }
+}
+
+
+void MainWindow::on_generatePdfButton_clicked()
+{
+    const auto& results{ m_calculateurDevis->getLastResults() };
+
+    // ✅ DEMANDER à l'utilisateur où sauvegarder
+    QString filePath{ QFileDialog::getSaveFileName(
+        this,
+        "Sauvegarder le devis PDF",
+        QString("DevisChattiDemenagement_%1_%2.pdf")
+            .arg(m_client.getNom())
+            .arg(QDate::currentDate().toString("yyyyMMdd")),
+        "Fichiers PDF (*.pdf)"
+    ) };
+
+    if (filePath.isEmpty()) {
+        return;  // Utilisateur a annulé
+    }
+
+    // ✅ PASSER le chemin choisi
+    m_PDFGenerator->generateDevisPDF(m_client, results, filePath);
 }

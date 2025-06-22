@@ -1,4 +1,5 @@
 #pragma once
+#include <QString>
 #include <string>
 #include "common.h"
 
@@ -10,7 +11,7 @@ public:
     Client() = default;
 
    
-    std::string getNom() const { return m_nom; }
+    const QString& getNom() const { return m_nom; }
     const Adresse& getAdresseDepart() const { return m_depart; }
     const Adresse& getAdresseArrivee() const { return m_livraison; }
     const Prestation& getPrestation() const { return m_prestation; }
@@ -22,8 +23,8 @@ public:
     bool getIsDE() const { return m_isDE; }
 
  
-    void setNom(const std::string& nom) { m_nom = nom; }
-    void setPrenom(const std::string& prenom) { m_prenom = prenom; }
+    void setNom(const QString& nom) { m_nom = nom; }
+    void setPrenom(const QString& prenom) { m_prenom = prenom; }
     void setAdresseDepart(const Adresse& adresse) { m_depart = adresse; }
     void setAdresseArrivee(const Adresse& adresse) { m_livraison = adresse; }
     void setDistance(double distance) { m_distance = distance; }
@@ -37,8 +38,8 @@ public:
 
 private:
 
-    std::string m_nom;
-    std::string m_prenom;
+    QString m_nom;
+    QString m_prenom;
     Adresse m_depart;
     Adresse m_livraison;
     Prestation m_prestation;

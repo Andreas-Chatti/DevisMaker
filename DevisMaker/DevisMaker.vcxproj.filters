@@ -58,6 +58,12 @@
     <ClCompile Include="streetMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="calculateurDevis.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pdfGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="client.h">
@@ -76,6 +82,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="calculateurDevis.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resultatDevis.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pdfGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

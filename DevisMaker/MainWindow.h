@@ -21,6 +21,7 @@
 #include "InventoryAnalyzer.h"
 #include "streetMap.h"
 #include "calculateurDevis.h"
+#include "pdfGenerator.h"
 
 
 
@@ -37,6 +38,8 @@ public:
 private slots:
 
     void on_generateDevisButton_clicked();
+
+    void on_generatePdfButton_clicked();
 
     void on_volumelineEdit_textChanged(const QString& text);
 
@@ -63,6 +66,7 @@ private:
     InventoryAnalyzer* m_inventoryAnalyzer;
     OpenStreetMap* m_openStreetMap;
     CalculateurDevis* m_calculateurDevis;
+    PDFGenerator* m_PDFGenerator;
 
 
     AddressCompleter* m_departCompleter{ nullptr };

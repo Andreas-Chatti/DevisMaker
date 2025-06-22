@@ -79,7 +79,7 @@ INTERDICTION ABSOLUE d'expressions mathématiques dans les valeurs !
 Format exact:
 {
   "items": [
-    {"name": "6 valises", "volume": 1.8}
+    {"name": "6 valises", "volume": 1.8 }
   ],
   "totalVolume": 1.8
 }

@@ -36,13 +36,13 @@
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
-    <QtInstall>6.9.0_msvc2022_64</QtInstall>
-    <QtModules>core;gui;widgets;network</QtModules>
+    <QtInstall>msvc2022_64</QtInstall>
+    <QtModules>core;gui;widgets;network;printsupport</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
     <QtInstall>msvc2022_64</QtInstall>
-    <QtModules>core;gui;widgets</QtModules>
+    <QtModules>core;gui;widgets;network;printsupport</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>
   <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
@@ -103,6 +103,7 @@
     <ClCompile Include="IA.cpp" />
     <ClCompile Include="InventoryAnalyzer.cpp" />
     <ClCompile Include="MainWindow.cpp" />
+    <ClCompile Include="pdfGenerator.cpp" />
     <ClCompile Include="streetMap.cpp" />
     <ClCompile Include="tarification.cpp" />
     <QtRcc Include="DevisMaker.qrc" />
@@ -121,6 +122,7 @@
     <QtMoc Include="MainWindow.h" />
     <QtMoc Include="InventoryAnalyzer.h" />
     <QtMoc Include="streetMap.h" />
+    <ClInclude Include="pdfGenerator.h" />
     <ClInclude Include="resultatDevis.h" />
     <ClInclude Include="tarification.h" />
   </ItemGroup>
