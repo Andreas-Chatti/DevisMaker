@@ -577,7 +577,7 @@ void MainWindow::on_generatePdfButton_clicked()
 {
     const auto& results{ m_calculateurDevis->getLastResults() };
 
-    // ✅ DEMANDER à l'utilisateur où sauvegarder
+    // DEMANDER à l'utilisateur où sauvegarder
     QString filePath{ QFileDialog::getSaveFileName(
         this,
         "Sauvegarder le devis PDF",
@@ -587,10 +587,9 @@ void MainWindow::on_generatePdfButton_clicked()
         "Fichiers PDF (*.pdf)"
     ) };
 
-    if (filePath.isEmpty()) {
+    if (filePath.isEmpty())
         return;  // Utilisateur a annulé
-    }
 
-    // ✅ PASSER le chemin choisi
+    // PASSER le chemin choisi
     m_PDFGenerator->generateDevisPDF(m_client, results, filePath);
 }

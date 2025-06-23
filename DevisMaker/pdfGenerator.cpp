@@ -3,15 +3,15 @@
 
 bool PDFGenerator::generateDevisPDF(const Client& client, const ResultatsDevis& resultats, const QString& outputPath) const
 {
-    // ✅ Déterminer le chemin de sortie
+    // Déterminer le chemin de sortie
     QString finalPath{ outputPath };
     if (finalPath.isEmpty()) 
         finalPath = getDefaultOutputPath();
 
-    // ✅ Créer le contenu HTML
+    // Créer le contenu HTML
     QString htmlContent{ createHTMLTemplate(client, resultats) };
 
-    // ✅ Créer le document PDF
+    // Créer le document PDF
     QTextDocument document;
     document.setHtml(htmlContent);
 
@@ -20,7 +20,7 @@ bool PDFGenerator::generateDevisPDF(const Client& client, const ResultatsDevis& 
     printer.setOutputFormat(QPrinter::PdfFormat);
     printer.setOutputFileName(finalPath);
     printer.setPageSize(QPageSize::A4);
-    printer.setPageMargins(QMarginsF(15, 15, 15, 15), QPageLayout::Millimeter);
+    printer.setPageMargins(QMarginsF(5, 2, 5, 5), QPageLayout::Millimeter);
 
     // ✅ Générer le PDF
     document.print(&printer);
@@ -40,356 +40,396 @@ QString PDFGenerator::createHTMLTemplate(const Client& client, const ResultatsDe
         body { 
             font-family: Arial, sans-serif; 
             margin: 0; 
-            padding: 15px;
+            padding: 5px;
             color: #000;
-            font-size: 11px;
+            font-size: 8px;
+            line-height: 1.0;
         }
         
-        .header {
+        /* En-tête principal */
+        .main-header {
             display: table;
             width: 100%;
-            margin-bottom: 20px;
-        }
-        
-        .logo-section {
-            display: table-cell;
-            width: 40%;
-            vertical-align: top;
-        }
-        
-        .company-info {
-            display: table-cell;
-            width: 60%;
-            text-align: right;
-            vertical-align: top;
-            font-size: 10px;
-        }
-        
-        .company-name {
-            font-size: 24px;
-            font-weight: bold;
-            color: #1a4c96;
             margin-bottom: 5px;
         }
         
-        .company-subtitle {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 15px;
-        }
-        
-        .devis-info {
-            border: 1px solid #000;
-            padding: 8px;
-            margin: 20px 0;
-            text-align: center;
-            background-color: #f0f0f0;
-        }
-        
-        .devis-details {
-            display: table;
-            width: 100%;
-            margin-bottom: 15px;
-        }
-        
-        .devis-left, .devis-right {
+        .left-section {
             display: table-cell;
-            width: 50%;
-            padding: 5px;
+            width: 60%;
+            vertical-align: top;
+            padding-right: 15px;
         }
         
-        .client-table {
+        .right-section {
+            display: table-cell;
+            width: 40%;
+            vertical-align: top;
+            text-align: right;
+        }
+        
+        .company-logo {
+            font-size: 16px;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 1px;
+        }
+        
+        .company-info {
+            font-size: 7px;
+            line-height: 1.1;
+        }
+        
+        .client-header-info {
+            font-size: 7px;
+            line-height: 1.2;
+        }
+        
+        /* Section TVA */
+        .tva-section {
+            text-align: center;
+            font-size: 7px;
+            font-weight: bold;
+            margin: 3px 0;
+        }
+        
+        /* Barre client */
+        .client-bar {
+            background-color: #d3d3d3;
+            padding: 2px;
+            text-align: center;
+            font-size: 8px;
+            font-weight: bold;
+            border: 1px solid #000;
+            margin: 3px 0;
+        }
+        
+        /* Tableaux séparés mais cohérents */
+        .table-section {
             width: 100%;
             border-collapse: collapse;
-            margin: 15px 0;
-            border: 1px solid #000;
+            border: 2px solid #000;
+            margin-bottom: 3px;
         }
         
-        .client-table th {
-            background-color: #e0e0e0;
+        .table-section td, .table-section th {
             border: 1px solid #000;
-            padding: 8px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 10px;
-        }
-        
-        .client-table td {
-            border: 1px solid #000;
-            padding: 8px;
-            font-size: 10px;
+            padding: 2px;
+            font-size: 7px;
             vertical-align: top;
         }
         
-        .characteristics-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 15px 0;
-            border: 1px solid #000;
-        }
-        
-        .characteristics-table td {
-            border: 1px solid #000;
-            padding: 5px;
-            font-size: 10px;
+        .table-section th {
+            background-color: #e8e8e8;
             text-align: center;
+            font-weight: bold;
         }
         
+        /* Tableau caractéristiques */
         .char-header {
-            background-color: #e0e0e0;
-            font-weight: bold;
-        }
-        
-        .pricing-section {
-            margin-top: 20px;
-        }
-        
-        .pricing-title {
+            background-color: #e8e8e8;
             text-align: center;
             font-weight: bold;
-            background-color: #e0e0e0;
-            padding: 8px;
-            border: 1px solid #000;
-            margin-bottom: 0;
         }
         
-        .pricing-table {
+        .prestation-yellow {
+            background-color: #ffff00 !important;
+        }
+        
+        .row-label {
+            background-color: #e8e8e8;
+            font-weight: bold;
+            text-align: center;
+            width: 15%;
+        }
+        
+        /* Tableau accès compact */
+        .access-subtable {
+            width: 100%;
+            font-size: 6px;
+            border: none;
+        }
+        
+        .access-subtable td {
+            border: none;
+            padding: 0px 1px;
+            text-align: left;
+        }
+        
+        /* Section prix */
+        .price-header {
+            background-color: #e8e8e8;
+            border: 2px solid #000;
+            text-align: center;
+            padding: 2px;
+            font-weight: bold;
+            font-size: 8px;
+            margin-top: 3px;
+        }
+        
+        .price-table {
             width: 100%;
             border-collapse: collapse;
-            border: 1px solid #000;
+            border: 2px solid #000;
+            border-top: none;
         }
         
-        .pricing-table td {
+        .price-table td {
             border: 1px solid #000;
-            padding: 6px;
-            font-size: 10px;
+            padding: 1px 3px;
+            font-size: 7px;
+            vertical-align: top;
         }
         
         .price-amount {
+            width: 80px;
             text-align: right;
             font-weight: bold;
         }
         
-        .total-row {
-            background-color: #e0e0e0;
+        .total-ht {
+            background-color: #e8e8e8;
             font-weight: bold;
-            font-size: 11px;
         }
         
-        .conditions {
-            margin-top: 20px;
-            font-size: 9px;
-            text-align: justify;
-            line-height: 1.3;
+        .total-ttc {
+            background-color: #000;
+            color: #fff;
+            font-weight: bold;
         }
         
-        .signature-section {
-            margin-top: 30px;
-            display: table;
+        /* Section suppléments */
+        .supplements {
+            margin-top: 3px;
+            font-size: 6px;
+        }
+        
+        .supplements-table {
             width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #000;
         }
         
-        .signature-left, .signature-right {
-            display: table-cell;
-            width: 50%;
+        .supplements-table td {
+            border: 1px solid #000;
+            padding: 1px 2px;
+            font-size: 6px;
             text-align: center;
-            font-size: 10px;
-            vertical-align: top;
         }
         
+        /* Section légale */
+        .legal-text {
+            margin-top: 3px;
+            font-size: 6px;
+            line-height: 1.1;
+        }
+        
+        .signature-area {
+            margin-top: 3px;
+            text-align: center;
+            font-size: 7px;
+        }
+        
+        /* Footer */
         .footer {
-            margin-top: 30px;
+            margin-top: 3px;
             text-align: center;
-            font-size: 9px;
+            font-size: 6px;
             border-top: 1px solid #000;
-            padding-top: 10px;
-        }
-        
-        .prestation-highlight {
-            background-color: #ffff00;
-            font-weight: bold;
+            padding-top: 2px;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="logo-section">
-            <div class="company-name">DEVIS MAKER</div>
-            <div class="company-subtitle">Déménagement</div>
-            <div style="font-size: 10px; margin-top: 10px;">
-                <strong>DEVIS MAKER</strong><br>
-                2 Rue de l'Innovation<br>
-                75000 PARIS<br>
-                Tél: 01 23 45 67 89<br>
-                Email: contact@devismaker.com
+    <!-- En-tête principal -->
+    <div class="main-header">
+        <div class="left-section">
+            <div class="company-logo">CHATTI DEMENAGEMENT</div>
+            <div class="company-info">
+                2, Rue Jean Cocteau<br>
+                91460 MARCOUSSIS<br>
+                Tél: 01 69 75 18 22<br>
+                E-mail: chattidemenagement@gmail.com
             </div>
         </div>
-        <div class="company-info">
-            Client n°: %CLIENT_NUMBER%<br>
-            Devis n°: %DEVIS_NUMBER%<br>
-            Date: %DATE%<br>
-            Validité: %VALIDITY_DATE%
-        </div>
-    </div>
-
-    <div class="devis-info">
-        <div class="devis-details">
-            <div class="devis-left">
-                <strong>Client:</strong> %CLIENT_NAME%<br>
-                <strong>Client n°:</strong> %CLIENT_NUMBER%
-            </div>
-            <div class="devis-right">
-                <strong>Devis n°:</strong> %DEVIS_NUMBER%<br>
-                <strong>Validité:</strong> %VALIDITY_DATE%
+        <div class="right-section">
+            <div class="client-header-info">
+                Client n° %CLIENT_NUMBER%<br>
+                Devis n° %DEVIS_NUMBER%<br>
+                Date %DATE%<br>
+                Validité %VALIDITY_DATE%<br><br>
+                Mr %CLIENT_NAME%<br>
+                %ADRESSE_DEPART%
             </div>
         </div>
     </div>
 
-    <table class="client-table">
-        <thead>
-            <tr>
-                <th style="width: 15%;">Période</th>
-                <th style="width: 42.5%;">Chargement %CHARGE_DATE%</th>
-                <th style="width: 42.5%;">Livraison %DELIVERY_DATE%</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td style="font-weight: bold;">Adresse</td>
-                <td>%ADRESSE_DEPART%</td>
-                <td>%ADRESSE_ARRIVEE%</td>
-            </tr>
-            <tr>
-                <td style="font-weight: bold;">Téléphone</td>
-                <td>%PHONE_DEPART%</td>
-                <td>%PHONE_ARRIVEE%</td>
-            </tr>
-            <tr>
-                <td style="font-weight: bold;">Accès</td>
-                <td>
-                    Escalier: %ESCALIER_DEPART%<br>
-                    Passage: %PASSAGE_DEPART%<br>
-                    Stationnement: %STATIONNEMENT_DEPART%<br>
-                    Etage: %ETAGE_DEPART%
-                </td>
-                <td>
-                    Escalier: %ESCALIER_ARRIVEE%<br>
-                    Passage: %PASSAGE_ARRIVEE%<br>
-                    Stationnement: %STATIONNEMENT_ARRIVEE%<br>
-                    Etage: %ETAGE_ARRIVEE%
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <!-- Section TVA -->
+    <div class="tva-section">
+        CHATTI DEMENAGEMENT - TVA intracommunautaire: FR68390329894<br>
+        SIRET: 39032989400054 - APE: 4942Z - RCS: Evry A 390 329 894 000 54
+    </div>
 
-    <table class="characteristics-table">
+    <!-- Barre client -->
+    <div class="client-bar">
+        Client %CLIENT_NAME% &nbsp;&nbsp; Client n° %CLIENT_NUMBER% &nbsp;&nbsp; Devis N° %DEVIS_NUMBER% &nbsp;&nbsp; Validité %VALIDITY_DATE%
+    </div>
+
+    <!-- Tableau caractéristiques -->
+    <table class="table-section">
         <tr class="char-header">
-            <td>Volume</td>
-            <td>Distance</td>
-            <td>Nature</td>
-            <td>Prestation</td>
+            <td style="width: 15%;">Volume</td>
+            <td style="width: 15%;">Distance</td>
+            <td style="width: 15%;">Nature</td>
+            <td style="width: 55%;">Prestation</td>
         </tr>
         <tr>
             <td>%VOLUME% m3</td>
             <td>%DISTANCE% km</td>
             <td>%NATURE%</td>
-            <td class="prestation-highlight">%PRESTATION%</td>
+            <td class="prestation-yellow">%PRESTATION%</td>
         </tr>
     </table>
 
-    <div class="pricing-section">
-        <div class="pricing-title">Détail du prix</div>
-        <table class="pricing-table">
-            <tr>
-                <td>Camion de déménagement et personnel qualifié 4h minimum</td>
-                <td class="price-amount">%COUT_MO% €</td>
-            </tr>
-            <tr>
-                <td>Déplacement</td>
-                <td class="price-amount">%COUT_CAMION% €</td>
-            </tr>
-            <tr>
-                <td>Frais d'emballage (uniquement déménagement Professionnel)</td>
-                <td class="price-amount">%COUT_EMBALLAGE% €</td>
-            </tr>
-            %FRAIS_ROUTE_ROW%
-            %SUPPLEMENTS_ROWS%
-            <tr>
-                <td>Assurance Générale responsabilité Contractuelle</td>
-                <td class="price-amount">%COUT_ASSURANCE% €</td>
-            </tr>
-            <tr class="total-row">
-                <td><strong>PRIX T.T.C EN EUROS (valable jusqu'au %VALIDITY_DATE%)</strong></td>
-                <td class="price-amount"><strong>%TOTAL_TTC% €</strong></td>
-            </tr>
-            <tr>
-                <td>30% d'arrhes à la commande. Solde à la livraison</td>
-                <td class="price-amount">%ARRHES% €</td>
-            </tr>
+    <!-- Tableau principal -->
+    <table class="table-section">
+        <tr>
+            <th style="width: 15%;"></th>
+            <th style="width: 42.5%;">Chargement</th>
+            <th style="width: 42.5%;">Livraison</th>
+        </tr>
+        <tr>
+            <td class="row-label">Période</td>
+            <td>%PERIODE_CHARGEMENT%</td>
+            <td>%PERIODE_LIVRAISON%</td>
+        </tr>
+        <tr>
+            <td class="row-label">Adresse</td>
+            <td>%ADRESSE_DEPART%<br>FRANCE</td>
+            <td>%ADRESSE_ARRIVEE%<br>FRANCE</td>
+        </tr>
+        <tr>
+            <td class="row-label">Téléphone</td>
+            <td>%PHONE_DEPART%</td>
+            <td>%PHONE_ARRIVEE%</td>
+        </tr>
+        <tr>
+            <td class="row-label">Accès</td>
+            <td>
+                <table class="access-subtable">
+                    <tr><td><strong>Étage</strong></td><td><strong>Digicode</strong></td></tr>
+                    <tr><td>Ascenseur %ASCENSEUR_DEPART%</td><td>Monte-meubles %MONTE_MEUBLES_DEPART%</td></tr>
+                    <tr><td>Passage fenêtre %PASSAGE_FENETRE_DEPART%</td><td>Transbordement %TRANSBORDEMENT_DEPART%</td></tr>
+                    <tr><td>Portage %PORTAGE_DEPART%</td><td>Stationnement %STATIONNEMENT_DEPART%</td></tr>
+                    <tr><td colspan="2">Stationnement facile</td></tr>
+                </table>
+            </td>
+            <td>
+                <table class="access-subtable">
+                    <tr><td><strong>Étage</strong></td><td><strong>Digicode</strong></td></tr>
+                    <tr><td>Ascenseur %ASCENSEUR_ARRIVEE%</td><td>Monte-meubles %MONTE_MEUBLES_ARRIVEE%</td></tr>
+                    <tr><td>Passage fenêtre %PASSAGE_FENETRE_ARRIVEE%</td><td>Transbordement %TRANSBORDEMENT_ARRIVEE%</td></tr>
+                    <tr><td>Portage %PORTAGE_ARRIVEE%</td><td>Stationnement %STATIONNEMENT_ARRIVEE%</td></tr>
+                    <tr><td colspan="2">Stationnement facile</td></tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Section prix -->
+    <div class="price-header">Détail du prix</div>
+    <table class="price-table">
+        <tr><td>Camion en circuit organisé (licence intérieur et communautaire)</td><td class="price-amount">%COUT_CAMION% €</td></tr>
+        <tr><td>Kilomètre</td><td class="price-amount">%COUT_KILOMETRE% €</td></tr>
+        <tr><td>Petit matériel</td><td class="price-amount">%PETIT_MATERIEL% €</td></tr>
+        <tr><td>Main d'œuvre qualifié déménageurs Professionnels</td><td class="price-amount">%MAIN_OEUVRE% €</td></tr>
+        <tr><td>Emballage perdu cartons renforcés et adhésifs</td><td class="price-amount">%EMBALLAGE% €</td></tr>
+        <tr><td>Remise Groupage selon disponibilité</td><td class="price-amount">%REMISE_GROUPAGE% €</td></tr>
+        <tr><td>Pack Demande Autorisation stationnement (sur demande)</td><td class="price-amount">%PACK_AUTORISATION% €</td></tr>
+        <tr><td>Matériel Balisage stationnement-Panneau déménagement</td><td class="price-amount">%MATERIEL_BALISAGE% €</td></tr>
+        <tr><td>Assurance Garantie responsabilité Contractuelle</td><td class="price-amount">%ASSURANCE% €</td></tr>
+        <tr><td>Valeur globale 30 000.00 € et 380,00 euros maxi par objet non listé</td><td class="price-amount"></td></tr>
+        <tr class="total-ht"><td><strong>Total H.T.</strong></td><td class="price-amount"><strong>%TOTAL_HT% €</strong></td></tr>
+        <tr><td>TVA de 20.00%</td><td class="price-amount">%TVA% €</td></tr>
+        <tr class="total-ttc"><td><strong>PRIX TTC EN EUROS (valable jusqu'au %VALIDITY_DATE%)</strong></td><td class="price-amount"><strong>%TOTAL_TTC% €</strong></td></tr>
+        <tr><td>30% d'arrhes à la commande, Solde à la livraison</td><td>Arrhes</td></tr>
+        <tr><td></td><td>Solde</td></tr>
+        <tr><td></td><td class="price-amount">%ARRHES% €</td></tr>
+        <tr><td></td><td class="price-amount">%SOLDE% €</td></tr>
+    </table>
+
+    <!-- Section suppléments -->
+    <div class="supplements">
+        <div style="font-style: italic; margin-bottom: 1px;">En cas de difficultés non signalées, suppléments éventuels :</div>
+        <table class="supplements-table">
+            <tr><td><strong>Monte meubles (1/2 journée)</strong></td><td><strong>1 personne supplémentaire (1/2 journée)</strong></td><td><strong>Véhicule léger (1/2 journée)</strong></td></tr>
+            <tr><td>298.80 € TTC</td><td>270.00 € TTC</td><td>120.00 € TTC</td></tr>
         </table>
     </div>
 
-    <div class="signature-section">
-        <div class="signature-left">
-            Nous espérons l'acceptation<br>
-            1 personne encadrement d'équipe<br>
-            Bon pour accord et pour l'avance
-        </div>
-        <div class="signature-right">
-            Prenomsignature client<br>
-            Cachet et 2 signatures<br>
-            Date et L.B.P
+    <!-- Section légale -->
+    <div class="legal-text">
+        <p style="margin: 2px 0;">le prix est définitif (article 1er de l'arrêté du 27 avril 2010) sauf cas préciser dans l'article 6 des CGV jointes au devis.</p>
+        
+        <div style="font-weight: bold; margin: 2px 0;">Emission CO2 selon art L1431-3 Code Transport: %EMISSION_CO2% kg</div>
+        
+        <p style="margin: 2px 0;">En accord avec les termes de ce présent devis et de nos conditions générales de vente ci-jointes, nous vous prions de bien vouloir nous retourner ces documents signés et accompagnés du chèque d'arrhes correspondant à la prestation choisie afin de confirmer votre déménagement. Le solde sera à régler à la livraison de votre mobilier.</p>
+        
+        <div class="signature-area">
+            <strong>Fait à MARCOUSSIS, le %DATE%</strong><br>
+            <strong>Signature du client:</strong>
         </div>
     </div>
 
-    <div class="conditions">
-        En cas de débit, nous nous réservons le droit de s'y faire part par tous moyens 
-        que nous jugerons opportune, tous frais de recouvrement à la charge du débiteur. 
-        Les frais de recouvrement s'élèvent forfaitairement à l'exécution de livres commande 
-        et accompagnée du règlement d'arrhes correspondant à la commande. 
-        Le solde étant exigible à la livraison soit la remise des documents sous H.
-        <br><br>
-        <strong>Fait à PARIS/BANLIEUE, le %DATE%</strong>
-    </div>
-
+    <!-- Footer -->
     <div class="footer">
-        <strong>DEVIS MAKER DÉMÉNAGEMENT - Tél déménagement: 01 23 45 67 89</strong><br>
-        SIRET: 12345678901234 - APE: 4942Z - RCS: Paris - TVA: FR12345678901
+        <strong>CHATTI DEMENAGEMENT - TVA intracommunautaire: FR68390329894</strong><br>
+        <strong>SIRET: 39032989400054 - APE: 4942Z - RCS: Evry A 390 329 894 000 54</strong>
     </div>
 </body>
 </html>
     )")
-        .replace("%CLIENT_NUMBER%", "001")
-        .replace("%DEVIS_NUMBER%", QString::number(QDateTime::currentSecsSinceEpoch() % 100000))
+        .replace("%CLIENT_NUMBER%", "951")
+        .replace("%DEVIS_NUMBER%", QString::number(QDateTime::currentSecsSinceEpoch() % 10000000))
         .replace("%DATE%", getCurrentDate())
-        .replace("%VALIDITY_DATE%", QDate::currentDate().addDays(30).toString("dd/MM/yyyy"))
+        .replace("%VALIDITY_DATE%", QDate::currentDate().addDays(60).toString("dd/MM/yyyy"))
         .replace("%CLIENT_NAME%", client.getNom())
-        .replace("%CHARGE_DATE%", getCurrentDate())
-        .replace("%DELIVERY_DATE%", getCurrentDate())
         .replace("%ADRESSE_DEPART%", QString::fromStdString(client.getAdresseDepart().m_rue))
         .replace("%ADRESSE_ARRIVEE%", QString::fromStdString(client.getAdresseArrivee().m_rue))
-        .replace("%PHONE_DEPART%", "Non renseigné")
+        .replace("%PHONE_DEPART%", "01 69 75 18 22")
         .replace("%PHONE_ARRIVEE%", "Non renseigné")
-        .replace("%ESCALIER_DEPART%", client.getAdresseDepart().m_ascenseur ? "Ascenseur" : "Non")
-        .replace("%ESCALIER_ARRIVEE%", client.getAdresseArrivee().m_ascenseur ? "Ascenseur" : "Non")
-        .replace("%PASSAGE_DEPART%", "Normal")
-        .replace("%PASSAGE_ARRIVEE%", "Normal")
-        .replace("%STATIONNEMENT_DEPART%", client.getAdresseDepart().m_autStationnement ? "Facile" : "Normal")
-        .replace("%STATIONNEMENT_ARRIVEE%", client.getAdresseArrivee().m_autStationnement ? "Facile" : "Normal")
-        .replace("%ETAGE_DEPART%", QString::number(client.getAdresseDepart().m_etage))
-        .replace("%ETAGE_ARRIVEE%", QString::number(client.getAdresseArrivee().m_etage))
-        .replace("%VOLUME%", QString::number(client.getVolume(), 'f', 2))
+        .replace("%PERIODE_CHARGEMENT%", QDate::currentDate().toString("MMMM yyyy"))
+        .replace("%PERIODE_LIVRAISON%", QDate::currentDate().toString("MMMM yyyy"))
+        .replace("%ASCENSEUR_DEPART%", client.getAdresseDepart().m_ascenseur ? "Oui" : "Non")
+        .replace("%ASCENSEUR_ARRIVEE%", client.getAdresseArrivee().m_ascenseur ? "Oui" : "Non")
+        .replace("%MONTE_MEUBLES_DEPART%", client.getAdresseDepart().m_monteMeubles ? "Oui" : "Non")
+        .replace("%MONTE_MEUBLES_ARRIVEE%", client.getAdresseArrivee().m_monteMeubles ? "Oui" : "Non")
+        .replace("%PASSAGE_FENETRE_DEPART%", "Non")
+        .replace("%PASSAGE_FENETRE_ARRIVEE%", "Non")
+        .replace("%TRANSBORDEMENT_DEPART%", "Non")
+        .replace("%TRANSBORDEMENT_ARRIVEE%", "Non")
+        .replace("%PORTAGE_DEPART%", "Non")
+        .replace("%PORTAGE_ARRIVEE%", "Non")
+        .replace("%STATIONNEMENT_DEPART%", "Non")
+        .replace("%STATIONNEMENT_ARRIVEE%", "Non")
+        .replace("%VOLUME%", QString::number(client.getVolume(), 'f', 0))
         .replace("%DISTANCE%", QString::number(client.getDistance(), 'f', 0))
         .replace("%NATURE%", getNatureString(client.getNature()))
         .replace("%PRESTATION%", getPrestationString(client.getPrestation()))
-        .replace("%COUT_MO%", QString::number(resultats.coutMainOeuvre, 'f', 0))
-        .replace("%COUT_CAMION%", QString::number(resultats.coutCamion, 'f', 0))
-        .replace("%COUT_EMBALLAGE%", "0")  // À adapter selon vos besoins
-        .replace("%COUT_ASSURANCE%", QString::number(resultats.coutAssurance, 'f', 0))
-        .replace("%TOTAL_TTC%", QString::number(resultats.prixTotalHT * 1.20, 'f', 0))  // +20% TVA
-        .replace("%ARRHES%", QString::number(resultats.arrhes, 'f', 0))
-        .replace("%FRAIS_ROUTE_ROW%", createFraisRouteRow(resultats))
-        .replace("%SUPPLEMENTS_ROWS%", createSupplementsRows(resultats));
+        .replace("%COUT_CAMION%", QString::number(resultats.coutCamion, 'f', 2))
+        .replace("%COUT_KILOMETRE%", QString::number(resultats.fraisRoute, 'f', 2))
+        .replace("%PETIT_MATERIEL%", "6.00")
+        .replace("%MAIN_OEUVRE%", QString::number(resultats.coutMainOeuvre, 'f', 2))
+        .replace("%EMBALLAGE%", "30.00")
+        //.replace("%REMISE_GROUPAGE%", QString::number(resultats.remise > 0 ? -resultats.remise : 0, 'f', 2))
+        .replace("%PACK_AUTORISATION%", "1.00")
+        .replace("%MATERIEL_BALISAGE%", "0.00")
+        .replace("%ASSURANCE%", QString::number(resultats.coutAssurance, 'f', 2))
+        .replace("%TOTAL_HT%", QString::number(resultats.prixTotalHT, 'f', 2))
+        .replace("%TVA%", QString::number(resultats.prixTotalHT * 0.20, 'f', 2))
+        .replace("%TOTAL_TTC%", QString::number(resultats.prixTotalHT * 1.20, 'f', 2))
+        .replace("%ARRHES%", QString::number(resultats.arrhes, 'f', 2))
+        .replace("%SOLDE%", QString::number((resultats.prixTotalHT * 1.20) - resultats.arrhes, 'f', 2))
+        .replace("%EMISSION_CO2%", QString::number(client.getDistance() * 0.42, 'f', 1));
 }
 
 
