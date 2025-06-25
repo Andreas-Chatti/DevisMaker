@@ -581,8 +581,9 @@ void MainWindow::on_generatePdfButton_clicked()
     QString filePath{ QFileDialog::getSaveFileName(
         this,
         "Sauvegarder le devis PDF",
-        QString("DevisChattiDemenagement_%1_%2.pdf")
+        QString("DevisChatti_%1_%2_%3.pdf")
             .arg(m_client.getNom())
+            .arg(m_PDFGenerator->getPrestationString(m_client.getPrestation()))
             .arg(QDate::currentDate().toString("yyyyMMdd")),
         "Fichiers PDF (*.pdf)"
     ) };

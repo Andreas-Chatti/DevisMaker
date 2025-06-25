@@ -21,6 +21,9 @@ public:
 
     bool generateDevisPDF(const Client& client, const ResultatsDevis& resultats, const QString& outputPath = QString()) const;
 
+    QString getNatureString(const Nature& nature) const;
+    QString getPrestationString(const Prestation& prestation) const;
+
 private:
 
     QString createHTMLTemplate(const Client& client, const ResultatsDevis& resultats) const;
@@ -28,7 +31,4 @@ private:
     QString formatCurrency(double value, const QString& suffix = " € H.T.") const;
     QString getCurrentDate() const;
     QString createSupplementsRows(const ResultatsDevis& resultats) const;
-    QString getNatureString(Nature nature) const;
-    QString getPrestationString(Prestation prestation) const;
-    QString createFraisRouteRow(const ResultatsDevis& resultats) const;
 };

@@ -14,6 +14,7 @@ struct ResultatsDevis
     double fraisMonteMeubles;
     double prixDechetterie;
     double prixSuppAdresse;
+    double prixKilometrage;
 
     double prixTotalHT;
     double arrhes;

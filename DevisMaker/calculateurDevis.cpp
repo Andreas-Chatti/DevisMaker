@@ -22,12 +22,14 @@ const ResultatsDevis& CalculateurDevis::calculate(bool suppAdresseEnabled, int s
 
     double prixSuppAdresse{ calculerPrixSuppAdresse(suppAdresseEnabled, suppAdresseValue) };
 
+    double prixKilometrage{ m_tarification.calculerCoutKilometrageTotal(m_client.getDistance()) };
+
     double prixTotalHT{ m_tarification.calculerCoutTotalHT(m_client.getVolume(), coutAssurance, coutAutStatTotal, fraisMMeubles, prixDechetterie, fraisRouteTotal, prixSuppAdresse) };
 
     double arrhes{ m_tarification.calculerArrhes(prixTotalHT) };
 
     m_lastResults = { volumeParPersonne, nombreCamion, nombreMO, coutMOTotal, coutCamionTotal,
-        coutAutStatTotal, fraisRouteTotal, coutAssurance, fraisMMeubles, prixDechetterie, prixSuppAdresse, prixTotalHT, arrhes };
+        coutAutStatTotal, fraisRouteTotal, coutAssurance, fraisMMeubles, prixDechetterie, prixSuppAdresse, prixKilometrage, prixTotalHT, arrhes };
 
 
     return m_lastResults;

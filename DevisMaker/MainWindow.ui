@@ -72,34 +72,7 @@
            <set>Qt::AlignmentFlag::AlignCenter</set>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
-           <item row="0" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout_9">
-             <item>
-              <widget class="QLabel" name="adresseDepartLabel">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Adresse de Chargement</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="adresseDepartLineEdit">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item row="1" column="0">
+           <item row="2" column="0">
             <layout class="QHBoxLayout" name="horizontalLayout_30">
              <item>
               <widget class="QLabel" name="etageDepartLabel">
@@ -168,6 +141,106 @@
              </item>
              <item>
               <spacer name="horizontalSpacer_11">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+           <item row="1" column="0">
+            <layout class="QHBoxLayout" name="horizontalLayout_9">
+             <item>
+              <widget class="QLabel" name="adresseDepartLabel">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Adresse de Chargement</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="adresseDepartLineEdit">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="0" column="0">
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <item>
+              <widget class="QLabel" name="departDateLabel">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Date souhaitée :</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QDateEdit" name="departDateEdit">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="dateTime">
+                <datetime>
+                 <hour>23</hour>
+                 <minute>0</minute>
+                 <second>0</second>
+                 <year>2025</year>
+                 <month>5</month>
+                 <day>31</day>
+                </datetime>
+               </property>
+               <property name="maximumDateTime">
+                <datetime>
+                 <hour>7</hour>
+                 <minute>0</minute>
+                 <second>59</second>
+                 <year>2030</year>
+                 <month>12</month>
+                 <day>31</day>
+                </datetime>
+               </property>
+               <property name="minimumDateTime">
+                <datetime>
+                 <hour>23</hour>
+                 <minute>0</minute>
+                 <second>0</second>
+                 <year>2025</year>
+                 <month>5</month>
+                 <day>31</day>
+                </datetime>
+               </property>
+               <property name="timeSpec">
+                <enum>Qt::TimeSpec::UTC</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_4">
                <property name="orientation">
                 <enum>Qt::Orientation::Horizontal</enum>
                </property>
@@ -281,6 +354,79 @@
                 </sizepolicy>
                </property>
               </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="0" column="0">
+            <layout class="QHBoxLayout" name="horizontalLayout_15">
+             <item>
+              <widget class="QLabel" name="livraisonDateLabel">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Date souhaitée :</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QDateEdit" name="livraisonDateEdit">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="dateTime">
+                <datetime>
+                 <hour>23</hour>
+                 <minute>0</minute>
+                 <second>0</second>
+                 <year>2025</year>
+                 <month>5</month>
+                 <day>31</day>
+                </datetime>
+               </property>
+               <property name="maximumDateTime">
+                <datetime>
+                 <hour>22</hour>
+                 <minute>59</minute>
+                 <second>59</second>
+                 <year>2030</year>
+                 <month>12</month>
+                 <day>31</day>
+                </datetime>
+               </property>
+               <property name="minimumDateTime">
+                <datetime>
+                 <hour>23</hour>
+                 <minute>0</minute>
+                 <second>0</second>
+                 <year>2025</year>
+                 <month>5</month>
+                 <day>31</day>
+                </datetime>
+               </property>
+               <property name="timeSpec">
+                <enum>Qt::TimeSpec::UTC</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_5">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
              </item>
             </layout>
            </item>
@@ -637,6 +783,33 @@
                <property name="enabled">
                 <bool>true</bool>
                </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="Line" name="line_4">
+               <property name="frameShadow">
+                <enum>QFrame::Shadow::Plain</enum>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Orientation::Vertical</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="numTelLabel">
+               <property name="text">
+                <string>Tél.</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="numTelLineEdit">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                  <horstretch>0</horstretch>
