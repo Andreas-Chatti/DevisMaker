@@ -89,6 +89,11 @@ void MainWindow::setupValidators()
     {
         field->setValidator(intValidator);
     }
+
+
+    QRegularExpressionValidator* phoneValidator = new QRegularExpressionValidator(QRegularExpression("^[0-9]{0,10}$"), this);
+    ui.numTelLineEdit->setValidator(phoneValidator);
+    ui.numTelLineEdit->setMaxLength(14);
 }
 
 
@@ -199,7 +204,6 @@ bool MainWindow::areAllFieldCompleted()
   ui.fraisStatLineEdit,
     };
 
-
     for (const auto& e : champs)
         if (e->text().isEmpty())
             return false;
@@ -210,9 +214,10 @@ bool MainWindow::areAllFieldCompleted()
 
 void MainWindow::updateClientVariables()
 {
-    // Nom, prénom du client
+    // Nom, prénom, tél du client
     m_client.setNom(ui.nomLineEdit->text());
     m_client.setPrenom(ui.prenomLineEdit->text());
+    m_client.setNumTel(ui.numTelLineEdit->text());
 
     // Adresse Chargement
     std::string rueChargement{ ui.adresseDepartLineEdit->text().toStdString() };
@@ -220,8 +225,9 @@ void MainWindow::updateClientVariables()
     bool ascChargement{ ui.ascDepartCheckBox->isChecked() };
     bool mmChargement{ ui.mmDepartCheckBox->isChecked() };
     bool autStatChargement{ ui.asDepartCheckBox->isChecked() };
+    QDate dateChargement{ ui.departDateEdit->date() };
 
-    const Adresse A_Chargement{ rueChargement, etageChargement, ascChargement, mmChargement, autStatChargement };
+    const Adresse A_Chargement{ rueChargement, etageChargement, ascChargement, mmChargement, autStatChargement, dateChargement };
     m_client.setAdresseDepart(A_Chargement);
 
 
@@ -231,8 +237,9 @@ void MainWindow::updateClientVariables()
     bool ascLivraison{ ui.ascLivraisonCheckBox->isChecked() };
     bool mmLivraison{ ui.mmLivraisonCheckBox->isChecked() };
     bool autStatLivraison{ ui.asLivraisonCheckBox->isChecked() };
+    QDate dateLivraison{ ui.livraisonDateEdit->date() };
 
-    const Adresse A_Livraison{ rueLivraison, etageLivraison, ascLivraison, mmLivraison, autStatLivraison };
+    const Adresse A_Livraison{ rueLivraison, etageLivraison, ascLivraison, mmLivraison, autStatLivraison, dateLivraison };
     m_client.setAdresseArrivee(A_Livraison);
 
 
@@ -593,4 +600,38 @@ void MainWindow::on_generatePdfButton_clicked()
 
     // PASSER le chemin choisi
     m_PDFGenerator->generateDevisPDF(m_client, results, filePath);
+}
+
+
+void MainWindow::on_numTelLineEdit_editingFinished()
+{
+    QString text{ ui.numTelLineEdit->text() };
+
+    text.remove(QRegularExpression("[^0-9]"));
+
+    if (text.isEmpty()) 
+        return; // Champ vide, on ne fait rien
+
+    if (text.length() == 10 && text.startsWith("0")) 
+    {
+        // Numéro valide - formatage
+        QString formatted{ QString("%1 %2 %3 %4 %5")
+            .arg(text.mid(0, 2))
+            .arg(text.mid(2, 2))
+            .arg(text.mid(4, 2))
+            .arg(text.mid(6, 2))
+            .arg(text.mid(8, 2)) };
+
+        ui.numTelLineEdit->blockSignals(true);
+        ui.numTelLineEdit->setText(formatted);
+        ui.numTelLineEdit->setStyleSheet(""); // Reset style en cas d'erreur précédente
+        ui.numTelLineEdit->blockSignals(false);
+    }
+
+    else 
+    {
+        // Numéro invalide - feedback visuel
+        ui.numTelLineEdit->setStyleSheet("border: 2px solid red;");
+        ui.numTelLineEdit->setToolTip("Le numéro doit contenir 10 chiffres et commencer par 0");
+    }
 }

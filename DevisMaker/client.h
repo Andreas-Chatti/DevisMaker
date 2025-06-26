@@ -20,6 +20,7 @@ public:
     double getDistance() const { return m_distance; }
     double getVolume() const { return m_volume; }
     double getValeurAssurance() const { return m_valeurAssurance; }
+    const QString& getNumTel() const { return m_tel; }
     bool getIsDE() const { return m_isDE; }
 
  
@@ -34,6 +35,7 @@ public:
     void setNature(Nature nature) { m_nature = nature; }
     void setVolume(double volume) { m_volume = volume; }
     void setIsDE(bool isDE) { m_isDE = isDE; }
+    void setNumTel(QString tel) { m_tel = tel; }
 
 
 private:
@@ -49,4 +51,5 @@ private:
     double m_distance;
     double m_volume;
     bool m_isDE;
+    QString m_tel;
 };

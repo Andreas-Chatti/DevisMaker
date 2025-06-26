@@ -191,7 +191,7 @@ QString PDFGenerator::createHTMLTemplate(const Client& client, const ResultatsDe
                 <td class="header-cell yellow-cell" colspan="2" style="border-right: 0px; border-left: 0px; border-top: 1px solid #000; border-bottom: 1px solid #000;">Prestation: %PRESTATION%</td>
             </tr>
             <tr>
-                <td class="header-cell" colspan="8" style="border-right: 0px; border-left: 0px; border-top: 1px solid #000; border-bottom: 1px solid #000;">Téléphone: %PHONE_DEPART%</td>
+                <td class="header-cell" colspan="8" style="border-right: 0px; border-left: 0px; border-top: 1px solid #000; border-bottom: 1px solid #000;">Téléphone: %PHONE_NUMBER%</td>
             </tr>
         </table>
     )");
@@ -312,7 +312,7 @@ QString PDFGenerator::createHTMLTemplate(const Client& client, const ResultatsDe
     )");
 
     // Assembler toutes les parties
-    QString templateComplet = htmlHeader + tableauCaracteristiques + tableauChargementLivraison + tableauPrix + htmlFooter;
+    QString templateComplet{ htmlHeader + tableauCaracteristiques + tableauChargementLivraison + tableauPrix + htmlFooter };
 
     // Appliquer les remplacements
     return templateComplet
@@ -323,9 +323,9 @@ QString PDFGenerator::createHTMLTemplate(const Client& client, const ResultatsDe
         .replace("%CLIENT_NAME%", client.getNom())
         .replace("%ADRESSE_DEPART%", QString::fromStdString(client.getAdresseDepart().m_rue))
         .replace("%ADRESSE_ARRIVEE%", QString::fromStdString(client.getAdresseArrivee().m_rue))
-        .replace("%PHONE_DEPART%", "01 69 75 18 22")
-        .replace("%PERIODE_CHARGEMENT%", QDate::currentDate().toString("MMMM yyyy"))
-        .replace("%PERIODE_LIVRAISON%", QDate::currentDate().toString("MMMM yyyy"))
+        .replace("%PHONE_NUMBER%", client.getNumTel())
+        .replace("%PERIODE_CHARGEMENT%", QLocale{ QLocale::French, QLocale::France }.toString(client.getAdresseDepart().m_date, "dddd dd MMMM yyyy"))
+        .replace("%PERIODE_LIVRAISON%", QLocale{ QLocale::French, QLocale::France }.toString(client.getAdresseArrivee().m_date, "dddd dd MMMM yyyy"))
         .replace("%ASCENSEUR_DEPART%", client.getAdresseDepart().m_ascenseur ? "Oui" : "Non")
         .replace("%ASCENSEUR_ARRIVEE%", client.getAdresseArrivee().m_ascenseur ? "Oui" : "Non")
         .replace("%MONTE_MEUBLES_DEPART%", client.getAdresseDepart().m_monteMeubles ? "Oui" : "Non")

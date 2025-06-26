@@ -56,6 +56,8 @@ private slots:
 
     void on_suppAdresseCheckBox_toggled(bool isChecked);
 
+    void on_numTelLineEdit_editingFinished();
+
 private:
 
     Ui::MainWindowClass ui;

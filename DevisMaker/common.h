@@ -1,6 +1,8 @@
 #ifndef COMMON_H
 #define COMMON_H
 #include <string>
+#include <qstring.h>
+#include <qdatetime.h>
 
 struct Adresse
 {
@@ -9,6 +11,7 @@ struct Adresse
 	bool m_ascenseur;
 	bool m_monteMeubles;
 	bool m_autStationnement;
+	QDate m_date;
 };
 
 
