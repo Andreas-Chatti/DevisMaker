@@ -28,8 +28,10 @@ const ResultatsDevis& CalculateurDevis::calculate(bool suppAdresseEnabled, int s
 
     double arrhes{ m_tarification.calculerArrhes(prixTotalHT) };
 
+    double prixMetreCube{ m_tarification.getPrixMetreCube() };
+
     m_lastResults = { volumeParPersonne, nombreCamion, nombreMO, coutMOTotal, coutCamionTotal,
-        coutAutStatTotal, fraisRouteTotal, coutAssurance, fraisMMeubles, prixDechetterie, prixSuppAdresse, prixKilometrage, prixTotalHT, arrhes };
+        coutAutStatTotal, fraisRouteTotal, coutAssurance, fraisMMeubles, prixDechetterie, prixSuppAdresse, prixKilometrage, prixTotalHT, arrhes, prixMetreCube };
 
 
     return m_lastResults;

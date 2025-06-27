@@ -15,14 +15,14 @@ bool PDFGenerator::generateDevisPDF(const Client& client, const ResultatsDevis& 
     QTextDocument document;
     document.setHtml(htmlContent);
 
-    // ✅ Configuration de l'impression
+    // Configuration de l'impression
     QPrinter printer(QPrinter::PrinterResolution);
     printer.setOutputFormat(QPrinter::PdfFormat);
     printer.setOutputFileName(finalPath);
     printer.setPageSize(QPageSize::A4);
     printer.setPageMargins(QMarginsF(1, 1, 1, 1), QPageLayout::Millimeter);
 
-    // ✅ Générer le PDF
+    // Générer le PDF
     document.print(&printer);
 
     return QFile::exists(finalPath);
@@ -246,16 +246,8 @@ QString PDFGenerator::createHTMLTemplate(const Client& client, const ResultatsDe
                     <td colspan="2" style="background-color: #2c3e50; color: white; border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; text-align: center; padding: 6px; font-weight: bold; font-size: 12px;">Détail du prix</td>
                 </tr>
                 <tr>
-                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle;"><strong>Main d'œuvre qualifiée déménageurs professionnels</strong></td>
-                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle; text-align: right; font-weight: bold; width: 120px; background-color: #f8f9fa;">%MAIN_OEUVRE% €</td>
-                </tr>
-                <tr>
-                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle;"><strong>Camion en circuit organisé (licence intérieur et communautaire)</strong></td>
-                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle; text-align: right; font-weight: bold; width: 120px; background-color: #f8f9fa;">%COUT_CAMION% €</td>
-                </tr>
-                <tr>
-                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle;"><strong>Kilomètres</strong></td>
-                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle; text-align: right; font-weight: bold; width: 120px; background-color: #f8f9fa;">%COUT_KILOMETRE% €</td>
+                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle;"><strong>Prix forfaitaire</strong></td>
+                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle; text-align: right; font-weight: bold; width: 120px; background-color: #f8f9fa;">%PRIX_FORFAITAIRE% €</td>
                 </tr>
                 <tr>
                     <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle;"><strong>Assurance Garantie responsabilité Contractuelle</strong></td>
@@ -312,7 +304,7 @@ QString PDFGenerator::createHTMLTemplate(const Client& client, const ResultatsDe
     )");
 
     // Assembler toutes les parties
-    QString templateComplet{ htmlHeader + tableauCaracteristiques + tableauChargementLivraison + tableauPrix + htmlFooter };
+    QString templateComplet = htmlHeader + tableauCaracteristiques + tableauChargementLivraison + tableauPrix + htmlFooter;
 
     // Appliquer les remplacements
     return templateComplet
@@ -346,7 +338,8 @@ QString PDFGenerator::createHTMLTemplate(const Client& client, const ResultatsDe
         .replace("%TOTAL_TTC%", QString::number(resultats.prixTotalHT * 1.20, 'f', 2))
         .replace("%ARRHES%", QString::number(resultats.arrhes, 'f', 2))
         .replace("%SOLDE%", QString::number((resultats.prixTotalHT * 1.20) - resultats.arrhes, 'f', 2))
-        .replace("%EMISSION_CO2%", QString::number(client.getDistance() * 0.42, 'f', 1));
+        .replace("%EMISSION_CO2%", QString::number(client.getDistance() * 0.42, 'f', 1))
+        .replace("%PRIX_FORFAITAIRE%", QString::number(resultats.prixMetreCube * client.getVolume(), 'f', 2));
 }
 
 
@@ -357,7 +350,7 @@ QString PDFGenerator::getNatureString(const Nature& nature) const
     case Nature::urbain: return "Urbain";
     case Nature::special: return "Spécial";
     case Nature::groupage: return "Groupage";
-    default: return "Urbain";
+    default: return "UNDEFINED";
     }
 }
 
@@ -369,7 +362,7 @@ QString PDFGenerator::getPrestationString(const Prestation& prestation) const
     case Prestation::ecoPlus: return "ECONOMIQUE +";
     case Prestation::standard: return "STANDARD";
     case Prestation::luxe: return "LUXE";
-    default: return "STANDARD";
+    default: return "UNDEFINED";
     }
 }
 

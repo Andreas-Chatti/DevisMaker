@@ -210,8 +210,8 @@
                  <minute>0</minute>
                  <second>0</second>
                  <year>2025</year>
-                 <month>5</month>
-                 <day>31</day>
+                 <month>6</month>
+                 <day>1</day>
                 </datetime>
                </property>
                <property name="maximumDateTime">
@@ -226,11 +226,11 @@
                </property>
                <property name="minimumDateTime">
                 <datetime>
-                 <hour>21</hour>
+                 <hour>23</hour>
                  <minute>0</minute>
                  <second>0</second>
-                 <year>2025</year>
-                 <month>5</month>
+                 <year>2024</year>
+                 <month>12</month>
                  <day>31</day>
                 </datetime>
                </property>
@@ -386,8 +386,8 @@
                  <minute>0</minute>
                  <second>0</second>
                  <year>2025</year>
-                 <month>5</month>
-                 <day>31</day>
+                 <month>6</month>
+                 <day>1</day>
                 </datetime>
                </property>
                <property name="maximumDateTime">
@@ -402,16 +402,23 @@
                </property>
                <property name="minimumDateTime">
                 <datetime>
-                 <hour>21</hour>
+                 <hour>23</hour>
                  <minute>0</minute>
                  <second>0</second>
-                 <year>2025</year>
-                 <month>5</month>
+                 <year>2024</year>
+                 <month>12</month>
                  <day>31</day>
                 </datetime>
                </property>
                <property name="timeSpec">
                 <enum>Qt::TimeSpec::UTC</enum>
+               </property>
+               <property name="date">
+                <date>
+                 <year>2025</year>
+                 <month>6</month>
+                 <day>1</day>
+                </date>
                </property>
               </widget>
              </item>

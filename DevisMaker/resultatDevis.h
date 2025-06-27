@@ -18,4 +18,5 @@ struct ResultatsDevis
 
     double prixTotalHT;
     double arrhes;
+    double prixMetreCube;
 };
