@@ -6,6 +6,7 @@
 #include <array>
 #include <cmath>
 #include "common.h"
+#include "presetsPrices.h"
 
 
 class Tarification 
@@ -112,7 +113,10 @@ private:
     OU
     Créer un nouveau fichier .ini avec les paramètres par défaut si celui-ci n'existe pas
     */
-    void loadSettings();
+    void loadSettings(PricePreset preset);
+
+
+    double getDefaultValue(const QString& key, PricePreset preset) const;
 };
 
 #endif

@@ -41,4 +41,12 @@ enum class TypeAssurance
 	max_types
 };
 
+
+enum class PricePreset 
+{
+	BasseSaison,
+	HauteSaison,
+	max_presets
+};
+
 #endif

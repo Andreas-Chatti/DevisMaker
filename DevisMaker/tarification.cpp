@@ -1,6 +1,6 @@
 #include "Tarification.h"
 
-void Tarification::loadSettings()
+void Tarification::loadSettings(PricePreset preset)
 {
     // Définir le chemin du fichier de configuration
     QString settingsPath{ QDir::homePath() + "/DevisMaker/config.ini" };
@@ -12,26 +12,38 @@ void Tarification::loadSettings()
     // Initialiser QSettings
     QSettings settings(settingsPath, QSettings::IniFormat);
 
-    // Si le fichier existe, charger les paramètres
-    if (checkFile.exists() && checkFile.isFile()) 
+    // Déterminer le nom de la section selon le preset
+    QString sectionName;
+    if (preset == PricePreset::BasseSaison)
+        sectionName = "TarificationBasseSaison";
+ 
+    else
+        sectionName = "TarificationHauteSaison";
+  
+
+    // Si le fichier existe, charger les paramètres du preset demandé
+    if (checkFile.exists() && checkFile.isFile())
     {
-        settings.beginGroup("Tarification");
+        settings.beginGroup(sectionName);
         m_coutCamion = settings.value("CoutCamion", 75.0).toDouble();
         m_coutKilometrique = settings.value("CoutKilometrique", 1.3).toDouble();
-        m_coutEmballage = settings.value("CoutEmballage", 5.0).toDouble();
-        m_prixLocMateriel = settings.value("PrixLocMateriel", 0.5).toDouble();
-        m_fraisRoute = settings.value("FraisRoute", 65.0).toDouble();
-        m_coutMO = settings.value("CoutMO", 220.0).toDouble();
-        m_fraisStationnement = settings.value("FraisStationnement", 50.0).toDouble();
-        m_prixMonteMeubles = settings.value("PrixMM", 250.0).toDouble();
-        m_prixDechetterie = settings.value("PrixDechetterie", 200.0).toDouble();
-        m_prixSuppAdresse = settings.value("PrixSuppAdresse", 75.0).toDouble();
+        m_coutEmballage = settings.value("CoutEmballage", getDefaultValue("CoutEmballage", preset)).toDouble();
+        m_prixLocMateriel = settings.value("PrixLocMateriel", getDefaultValue("PrixLocMateriel", preset)).toDouble();
+        m_fraisRoute = settings.value("FraisRoute", getDefaultValue("FraisRoute", preset)).toDouble();
+        m_coutMO = settings.value("CoutMO", getDefaultValue("CoutMO", preset)).toDouble();
+        m_fraisStationnement = settings.value("FraisStationnement", getDefaultValue("FraisStationnement", preset)).toDouble();
+        m_prixMonteMeubles = settings.value("PrixMM", getDefaultValue("PrixMM", preset)).toDouble();
+        m_prixDechetterie = settings.value("PrixDechetterie", getDefaultValue("PrixDechetterie", preset)).toDouble();
+        m_prixSuppAdresse = settings.value("PrixSuppAdresse", getDefaultValue("PrixSuppAdresse", preset)).toDouble();
         settings.endGroup();
     }
-
-    else 
-        // Sinon, créer le fichier avec les valeurs par défaut
-        saveSettings();
+    else
+    {
+        // Fichier n'existe pas, charger les valeurs par défaut et sauvegarder les deux presets
+        loadDefaultValues(preset);
+        saveSettings(Preset::BasseSaison);
+        saveSettings(Preset::HauteSaison);
+    }
 }
 
 
@@ -261,4 +273,18 @@ double Tarification::calculerSupplementMM(const Adresse& aChargement, const Adre
     }
 
     return supplement;
+}
+
+
+double Tarification::getDefaultValue(const QString& key, PricePreset preset) const
+{
+
+    switch (preset)
+    {
+    case PricePreset::BasseSaison: return BasseSaison::pricesMap.at(key);
+
+    case PricePreset::HauteSaison: return HauteSaison::pricesMap.at(key);
+    }
+
+    return 0.0;
 }
