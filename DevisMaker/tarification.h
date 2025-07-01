@@ -27,7 +27,7 @@ public:
         , m_prixDechetterie{ 200.0 }
         , m_prixSuppAdresse{ 75.0 }
     {
-        loadSettings();
+        loadSettings(PricePreset::BasseSaison);
     }
 
     
@@ -55,6 +55,14 @@ public:
     void setCoutMonteMeubles(double prixMM) { m_prixMonteMeubles = prixMM; }
     void setPrixDechetterie(double prixDechetterie) { m_prixDechetterie = prixDechetterie; }
     void setPrixSuppAdresse(double prixSuppAdresse) { m_prixSuppAdresse = prixSuppAdresse; }
+
+
+    /*
+    Charger les paramètres depuis le fichier.ini
+    OU
+    Créer un nouveau fichier .ini avec les paramètres par défaut si celui-ci n'existe pas
+    */
+    void loadSettings(PricePreset preset);
 
 
     // Méthodes de calcul individuelles
@@ -90,7 +98,7 @@ public:
 
 
     // Sauvegarde des paramètres de tarification dans un fichier .ini
-    void saveSettings() const;
+    void saveSettings(PricePreset preset) const;
 
 
 private:
@@ -108,15 +116,11 @@ private:
     double m_prixSuppAdresse; // Prix supplément PAR adresse
 
 
-    /*
-    Charger les paramètres depuis le fichier.ini
-    OU
-    Créer un nouveau fichier .ini avec les paramètres par défaut si celui-ci n'existe pas
-    */
-    void loadSettings(PricePreset preset);
-
-
     double getDefaultValue(const QString& key, PricePreset preset) const;
+
+
+    void loadDefaultValues(PricePreset preset);
+
 };
 
 #endif

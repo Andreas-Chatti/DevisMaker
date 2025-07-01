@@ -25,8 +25,8 @@ void Tarification::loadSettings(PricePreset preset)
     if (checkFile.exists() && checkFile.isFile())
     {
         settings.beginGroup(sectionName);
-        m_coutCamion = settings.value("CoutCamion", 75.0).toDouble();
-        m_coutKilometrique = settings.value("CoutKilometrique", 1.3).toDouble();
+        m_coutCamion = settings.value("CoutCamion", getDefaultValue("CoutCamion", preset)).toDouble();
+        m_coutKilometrique = settings.value("CoutKilometrique", getDefaultValue("CoutKilometrique", preset)).toDouble();
         m_coutEmballage = settings.value("CoutEmballage", getDefaultValue("CoutEmballage", preset)).toDouble();
         m_prixLocMateriel = settings.value("PrixLocMateriel", getDefaultValue("PrixLocMateriel", preset)).toDouble();
         m_fraisRoute = settings.value("FraisRoute", getDefaultValue("FraisRoute", preset)).toDouble();
@@ -37,17 +37,20 @@ void Tarification::loadSettings(PricePreset preset)
         m_prixSuppAdresse = settings.value("PrixSuppAdresse", getDefaultValue("PrixSuppAdresse", preset)).toDouble();
         settings.endGroup();
     }
+
     else
     {
         // Fichier n'existe pas, charger les valeurs par défaut et sauvegarder les deux presets
-        loadDefaultValues(preset);
-        saveSettings(Preset::BasseSaison);
-        saveSettings(Preset::HauteSaison);
+        loadDefaultValues(PricePreset::BasseSaison);
+        saveSettings(PricePreset::BasseSaison);
+
+        loadDefaultValues(PricePreset::HauteSaison);
+        saveSettings(PricePreset::HauteSaison);
     }
 }
 
 
-void Tarification::saveSettings() const
+void Tarification::saveSettings(PricePreset preset) const
 {
     // Définir le chemin du fichier de configuration
     QString settingsPath{ QDir::homePath() + "/DevisMaker/config.ini" };
@@ -55,8 +58,17 @@ void Tarification::saveSettings() const
     // Initialiser QSettings
     QSettings settings{ settingsPath, QSettings::IniFormat };
 
-    // Sauvegarder les paramètres
-    settings.beginGroup("Tarification");
+    // Déterminer le nom de la section selon le preset
+    QString sectionName;
+    if (preset == PricePreset::BasseSaison)
+        sectionName = "TarificationBasseSaison";
+
+    else
+        sectionName = "TarificationHauteSaison";
+    
+
+    // Sauvegarder les paramètres dans la section correspondante
+    settings.beginGroup(sectionName);
     settings.setValue("CoutCamion", m_coutCamion);
     settings.setValue("CoutKilometrique", m_coutKilometrique);
     settings.setValue("CoutEmballage", m_coutEmballage);
@@ -287,4 +299,19 @@ double Tarification::getDefaultValue(const QString& key, PricePreset preset) con
     }
 
     return 0.0;
+}
+
+
+void Tarification::loadDefaultValues(PricePreset preset)
+{
+    m_coutCamion = getDefaultValue("CoutCamion", preset);
+    m_coutKilometrique = getDefaultValue("CoutKilometrique", preset);
+    m_coutEmballage = getDefaultValue("CoutEmballage", preset);
+    m_prixLocMateriel = getDefaultValue("PrixLocMateriel", preset);
+    m_fraisRoute = getDefaultValue("FraisRoute", preset);
+    m_coutMO = getDefaultValue("CoutMO", preset);
+    m_fraisStationnement = getDefaultValue("FraisStationnement", preset);
+    m_prixMonteMeubles = getDefaultValue("PrixMM", preset);
+    m_prixDechetterie = getDefaultValue("PrixDechetterie", preset);
+    m_prixSuppAdresse = getDefaultValue("PrixSuppAdresse", preset);
 }

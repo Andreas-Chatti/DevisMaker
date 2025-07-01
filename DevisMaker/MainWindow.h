@@ -58,6 +58,14 @@ private slots:
 
     void on_numTelLineEdit_editingFinished();
 
+    void on_pricePresetComboBox_currentIndexChanged(int index);
+
+    void on_saveSettingsPushButton_clicked();
+
+    void on_livraisonDateEdit_editingFinished();
+
+    void on_departDateEdit_editingFinished();
+
 private:
 
     Ui::MainWindowClass ui;
@@ -90,4 +98,6 @@ private:
     void setupDevisTable();
 
     void populateDevisTable(ResultatsDevis resultat);
+
+    PricePreset determinePresetFromDates(const QDate& dateChargement, const QDate& dateLivraison) const;
 };

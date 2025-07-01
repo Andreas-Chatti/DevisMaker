@@ -51,6 +51,8 @@ MainWindow::MainWindow(QWidget* parent)
     setupValidators();
 
     setupSettings();
+
+    ui.typeSaisonLabel->setText(""); // Cacher le texte si l'utilisateur n'a pas encore mis de dates
 }
 
 
@@ -130,10 +132,20 @@ void MainWindow::on_generateDevisButton_clicked()
     updateClientVariables();
 
 
-    // 2. Mettre à jour toutes les variables de l'onglet PARAMETRES depuis les champs rentrés par l'utilisateur
+    /* 
+        * 2. Sélection du preset de tarifs HAUTE ou BASSE saison en fonction de la date
+        * Les variables sont mises à jour correctement dans m_tarification
+        * Puis ensuite mise à jour de l'affichage des valeurs dans les champs des PARAMETRES
+    */
 
-    
-    updateSettingsVariables();
+    PricePreset presetToUse{ determinePresetFromDates(ui.departDateEdit->date(), ui.livraisonDateEdit->date()) };
+    m_tarification.loadSettings(presetToUse);
+    setupSettings();
+    ui.pricePresetComboBox->setCurrentIndex(static_cast<int>(presetToUse));
+
+    // Pas sûr que cette fonction soit utile suite à l'ajout des presets. Je vais la laisser désactivée ici pour l'instant.
+    // loadSettings() fais le même travail et en plus de sauvegarde les paramètres dans un fichier .ini
+    //updateSettingsVariables();
 
 
     // 3. Afficher les résultats dans l'onglet "Résultats et Devis"
@@ -144,9 +156,6 @@ void MainWindow::on_generateDevisButton_clicked()
 
     if (!ui.generatePdfButton->isEnabled())
         ui.generatePdfButton->setEnabled(true);
-
-
-    m_tarification.saveSettings();
 }
 
 
@@ -634,4 +643,84 @@ void MainWindow::on_numTelLineEdit_editingFinished()
         ui.numTelLineEdit->setStyleSheet("border: 2px solid red;");
         ui.numTelLineEdit->setToolTip("Le numéro doit contenir 10 chiffres et commencer par 0");
     }
+}
+
+
+void MainWindow::on_pricePresetComboBox_currentIndexChanged(int index)
+{
+    PricePreset selectedPreset{ index };
+    m_tarification.loadSettings(selectedPreset);
+
+    setupSettings();
+}
+
+
+PricePreset MainWindow::determinePresetFromDates(const QDate& dateChargement, const QDate& dateLivraison) const
+{
+    auto isHauteSaison = [](const QDate& date) -> bool {
+        // 15 juin à 15 septembre
+        return (date.month() == 6 && date.day() >= 15) ||
+            (date.month() >= 7 && date.month() <= 8) ||
+            (date.month() == 9 && date.day() <= 15);
+        };
+
+    return (isHauteSaison(dateChargement) || isHauteSaison(dateLivraison)) ? PricePreset::HauteSaison : PricePreset::BasseSaison;
+}
+
+
+void MainWindow::on_saveSettingsPushButton_clicked()
+{
+    updateSettingsVariables();
+
+    PricePreset selectedPreset{ ui.pricePresetComboBox->currentIndex() };
+    m_tarification.saveSettings(selectedPreset);
+}
+
+
+void MainWindow::on_departDateEdit_editingFinished()
+{
+    QDate dateChargement{ ui.departDateEdit->date() };
+    QDate dateLivraison{ ui.livraisonDateEdit->date() };
+
+    if (dateLivraison.month() < dateChargement.month() ||
+        dateLivraison.year() < dateChargement.year() ||
+        (dateLivraison.month() == dateChargement.month() && dateLivraison.day() < dateChargement.day()))
+        ui.livraisonDateEdit->setDate(dateChargement);
+    
+    auto isHauteSaison = [](const QDate& date) {
+        // 15 juin à 15 septembre
+        return (date.month() == 6 && date.day() >= 15) ||
+            (date.month() >= 7 && date.month() <= 8) ||
+            (date.month() == 9 && date.day() <= 15);
+        };
+
+
+    bool hauteSaison{ isHauteSaison(dateLivraison) };
+    ui.typeSaisonLabel->setText(hauteSaison ? "HAUTE SAISON" : "BASSE SAISON");
+    ui.typeSaisonLabel->setStyleSheet(hauteSaison ? "color: red; font-weight: bold;" : "color: blue; font-weight: bold;");
+}
+
+
+void MainWindow::on_livraisonDateEdit_editingFinished()
+{
+    QDate dateChargement{ ui.departDateEdit->date() };
+    QDate dateLivraison{ ui.livraisonDateEdit->date() };
+
+    if (dateLivraison.month() < dateChargement.month() ||
+        dateLivraison.year() < dateChargement.year() ||
+        (dateLivraison.month() == dateChargement.month() && dateLivraison.day() < dateChargement.day()))
+        ui.departDateEdit->setDate(dateLivraison);
+
+
+    auto isHauteSaison = [](const QDate& date) {
+        // 15 juin à 15 septembre
+        return (date.month() == 6 && date.day() >= 15) ||
+            (date.month() >= 7 && date.month() <= 8) ||
+            (date.month() == 9 && date.day() <= 15);
+        };
+
+
+    bool hauteSaison{ isHauteSaison(dateLivraison) };
+    ui.typeSaisonLabel->setText(hauteSaison ? "HAUTE SAISON" : "BASSE SAISON");
+    ui.typeSaisonLabel->setStyleSheet(hauteSaison ? "color: red; font-weight: bold;" : "color: blue; font-weight: bold;");
 }

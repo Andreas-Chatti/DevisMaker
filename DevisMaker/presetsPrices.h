@@ -19,7 +19,7 @@ namespace BasseSaison
 	constexpr double prixSuppAdresseDefault{ 75.0 };
 
 
-	std::map<QString, double> pricesMap{
+	const std::map<QString, double> pricesMap{
 		{"CoutCamion", coutCamionDefault},
 		{"CoutKilometrique", coutKilometriqueDefault},
 		{"CoutEmballage", coutEmballageDefault},
@@ -51,7 +51,7 @@ namespace HauteSaison
 	constexpr double prixSuppAdresseDefault{ 100.0 };
 
 
-	std::map<QString, double> pricesMap{
+	const std::map<QString, double> pricesMap{
 		{"CoutCamion", coutCamionDefault},
 		{"CoutKilometrique", coutKilometriqueDefault},
 		{"CoutEmballage", coutEmballageDefault},
