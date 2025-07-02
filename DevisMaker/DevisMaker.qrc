@@ -1,4 +1,5 @@
 <RCC>
-    <qresource prefix="DevisMaker">
-    </qresource>
+	<qresource prefix="DevisMaker">
+		<file>logo.ico</file>
+	</qresource>
 </RCC>

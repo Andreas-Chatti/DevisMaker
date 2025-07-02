@@ -1,0 +1,35 @@
+// DevisMaker.rc - Fichier de ressources Windows
+#include <windows.h>
+
+// Définir l'icône principale (ID 1 est l'icône par défaut)
+1 ICON "logo.ico"
+
+// Informations sur la version (optionnel)
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION 1,0,0,0
+PRODUCTVERSION 1,0,0,0
+FILEFLAGSMASK 0x3fL
+FILEFLAGS 0x0L
+FILEOS VOS_NT_WINDOWS32
+FILETYPE VFT_APP
+FILESUBTYPE VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040c04b0"  // Français (France)
+        BEGIN
+            VALUE "CompanyName", "Votre Entreprise"
+            VALUE "FileDescription", "DevisMaker - Générateur de Devis"
+            VALUE "FileVersion", "1.0.0.0"
+            VALUE "InternalName", "DevisMaker"
+            VALUE "LegalCopyright", "Copyright (C) 2025"
+            VALUE "OriginalFilename", "DevisMaker.exe"
+            VALUE "ProductName", "DevisMaker"
+            VALUE "ProductVersion", "1.0.0.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x40c, 1200  // Français, Unicode
+    END
+END

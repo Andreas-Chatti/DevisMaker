@@ -138,14 +138,10 @@ void MainWindow::on_generateDevisButton_clicked()
         * Puis ensuite mise à jour de l'affichage des valeurs dans les champs des PARAMETRES
     */
 
-    PricePreset presetToUse{ determinePresetFromDates(ui.departDateEdit->date(), ui.livraisonDateEdit->date()) };
+    const PricePreset presetToUse{ determinePresetFromDates(ui.departDateEdit->date(), ui.livraisonDateEdit->date()) };
     m_tarification.loadSettings(presetToUse);
     setupSettings();
     ui.pricePresetComboBox->setCurrentIndex(static_cast<int>(presetToUse));
-
-    // Pas sûr que cette fonction soit utile suite à l'ajout des presets. Je vais la laisser désactivée ici pour l'instant.
-    // loadSettings() fais le même travail et en plus de sauvegarde les paramètres dans un fichier .ini
-    //updateSettingsVariables();
 
 
     // 3. Afficher les résultats dans l'onglet "Résultats et Devis"
@@ -221,6 +217,10 @@ bool MainWindow::areAllFieldCompleted()
 }
 
 
+/*
+Récupère les valeurs de chaque champ dans l'onglet "CLIENT"
+Puis met à jour les variables de la classe Client
+*/
 void MainWindow::updateClientVariables()
 {
     // Nom, prénom, tél du client
@@ -292,6 +292,10 @@ void MainWindow::updateClientVariables()
 }
 
 
+/*
+Récupère les valeurs de chaque champ dans l'onglet "PARAMETRES"
+Puis met à jour les variables dans la classe Tarification
+*/
 void MainWindow::updateSettingsVariables()
 {
     double prixCamion{ ui.prixCamionLineEdit->text().toDouble() };
@@ -679,39 +683,34 @@ void MainWindow::on_saveSettingsPushButton_clicked()
 
 void MainWindow::on_departDateEdit_editingFinished()
 {
-    QDate dateChargement{ ui.departDateEdit->date() };
-    QDate dateLivraison{ ui.livraisonDateEdit->date() };
+    const QDate dateChargement{ ui.departDateEdit->date() };
+    const QDate dateLivraison{ ui.livraisonDateEdit->date() };
+
+    updateSeasonTypeLabel(dateLivraison);
 
     if (dateLivraison.month() < dateChargement.month() ||
         dateLivraison.year() < dateChargement.year() ||
         (dateLivraison.month() == dateChargement.month() && dateLivraison.day() < dateChargement.day()))
         ui.livraisonDateEdit->setDate(dateChargement);
-    
-    auto isHauteSaison = [](const QDate& date) {
-        // 15 juin à 15 septembre
-        return (date.month() == 6 && date.day() >= 15) ||
-            (date.month() >= 7 && date.month() <= 8) ||
-            (date.month() == 9 && date.day() <= 15);
-        };
-
-
-    bool hauteSaison{ isHauteSaison(dateLivraison) };
-    ui.typeSaisonLabel->setText(hauteSaison ? "HAUTE SAISON" : "BASSE SAISON");
-    ui.typeSaisonLabel->setStyleSheet(hauteSaison ? "color: red; font-weight: bold;" : "color: blue; font-weight: bold;");
 }
 
 
 void MainWindow::on_livraisonDateEdit_editingFinished()
 {
-    QDate dateChargement{ ui.departDateEdit->date() };
-    QDate dateLivraison{ ui.livraisonDateEdit->date() };
+    const QDate dateChargement{ ui.departDateEdit->date() };
+    const QDate dateLivraison{ ui.livraisonDateEdit->date() };
+
+    updateSeasonTypeLabel(dateLivraison);
 
     if (dateLivraison.month() < dateChargement.month() ||
         dateLivraison.year() < dateChargement.year() ||
         (dateLivraison.month() == dateChargement.month() && dateLivraison.day() < dateChargement.day()))
         ui.departDateEdit->setDate(dateLivraison);
+}
 
 
+void MainWindow::updateSeasonTypeLabel(const QDate& dateLivraison) const
+{
     auto isHauteSaison = [](const QDate& date) {
         // 15 juin à 15 septembre
         return (date.month() == 6 && date.day() >= 15) ||
