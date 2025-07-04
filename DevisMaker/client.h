@@ -22,6 +22,7 @@ public:
     double getValeurAssurance() const { return m_valeurAssurance; }
     const QString& getNumTel() const { return m_tel; }
     bool getIsDE() const { return m_isDE; }
+    int getNbAdresseSupp() const { return m_nbAdresseSupp; }
 
  
     void setNom(const QString& nom) { m_nom = nom; }
@@ -36,6 +37,7 @@ public:
     void setVolume(double volume) { m_volume = volume; }
     void setIsDE(bool isDE) { m_isDE = isDE; }
     void setNumTel(QString tel) { m_tel = tel; }
+    void setNbAdresseSupp(int nbAdresseSupp) { m_nbAdresseSupp = nbAdresseSupp };
 
 
 private:
@@ -51,5 +53,6 @@ private:
     double m_distance;
     double m_volume;
     bool m_isDE;
+    int m_nbAdresseSupp;
     QString m_tel;
 };

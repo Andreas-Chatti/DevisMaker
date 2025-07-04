@@ -165,7 +165,7 @@ void MainWindow::on_volumelineEdit_textChanged(const QString& text)
     if (volume >= 0) 
     {
         // Calculer la valeur d'assurance (volume * 500)
-        double valeurAssurance{ volume * 500.0 };
+        double valeurAssurance{ m_calculateurDevis->calculerValeurAssurance(volume) };
 
         if (valeurAssurance > maxValeurAssurance)
             valeurAssurance = maxValeurAssurance;
@@ -187,10 +187,10 @@ void MainWindow::on_distanceLineEdit_textChanged(const QString& text)
     const double distance{ text.toDouble() };
 
     if (distance <= urbainMaxDistance)
-        ui.natureComboBox->setCurrentIndex(0);
+        ui.natureComboBox->setCurrentIndex(static_cast<int>(Nature::urbain));
 
     else if (distance > urbainMaxDistance)
-        ui.natureComboBox->setCurrentIndex(1);
+        ui.natureComboBox->setCurrentIndex(static_cast<int>(Nature::special));
 }
 
 
@@ -287,8 +287,14 @@ void MainWindow::updateClientVariables()
     m_client.setIsDE(dechetterie);
 
 
+    // Récupérer le nombre d'adresses supplémentaires (si checkbox == true)
+    int nbAdresseSupp{ ui.suppAdresseCheckBox->isChecked() ? ui.suppAdresseSpinBox->value() : 0 };
+    m_client.setNbAdresseSupp(nbAdresseSupp);
+
+
     // Déterminer le prix du mètre cube en fonctions des paramètres actuels
-    m_tarification.setPrixMetreCube(prestation, nature, m_client.getDistance());
+    PricePreset presetToUse{ determinePresetFromDates(ui.departDateEdit->date(), ui.livraisonDateEdit->date()) };
+    m_tarification.setPrixMetreCube(prestation, nature, m_client.getDistance(), presetToUse);
 }
 
 
@@ -348,7 +354,7 @@ void MainWindow::displayingResults()
 
     bool suppAdresseEnabled{ ui.suppAdresseCheckBox->isChecked() };
     int suppAdresseValue{ ui.suppAdresseSpinBox->value() };
-    ResultatsDevis result{ m_calculateurDevis->calculate(suppAdresseEnabled, suppAdresseValue) };
+    ResultatsDevis result{ m_calculateurDevis->calculateDevis(suppAdresseEnabled, suppAdresseValue) };
 
     populateDevisTable(result);
 }

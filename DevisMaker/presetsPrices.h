@@ -18,6 +18,11 @@ namespace BasseSaison
 	constexpr double prixDechetterieDefault{ 200.0 };
 	constexpr double prixSuppAdresseDefault{ 75.0 };
 
+	constexpr double prixM3_Eco_Default{ 30.0 };
+	constexpr double prixM3_EcoPlus_Default{ 35.0 };
+	constexpr double prixM3_Standard_Default{ 40.0 };
+	constexpr double prixM3_Luxe_Default{ 50.0 };
+
 
 	const std::map<QString, double> pricesMap{
 		{"CoutCamion", coutCamionDefault},
@@ -50,6 +55,10 @@ namespace HauteSaison
 	constexpr double prixDechetterieDefault{ 200.0 };
 	constexpr double prixSuppAdresseDefault{ 100.0 };
 
+	constexpr double prixM3_Eco_Default{ 40.0 };
+	constexpr double prixM3_EcoPlus_Default{ 50.0 };
+	constexpr double prixM3_Standard_Default{ 60.0 };
+	constexpr double prixM3_Luxe_Default { 65.0 };
 
 	const std::map<QString, double> pricesMap{
 		{"CoutCamion", coutCamionDefault},
