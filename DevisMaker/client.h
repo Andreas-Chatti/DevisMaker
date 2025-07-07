@@ -37,7 +37,7 @@ public:
     void setVolume(double volume) { m_volume = volume; }
     void setIsDE(bool isDE) { m_isDE = isDE; }
     void setNumTel(QString tel) { m_tel = tel; }
-    void setNbAdresseSupp(int nbAdresseSupp) { m_nbAdresseSupp = nbAdresseSupp };
+    void setNbAdresseSupp(int nbAdresseSupp) { m_nbAdresseSupp = nbAdresseSupp; }
 
 
 private:

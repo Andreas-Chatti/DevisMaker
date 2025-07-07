@@ -74,7 +74,7 @@ double CalculateurDevis::calculerSupplementMM() const
     for (const auto& adresse : std::vector<const Adresse>{ aChargement, aLivraison })
     {
         if (adresse.m_monteMeubles || (!adresse.m_ascenseur && !adresse.m_monteMeubles && adresse.m_etage >= 3))
-            supplement += prixMM_Unitaire
+            supplement += prixMM_Unitaire;
 
     }
 
@@ -100,7 +100,7 @@ double CalculateurDevis::calculerVolumeParPersonne() const
 }
 
 
-int CalculateurDevis::calculerNombreCamion(bool accesComplexe = false, bool montageImportant = false) const
+int CalculateurDevis::calculerNombreCamion(bool accesComplexe, bool montageImportant) const
 {
     int nombreJours{ 1 }; // Par défaut un jour minimum
 

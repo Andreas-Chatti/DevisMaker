@@ -21,6 +21,8 @@ public:
 
 	double calculerValeurAssurance() const { return m_client.getVolume() * 500.0; }
 
+	double calculerValeurAssurance(double volume) const { return volume * 500.0; }
+
 	double calculerVolumeParPersonne() const;
 
 	int calculerNombreCamion(bool accesComplexe = false, bool montageImportant = false) const;

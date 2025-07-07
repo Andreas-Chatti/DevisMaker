@@ -165,7 +165,7 @@ void MainWindow::on_volumelineEdit_textChanged(const QString& text)
     if (volume >= 0) 
     {
         // Calculer la valeur d'assurance (volume * 500)
-        double valeurAssurance{ m_calculateurDevis->calculerValeurAssurance(volume) };
+        double valeurAssurance{ m_calculateurDevis->calculerValeurAssurance(volume)};
 
         if (valeurAssurance > maxValeurAssurance)
             valeurAssurance = maxValeurAssurance;
@@ -352,9 +352,8 @@ void MainWindow::displayingResults()
 {
     setupDevisTable();
 
-    bool suppAdresseEnabled{ ui.suppAdresseCheckBox->isChecked() };
-    int suppAdresseValue{ ui.suppAdresseSpinBox->value() };
-    ResultatsDevis result{ m_calculateurDevis->calculateDevis(suppAdresseEnabled, suppAdresseValue) };
+    const PricePreset preset{ determinePresetFromDates(ui.departDateEdit->date(), ui.livraisonDateEdit->date()) };
+    ResultatsDevis result{ m_calculateurDevis->calculateDevis(preset) };
 
     populateDevisTable(result);
 }
