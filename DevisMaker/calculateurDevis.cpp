@@ -71,7 +71,7 @@ double CalculateurDevis::calculerSupplementMM() const
     const Adresse& aLivraison{ m_client.getAdresseArrivee() };
     double prixMM_Unitaire{ m_tarification.getCoutMonteMeubles() };
 
-    for (const auto& adresse : std::vector<const Adresse>{ aChargement, aLivraison })
+    for (const auto& adresse : std::vector<Adresse>{ aChargement, aLivraison })
     {
         if (adresse.m_monteMeubles || (!adresse.m_ascenseur && !adresse.m_monteMeubles && adresse.m_etage >= 3))
             supplement += prixMM_Unitaire;
@@ -84,25 +84,23 @@ double CalculateurDevis::calculerSupplementMM() const
 
 double CalculateurDevis::calculerVolumeParPersonne() const
 {
-    double volumeParPersonne{ 8.0 };
-
     // Volume par personne selon le type de prestation
     switch (m_client.getPrestation())
     {
-    case Prestation::luxe: return volumeParPersonne = 6.0;  // 6m³ par personne en LUXE
+    case Prestation::luxe: return SettingsConstants::Worker::M3_PER_WORKER_LUXE;  // 6m³ par personne en LUXE
 
-    case Prestation::standard: return volumeParPersonne = 8.0;  // 8m³ par personne en STANDARD
+    case Prestation::standard: return SettingsConstants::Worker::M3_PER_WORKER_STANDARD;  // 8m³ par personne en STANDARD
 
-    case Prestation::eco: [[fallthrough]];
+    case Prestation::eco: return SettingsConstants::Worker::M3_PER_WORKER_ECOPLUS; // 9m³ par personne en ECO
 
-    case Prestation::ecoPlus: return volumeParPersonne = 10.0; // 10m³ par personne en ECO/ECO+
+    case Prestation::ecoPlus: return SettingsConstants::Worker::M3_PER_WORKER_ECO; // 10m³ par personne en ECO
     }
 }
 
 
 int CalculateurDevis::calculerNombreCamion(bool accesComplexe, bool montageImportant) const
 {
-    int nombreJours{ 1 }; // Par défaut un jour minimum
+    int nombreJours{ SettingsConstants::MIN_WORKING_DAY }; // Par défaut un jour minimum
 
     const Nature& nature{ m_client.getNature() };
     const Prestation& prestation{ m_client.getPrestation() };
@@ -114,7 +112,7 @@ int CalculateurDevis::calculerNombreCamion(bool accesComplexe, bool montageImpor
     // Calcul pour déménagement urbain
     if (nature == Nature::urbain)
     {
-        if (volume > 60.0)
+        if (volume > SettingsConstants::MAX_M3_PER_TRUCK)
             nombreJours++; // +1 jour pour grand volume
 
         // Complexité supplémentaire pour démontage/remontage en urbain
@@ -132,20 +130,20 @@ int CalculateurDevis::calculerNombreCamion(bool accesComplexe, bool montageImpor
     {
         bool petitVolume{ volume <= 20.0 };
 
-        if (distance >= 150 && distance <= 400)
+        if (distance >= SettingsConstants::Distances::URBAN_DISTANCE_LIMIT && distance <= SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_1)
             nombreJours = petitVolume ? 2 : 3;
 
-        else if (distance > 400 && distance <= 600)
+        else if (distance > SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_1 && distance <= SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_2)
             nombreJours = 3;
 
-        else if (distance > 600 && distance <= 760)
+        else if (distance > SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_2 && distance <= SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_3)
             nombreJours = 4;
 
-        else if (distance > 760 && distance <= 900)
+        else if (distance > SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_3 && distance <= SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_4)
             nombreJours = 5;
 
-        else if (distance > 900)
-            nombreJours = 5 + static_cast<int>((distance - 900) / 300); // +1 jour par 300km supplémentaires
+        else if (distance > SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_4)
+            nombreJours = 5 + static_cast<int>((distance - SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_4) / 300); // +1 jour par 300km supplémentaires
     }
 
 
@@ -188,13 +186,13 @@ int CalculateurDevis::calculerNombreMO(int nombreCamions) const
         {
             // Premier jour: nombre de base (mais au moins 2 personnes)
             // Jours suivants: 2 personnes par camion
-            nombrePersonnesTotal = std::max(2, nombrePersonnesBase); // Premier jour
+            nombrePersonnesTotal = std::max(SettingsConstants::Worker::MIN_WORKERS, nombrePersonnesBase); // Premier jour
             nombrePersonnesTotal += 2 * (nombreCamions - 1);         // Jours suivants
         }
 
         else
             // Si un seul jour, prendre le maximum entre le nombre calculé et 2
-            nombrePersonnesTotal = std::max(2, nombrePersonnesBase);
+            nombrePersonnesTotal = std::max(SettingsConstants::Worker::MIN_WORKERS, nombrePersonnesBase);
     }
 
 
@@ -212,7 +210,7 @@ int CalculateurDevis::calculerNombreMO(int nombreCamions) const
     else if (nature == Nature::groupage)
     {
         // Pour le groupage, généralement 2 personnes suffisent
-        nombrePersonnesTotal = 2 * nombreCamions;
+        nombrePersonnesTotal = SettingsConstants::Worker::MIN_WORKERS * nombreCamions;
     }
 
 
@@ -243,19 +241,19 @@ double CalculateurDevis::calculerPrixMetreCube(PricePreset preset) const
 
     else if (nature == Nature::special || nature == Nature::groupage)
     {
-        if (distance >= 150 && distance <= 400)
-            return 65.0;
+        if (distance >= SettingsConstants::Distances::URBAN_DISTANCE_LIMIT && distance <= SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_1)
+            return SettingsConstants::M3PriceRoute::M3_PRICE_DISTANCE_1;
 
-        else if (distance > 400 && distance <= 600)
-            return 75.0;
+        else if (distance > SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_1 && distance <= SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_2)
+            return SettingsConstants::M3PriceRoute::M3_PRICE_DISTANCE_2;
 
-        else if (distance > 600 && distance <= 760)
-            return 80.0;
+        else if (distance > SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_2 && distance <= SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_3)
+            return SettingsConstants::M3PriceRoute::M3_PRICE_DISTANCE_3;
 
-        else if (distance > 760 && distance <= 900)
-            return 100.0;
+        else if (distance > SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_3 && distance <= SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_4)
+            return SettingsConstants::M3PriceRoute::M3_PRICE_DISTANCE_4;
 
-        else if (distance > 900)
-            return 120.0;
+        else if (distance > SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_4)
+            return SettingsConstants::M3PriceRoute::M3_PRICE_DISTANCE_5;
     }
 }

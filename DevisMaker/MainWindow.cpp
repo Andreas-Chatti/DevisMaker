@@ -164,11 +164,11 @@ void MainWindow::on_volumelineEdit_textChanged(const QString& text)
 
     if (volume >= 0) 
     {
-        // Calculer la valeur d'assurance (volume * 500)
+        // Calculer la valeur d'assurance
         double valeurAssurance{ m_calculateurDevis->calculerValeurAssurance(volume)};
 
         if (valeurAssurance > maxValeurAssurance)
-            valeurAssurance = maxValeurAssurance;
+            ui.typeAssuranceComboBox->setCurrentIndex(static_cast<int>(TypeAssurance::dommage));
 
         // Mettre à jour le champ de valeur d'assurance
         ui.valeurAssuranceLineEdit->setText(QString::number(valeurAssurance, 'f', 0));

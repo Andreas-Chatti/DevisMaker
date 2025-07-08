@@ -2,6 +2,7 @@
 #include "client.h"
 #include "tarification.h"
 #include "resultatDevis.h"
+#include "constants.h"
 
 
 class CalculateurDevis

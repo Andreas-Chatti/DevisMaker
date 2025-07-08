@@ -116,6 +116,7 @@
     <ClInclude Include="calculateurDevis.h" />
     <ClInclude Include="client.h" />
     <ClInclude Include="common.h" />
+    <ClInclude Include="constants.h" />
     <ClInclude Include="devis.h" />
     <ClInclude Include="IA.h" />
     <ClInclude Include="inventaire.h" />
