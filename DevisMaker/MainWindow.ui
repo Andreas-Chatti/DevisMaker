@@ -48,7 +48,7 @@
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="InformationsClient">
        <property name="enabled">
@@ -206,7 +206,7 @@
                </property>
                <property name="dateTime">
                 <datetime>
-                 <hour>19</hour>
+                 <hour>17</hour>
                  <minute>0</minute>
                  <second>0</second>
                  <year>2025</year>
@@ -216,7 +216,7 @@
                </property>
                <property name="maximumDateTime">
                 <datetime>
-                 <hour>5</hour>
+                 <hour>4</hour>
                  <minute>0</minute>
                  <second>59</second>
                  <year>2030</year>
@@ -226,7 +226,7 @@
                </property>
                <property name="minimumDateTime">
                 <datetime>
-                 <hour>22</hour>
+                 <hour>21</hour>
                  <minute>0</minute>
                  <second>0</second>
                  <year>2024</year>
@@ -382,7 +382,7 @@
                </property>
                <property name="dateTime">
                 <datetime>
-                 <hour>19</hour>
+                 <hour>17</hour>
                  <minute>0</minute>
                  <second>0</second>
                  <year>2025</year>
@@ -392,7 +392,7 @@
                </property>
                <property name="maximumDateTime">
                 <datetime>
-                 <hour>20</hour>
+                 <hour>19</hour>
                  <minute>59</minute>
                  <second>59</second>
                  <year>2030</year>
@@ -402,7 +402,7 @@
                </property>
                <property name="minimumDateTime">
                 <datetime>
-                 <hour>22</hour>
+                 <hour>21</hour>
                  <minute>0</minute>
                  <second>0</second>
                  <year>2024</year>
@@ -647,30 +647,6 @@
                 </sizepolicy>
                </property>
               </widget>
-             </item>
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_28">
-               <item>
-                <widget class="Line" name="line_2">
-                 <property name="frameShadow">
-                  <enum>QFrame::Shadow::Plain</enum>
-                 </property>
-                 <property name="orientation">
-                  <enum>Qt::Orientation::Vertical</enum>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="deCheckBox">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="text">
-                  <string>Supplément déchetterie</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
              </item>
              <item>
               <spacer name="horizontalSpacer_14">
@@ -1086,10 +1062,10 @@
         <string>Paramètres</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_7">
-        <item row="9" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_22">
+        <item row="10" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_33">
           <item>
-           <widget class="QLabel" name="MMeublesLabel">
+           <widget class="QLabel" name="suppAdresseLabel">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -1097,12 +1073,12 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Monte-Meubles (demi-journée)</string>
+             <string>Supplément PAR adresse</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="MMeublesLineEdit">
+           <widget class="QLineEdit" name="suppAdresseLineEdit">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -1112,60 +1088,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="htLabel8">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>€ H.T.</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_24">
-            <property name="orientation">
-             <enum>Qt::Orientation::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-        <item row="7" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_11">
-          <item>
-           <widget class="QLabel" name="moLabel">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Main d'oeuvre</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="moLineEdit">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="htLabel6">
+           <widget class="QLabel" name="htLabel10">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -1178,7 +1101,7 @@
            </widget>
           </item>
           <item>
-           <spacer name="horizontalSpacer_22">
+           <spacer name="horizontalSpacer_28">
             <property name="orientation">
              <enum>Qt::Orientation::Horizontal</enum>
             </property>
@@ -1232,59 +1155,6 @@
           </item>
           <item>
            <spacer name="horizontalSpacer_19">
-            <property name="orientation">
-             <enum>Qt::Orientation::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-        <item row="10" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_32">
-          <item>
-           <widget class="QLabel" name="deLabel_2">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Déchetterie</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="deLineEdit">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="htLabel9">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>€ H.T.</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_27">
             <property name="orientation">
              <enum>Qt::Orientation::Horizontal</enum>
             </property>
@@ -1360,46 +1230,63 @@
           </item>
          </layout>
         </item>
-        <item row="11" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_33">
+        <item row="0" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_16">
           <item>
-           <widget class="QLabel" name="suppAdresseLabel">
+           <spacer name="horizontalSpacer_6">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QComboBox" name="pricePresetComboBox">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <item>
+             <property name="text">
+              <string>Basse saison</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Haute saison</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_7">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="saveSettingsPushButton">
             <property name="text">
-             <string>Supplément PAR adresse</string>
+             <string>Sauvegarder paramètres</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="suppAdresseLineEdit">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="htLabel10">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>€ H.T.</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_28">
+           <spacer name="horizontalSpacer_8">
             <property name="orientation">
              <enum>Qt::Orientation::Horizontal</enum>
             </property>
@@ -1413,23 +1300,23 @@
           </item>
          </layout>
         </item>
-        <item row="8" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_25">
+        <item row="6" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_13">
           <item>
-           <widget class="QLabel" name="fraisStatLabel">
+           <widget class="QLabel" name="coutFraisRouteLabel_2">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Frais stationnement</string>
+             <string>Frais de route</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="fraisStatLineEdit">
+           <widget class="QLineEdit" name="coutFraisRouteLineEdit">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -1439,7 +1326,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="htLabel7">
+           <widget class="QLabel" name="htLabel5">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -1452,7 +1339,60 @@
            </widget>
           </item>
           <item>
-           <spacer name="horizontalSpacer_23">
+           <spacer name="horizontalSpacer_21">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item row="9" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_22">
+          <item>
+           <widget class="QLabel" name="MMeublesLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Monte-Meubles (demi-journée)</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="MMeublesLineEdit">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="htLabel8">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>€ H.T.</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_24">
             <property name="orientation">
              <enum>Qt::Orientation::Horizontal</enum>
             </property>
@@ -1525,59 +1465,6 @@
           </item>
          </layout>
         </item>
-        <item row="6" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_13">
-          <item>
-           <widget class="QLabel" name="coutFraisRouteLabel_2">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Frais de route</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="coutFraisRouteLineEdit">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="htLabel5">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>€ H.T.</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_21">
-            <property name="orientation">
-             <enum>Qt::Orientation::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
         <item row="3" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout_8">
           <item>
@@ -1631,43 +1518,46 @@
           </item>
          </layout>
         </item>
-        <item row="0" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_16">
+        <item row="7" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_11">
           <item>
-           <spacer name="horizontalSpacer_6">
-            <property name="orientation">
-             <enum>Qt::Orientation::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QComboBox" name="pricePresetComboBox">
+           <widget class="QLabel" name="moLabel">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <item>
-             <property name="text">
-              <string>Basse saison</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Haute saison</string>
-             </property>
-            </item>
+            <property name="text">
+             <string>Main d'oeuvre</string>
+            </property>
            </widget>
           </item>
           <item>
-           <spacer name="horizontalSpacer_7">
+           <widget class="QLineEdit" name="moLineEdit">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="htLabel6">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>€ H.T.</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_22">
             <property name="orientation">
              <enum>Qt::Orientation::Horizontal</enum>
             </property>
@@ -1679,15 +1569,48 @@
             </property>
            </spacer>
           </item>
+         </layout>
+        </item>
+        <item row="8" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_25">
           <item>
-           <widget class="QPushButton" name="saveSettingsPushButton">
+           <widget class="QLabel" name="fraisStatLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
-             <string>Sauvegarder paramètres</string>
+             <string>Frais stationnement</string>
             </property>
            </widget>
           </item>
           <item>
-           <spacer name="horizontalSpacer_8">
+           <widget class="QLineEdit" name="fraisStatLineEdit">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="htLabel7">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>€ H.T.</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_23">
             <property name="orientation">
              <enum>Qt::Orientation::Horizontal</enum>
             </property>

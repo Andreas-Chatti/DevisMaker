@@ -13,28 +13,22 @@ void Tarification::loadSettings(PricePreset preset)
     QSettings settings(settingsPath, QSettings::IniFormat);
 
     // Déterminer le nom de la section selon le preset
-    QString sectionName;
-    if (preset == PricePreset::BasseSaison)
-        sectionName = "TarificationBasseSaison";
- 
-    else
-        sectionName = "TarificationHauteSaison";
+    QString sectionName{ preset == PricePreset::BasseSaison ? "Tarification_Basse_Saison" : "Tarification_Haute_Saison" };
   
 
     // Si le fichier existe, charger les paramètres du preset demandé
     if (checkFile.exists() && checkFile.isFile())
     {
         settings.beginGroup(sectionName);
-        m_coutCamion = settings.value("CoutCamion", getDefaultValue("CoutCamion", preset)).toDouble();
-        m_coutKilometrique = settings.value("CoutKilometrique", getDefaultValue("CoutKilometrique", preset)).toDouble();
-        m_coutEmballage = settings.value("CoutEmballage", getDefaultValue("CoutEmballage", preset)).toDouble();
-        m_prixLocMateriel = settings.value("PrixLocMateriel", getDefaultValue("PrixLocMateriel", preset)).toDouble();
-        m_fraisRoute = settings.value("FraisRoute", getDefaultValue("FraisRoute", preset)).toDouble();
-        m_coutMO = settings.value("CoutMO", getDefaultValue("CoutMO", preset)).toDouble();
-        m_fraisStationnement = settings.value("FraisStationnement", getDefaultValue("FraisStationnement", preset)).toDouble();
-        m_prixMonteMeubles = settings.value("PrixMM", getDefaultValue("PrixMM", preset)).toDouble();
-        m_prixDechetterie = settings.value("PrixDechetterie", getDefaultValue("PrixDechetterie", preset)).toDouble();
-        m_prixSuppAdresse = settings.value("PrixSuppAdresse", getDefaultValue("PrixSuppAdresse", preset)).toDouble();
+        m_coutCamion = settings.value("Camion", SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutCamion, preset)).toDouble();
+        m_coutKilometrique = settings.value("Kilometrage", SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutKilometrique, preset)).toDouble();
+        m_coutEmballage = settings.value("Emballage", SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutEmballage, preset)).toDouble();
+        m_prixLocMateriel = settings.value("Location_Materiel", SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutCamion, preset)).toDouble();
+        m_fraisRoute = settings.value("Frais_Route", SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutFraisRoute, preset)).toDouble();
+        m_coutMO = settings.value("Main_Oeuvre", SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutMainOeuvre, preset)).toDouble();
+        m_fraisStationnement = settings.value("Stationnement", SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutFraisStationnement, preset)).toDouble();
+        m_prixMonteMeubles = settings.value("Monte_Meubles", SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutMonteMeubles, preset)).toDouble();
+        m_prixSuppAdresse = settings.value("Supplement_Adresse", SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutFraisStationnement, preset)).toDouble();
         settings.endGroup();
     }
 
@@ -59,54 +53,32 @@ void Tarification::saveSettings(PricePreset preset) const
     QSettings settings{ settingsPath, QSettings::IniFormat };
 
     // Déterminer le nom de la section selon le preset
-    QString sectionName;
-    if (preset == PricePreset::BasseSaison)
-        sectionName = "TarificationBasseSaison";
-
-    else
-        sectionName = "TarificationHauteSaison";
+    QString sectionName{ preset == PricePreset::BasseSaison ? "Tarification_Basse_Saison" : "Tarification_Haute_Saison" };
     
 
     // Sauvegarder les paramètres dans la section correspondante
     settings.beginGroup(sectionName);
-    settings.setValue("CoutCamion", m_coutCamion);
-    settings.setValue("CoutKilometrique", m_coutKilometrique);
-    settings.setValue("CoutEmballage", m_coutEmballage);
-    settings.setValue("PrixLocMateriel", m_prixLocMateriel);
-    settings.setValue("FraisRoute", m_fraisRoute);
-    settings.setValue("CoutMO", m_coutMO);
-    settings.setValue("FraisStationnement", m_fraisStationnement);
-    settings.setValue("PrixMM", m_prixMonteMeubles);
-    settings.setValue("PrixDechetterie", m_prixDechetterie);
-    settings.setValue("PrixSuppAdresse", m_prixSuppAdresse);
+    settings.setValue("Camion", m_coutCamion);
+    settings.setValue("Kilometrage", m_coutKilometrique);
+    settings.setValue("Emballage", m_coutEmballage);
+    settings.setValue("Location_Materiel", m_prixLocMateriel);
+    settings.setValue("Frais_Route", m_fraisRoute);
+    settings.setValue("Main_Oeuvre", m_coutMO);
+    settings.setValue("Stationnement", m_fraisStationnement);
+    settings.setValue("Monte_Meubles", m_prixMonteMeubles);
+    settings.setValue("Supplement_Adresse", m_prixSuppAdresse);
     settings.endGroup();
 }
 
-
-double Tarification::getDefaultValue(const QString& key, PricePreset preset) const
-{
-
-    switch (preset)
-    {
-    case PricePreset::BasseSaison: return BasseSaison::pricesMap.at(key);
-
-    case PricePreset::HauteSaison: return HauteSaison::pricesMap.at(key);
-    }
-
-    return 0.0;
-}
-
-
 void Tarification::loadDefaultValues(PricePreset preset)
 {
-    m_coutCamion = getDefaultValue("CoutCamion", preset);
-    m_coutKilometrique = getDefaultValue("CoutKilometrique", preset);
-    m_coutEmballage = getDefaultValue("CoutEmballage", preset);
-    m_prixLocMateriel = getDefaultValue("PrixLocMateriel", preset);
-    m_fraisRoute = getDefaultValue("FraisRoute", preset);
-    m_coutMO = getDefaultValue("CoutMO", preset);
-    m_fraisStationnement = getDefaultValue("FraisStationnement", preset);
-    m_prixMonteMeubles = getDefaultValue("PrixMM", preset);
-    m_prixDechetterie = getDefaultValue("PrixDechetterie", preset);
-    m_prixSuppAdresse = getDefaultValue("PrixSuppAdresse", preset);
+    m_coutCamion = SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutCamion, preset);
+    m_coutKilometrique = SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutKilometrique, preset);
+    m_coutEmballage = SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutEmballage, preset);
+    m_prixLocMateriel = SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutLocMateriel, preset);
+    m_fraisRoute = SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutFraisRoute, preset);
+    m_coutMO = SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutMainOeuvre, preset);
+    m_fraisStationnement = SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutFraisStationnement, preset);
+    m_prixMonteMeubles = SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutMonteMeubles, preset);
+    m_prixSuppAdresse = SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutSupplementAdresse, preset);
 }

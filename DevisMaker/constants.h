@@ -78,22 +78,23 @@ public:
         static constexpr double M3_PRICE_LUXE_HIGH{ 65.0 };
 
 
-        static double getPrice(PriceKey key, PricePreset preset)
+        static double getDefaultPrices(PriceKey key, PricePreset preset)
         {
             const PriceSet& prices{ preset == PricePreset::BasseSaison ? BASSE_SAISON_PRESET : HAUTE_SAISON_PRESET };
 
-            switch (key)
-            {
-            case SettingsConstants::M3PriceUrban::PriceKey::CoutCamion: return prices.cout_Camion;
-            case SettingsConstants::M3PriceUrban::PriceKey::CoutKilometrique: return prices.cout_Kilometrique;
-            case SettingsConstants::M3PriceUrban::PriceKey::CoutEmballage: return prices.cout_Emballage;
-            case SettingsConstants::M3PriceUrban::PriceKey::CoutLocMateriel: return prices.cout_LocMateriel;
-            case SettingsConstants::M3PriceUrban::PriceKey::CoutFraisRoute: return prices.cout_FraisRoute;
-            case SettingsConstants::M3PriceUrban::PriceKey::CoutMainOeuvre: return prices.cout_MainOeuvre;
-            case SettingsConstants::M3PriceUrban::PriceKey::CoutFraisStationnement: return prices.cout_FraisStationnement;
-            case SettingsConstants::M3PriceUrban::PriceKey::CoutMonteMeubles: prices.cout_MonteMeubles;
-            case SettingsConstants::M3PriceUrban::PriceKey::CoutSupplementAdresse: prices.cout_SupplementAdresse;
-            }
+            std::map<PriceKey, double>priceMap{
+                {PriceKey::CoutCamion, prices.cout_Camion},
+                {PriceKey::CoutKilometrique, prices.cout_Kilometrique},
+                {PriceKey::CoutEmballage, prices.cout_Emballage},
+                {PriceKey::CoutLocMateriel, prices.cout_LocMateriel},
+                {PriceKey::CoutFraisRoute, prices.cout_FraisRoute},
+                {PriceKey::CoutMainOeuvre, prices.cout_MainOeuvre},
+                {PriceKey::CoutFraisStationnement, prices.cout_FraisStationnement},
+                {PriceKey::CoutMonteMeubles, prices.cout_MonteMeubles},
+                {PriceKey::CoutSupplementAdresse, prices.cout_SupplementAdresse}
+            };
+
+            return priceMap.at(key);
         }
     };
 
@@ -128,6 +129,7 @@ public:
         static inline const QString COMPANY_EMAIL{ "chattidemenagement@gmail.com" };
         static inline const QString COMPANY_SIRET{ "39032989400054" };
         static inline const QString COMPANY_TVA{ "FR68390329894" };
+        static inline const QString COMPANY_APE{ "4942Z" };
     };
 
     // Facteurs calculés (évite la duplication)

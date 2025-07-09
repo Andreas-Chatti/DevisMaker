@@ -12,6 +12,7 @@
 #include <QPrinter>
 #include "resultatDevis.h"
 #include "client.h"
+#include "constants.h"
 
 class PDFGenerator
 {

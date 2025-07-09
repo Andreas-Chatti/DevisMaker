@@ -7,6 +7,7 @@
 #include <cmath>
 #include "common.h"
 #include "presetsPrices.h"
+#include "constants.h"
 
 
 class Tarification 
@@ -24,7 +25,6 @@ public:
         , m_fraisStationnement{}
         , m_prixMetreCube{}
         , m_prixMonteMeubles{}
-        , m_prixDechetterie{}
         , m_prixSuppAdresse{}
     {
         loadSettings(PricePreset::BasseSaison);
@@ -40,7 +40,6 @@ public:
     double getCoutFraisStationnement() const { return m_fraisStationnement; }
     double getPrixMetreCube() const { return m_prixMetreCube; }
     double getCoutMonteMeubles() const { return m_prixMonteMeubles; }
-    double getPrixDechetterie() const { return m_prixDechetterie; }
     double getPrixSuppAdresse() const { return m_prixSuppAdresse; }
 
     
@@ -53,7 +52,6 @@ public:
     void setCoutFraisStationnement(double fraisStationnement) { m_fraisStationnement = fraisStationnement; }
     void setPrixMetreCube(double prixM3) { m_prixMetreCube = prixM3; }
     void setCoutMonteMeubles(double prixMM) { m_prixMonteMeubles = prixMM; }
-    void setPrixDechetterie(double prixDechetterie) { m_prixDechetterie = prixDechetterie; }
     void setPrixSuppAdresse(double prixSuppAdresse) { m_prixSuppAdresse = prixSuppAdresse; }
 
 
@@ -80,11 +78,7 @@ private:
     double m_fraisStationnement; // Coût frais stationnement par adresse H.T.
     double m_prixMetreCube; // Prix du m3
     double m_prixMonteMeubles; // Prix d'un monte-meuble en demi-journée PAR adresse
-    double m_prixDechetterie; // Prix mise en déchetterie
     double m_prixSuppAdresse; // Prix supplément PAR adresse
-
-
-    double getDefaultValue(const QString& key, PricePreset preset) const;
 
 
     void loadDefaultValues(PricePreset preset);

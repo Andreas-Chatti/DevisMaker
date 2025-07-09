@@ -70,7 +70,6 @@ void MainWindow::setupValidators()
         ui.moLineEdit,
         ui.fraisStatLineEdit,
         ui.MMeublesLineEdit,
-        ui.deLineEdit,
         ui.suppAdresseLineEdit,
     };
 
@@ -109,7 +108,6 @@ void MainWindow::setupSettings()
     ui.moLineEdit->setText(QString::number(m_tarification.getCoutMO()));
     ui.fraisStatLineEdit->setText(QString::number(m_tarification.getCoutFraisStationnement()));
     ui.MMeublesLineEdit->setText(QString::number(m_tarification.getCoutMonteMeubles()));
-    ui.deLineEdit->setText(QString::number(m_tarification.getPrixDechetterie()));
     ui.suppAdresseLineEdit->setText(QString::number(m_tarification.getPrixSuppAdresse()));
 }
 
@@ -282,11 +280,6 @@ void MainWindow::updateClientVariables()
     m_client.setValeurAssurance(valeurAssurance);
 
 
-    // Récupérer la condition Déchetterie
-    bool dechetterie{ ui.deCheckBox->isChecked() };
-    m_client.setIsDE(dechetterie);
-
-
     // Récupérer le nombre d'adresses supplémentaires (si checkbox == true)
     int nbAdresseSupp{ ui.suppAdresseCheckBox->isChecked() ? ui.suppAdresseSpinBox->value() : 0 };
     m_client.setNbAdresseSupp(nbAdresseSupp);
@@ -335,10 +328,6 @@ void MainWindow::updateSettingsVariables()
 
     double prixMonteMeubles{ ui.MMeublesLineEdit->text().toDouble() };
     m_tarification.setCoutMonteMeubles(prixMonteMeubles);
-
-
-    double prixDechetterie{ ui.deLineEdit->text().toDouble() };
-    m_tarification.setPrixDechetterie(prixDechetterie);
 
 
     double prixSuppAdresse{ ui.suppAdresseLineEdit->text().toDouble() };
@@ -530,9 +519,6 @@ void MainWindow::populateDevisTable(ResultatsDevis resultat)
 
     if (resultat.fraisMonteMeubles > 0)
         devisItems.push_back({ "Monte-meubles", QString::number(resultat.fraisMonteMeubles, 'f', 2) + " € H.T." });
-
-    if (resultat.prixDechetterie > 0)
-        devisItems.push_back({ "Déchetterie", QString::number(resultat.prixDechetterie, 'f', 2) + " € H.T." });
 
     if (resultat.prixSuppAdresse > 0)
     {

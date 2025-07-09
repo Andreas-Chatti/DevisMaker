@@ -166,12 +166,11 @@ QString PDFGenerator::createHTMLTemplate(const Client& client, const ResultatsDe
 <body>
     <div class="container">
         <div class="header">
-            <div class="company-name">CHATTI DEMENAGEMENT</div>
+            <div class="company-name">%COMPANY_NAME%</div>
             <div class="company-details">
-                2, Rue Jean Cocteau<br>
-                91460 MARCOUSSIS<br>
-                Tél: 01 69 75 18 22<br>
-                E-mail: <span style="color: #3498db; text-decoration: underline;">chattidemenagement@gmail.com</span>
+                %COMPANY_ADRESS%<br>
+                Tél: %COMPANY_NUMBER%<br>
+                E-mail: <span style="color: #3498db; text-decoration: underline;">%COMPANY_EMAIL%</span>
             </div>
         </div>
     )");
@@ -294,8 +293,8 @@ QString PDFGenerator::createHTMLTemplate(const Client& client, const ResultatsDe
         </div>
 
         <div class="footer">
-            <strong>CHATTI DEMENAGEMENT - TVA intracommunautaire: FR68390329894</strong><br>
-            <strong>SIRET: 39032989400054 - APE: 4942Z - RCS: Evry A 390 329 894 000 54</strong>
+            <strong>%COMPANY_NAME% - TVA intracommunautaire: %TVA_NUMBER%</strong><br>
+            <strong>SIRET: %SIRET_NUMBER% - APE: %APE_NUMBER% - RCS: Evry A 390 329 894 000 54</strong>
         </div>
         
     </div>
@@ -304,7 +303,7 @@ QString PDFGenerator::createHTMLTemplate(const Client& client, const ResultatsDe
     )");
 
     // Assembler toutes les parties
-    QString templateComplet = htmlHeader + tableauCaracteristiques + tableauChargementLivraison + tableauPrix + htmlFooter;
+    QString templateComplet{ htmlHeader + tableauCaracteristiques + tableauChargementLivraison + tableauPrix + htmlFooter };
 
     // Appliquer les remplacements
     return templateComplet
@@ -339,7 +338,14 @@ QString PDFGenerator::createHTMLTemplate(const Client& client, const ResultatsDe
         .replace("%ARRHES%", QString::number(resultats.arrhes, 'f', 2))
         .replace("%SOLDE%", QString::number((resultats.prixTotalHT * 1.20) - resultats.arrhes, 'f', 2))
         .replace("%EMISSION_CO2%", QString::number(client.getDistance() * 0.42, 'f', 1))
-        .replace("%PRIX_FORFAITAIRE%", QString::number(resultats.prixMetreCube * client.getVolume(), 'f', 2));
+        .replace("%PRIX_FORFAITAIRE%", QString::number(resultats.prixMetreCube * client.getVolume(), 'f', 2))
+        .replace("%COMPANY_NAME%", SettingsConstants::CompanyInfos::COMPANY_NAME)
+        .replace("%COMPANY_ADRESS%", SettingsConstants::CompanyInfos::COMPANY_ADDRESS)
+        .replace("%TVA_NUMBER%", SettingsConstants::CompanyInfos::COMPANY_TVA)
+        .replace("%SIRET_NUMBER%", SettingsConstants::CompanyInfos::COMPANY_SIRET)
+        .replace("%APE_NUMBER%", SettingsConstants::CompanyInfos::COMPANY_APE)
+        .replace("%COMPANY_NUMBER%", SettingsConstants::CompanyInfos::COMPANY_PHONE_1)
+        .replace("%COMPANY_EMAIL%", SettingsConstants::CompanyInfos::COMPANY_EMAIL);
 }
 
 
@@ -389,14 +395,6 @@ QString PDFGenerator::createSupplementsRows(const ResultatsDevis& resultats) con
             .arg(cellStyleLeft)
             .arg(cellStyleRight)
             .arg(QString::number(resultats.fraisMonteMeubles, 'f', 2));
-    }
-
-    if (resultats.prixDechetterie > 0) 
-    {
-        rows += QString("<tr><td style=\"%1\"><strong>Déchetterie</strong></td><td style=\"%2\">%3 €</td></tr>")
-            .arg(cellStyleLeft)
-            .arg(cellStyleRight)
-            .arg(QString::number(resultats.prixDechetterie, 'f', 2));
     }
 
     if (resultats.prixSuppAdresse > 0) 

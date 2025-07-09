@@ -12,7 +12,6 @@ struct ResultatsDevis
     double fraisRoute;
     double coutAssurance;
     double fraisMonteMeubles;
-    double prixDechetterie;
     double prixSuppAdresse;
     double prixKilometrage;
 

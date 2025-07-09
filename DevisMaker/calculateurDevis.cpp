@@ -18,8 +18,6 @@ const ResultatsDevis& CalculateurDevis::calculateDevis(const PricePreset& preset
 
     double fraisMMeubles{ calculerSupplementMM() };
 
-    double prixDechetterie{ m_client.getIsDE() ? m_tarification.getPrixDechetterie() : 0 }; // A enlever plus tard
-
     double prixSuppAdresse{ calculerSuppAdresseTotal() };
 
     double prixKilometrage{ calculerCoutKilometrageTotal() };
@@ -31,7 +29,7 @@ const ResultatsDevis& CalculateurDevis::calculateDevis(const PricePreset& preset
     double prixMetreCube{ calculerPrixMetreCube(preset) };
 
     m_lastResults = { volumeParPersonne, nombreCamion, nombreMO, coutMOTotal, coutCamionTotal,
-        coutAutStatTotal, fraisRouteTotal, coutAssurance, fraisMMeubles, prixDechetterie, prixSuppAdresse, prixKilometrage, prixTotalHT, arrhes, prixMetreCube };
+        coutAutStatTotal, fraisRouteTotal, coutAssurance, fraisMMeubles, prixSuppAdresse, prixKilometrage, prixTotalHT, arrhes, prixMetreCube };
 
 
     return m_lastResults;
