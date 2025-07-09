@@ -40,7 +40,7 @@ const ResultatsDevis& CalculateurDevis::calculateDevis(const PricePreset& preset
 
 double CalculateurDevis::calculerCoutAssurance() const
 {
-    const double taux{ m_client.getTypeAssurance() == TypeAssurance::contractuelle ? 0.2 : 0.5};
+    const double taux{ m_client.getTypeAssurance() == TypeAssurance::contractuelle ? SettingsConstants::CONTRACTUELLE_INSURANCE_RATE : SettingsConstants::DOMMAGE_INSURANCE_RATE };
 
     return (m_client.getValeurAssurance() * taux) / 100;
 }
@@ -182,12 +182,12 @@ int CalculateurDevis::calculerNombreMO(int nombreCamions) const
     {
         // Pour la route, on a besoin du nombre de base pour le premier jour
         // et ensuite 2 personnes par jour supplémentaire
-        if (nombreCamions > 1)
+        if (nombreCamions > SettingsConstants::MIN_WORKING_DAY)
         {
             // Premier jour: nombre de base (mais au moins 2 personnes)
             // Jours suivants: 2 personnes par camion
             nombrePersonnesTotal = std::max(SettingsConstants::Worker::MIN_WORKERS, nombrePersonnesBase); // Premier jour
-            nombrePersonnesTotal += 2 * (nombreCamions - 1);         // Jours suivants
+            nombrePersonnesTotal += SettingsConstants::Worker::MIN_WORKERS * (nombreCamions - 1);         // Jours suivants
         }
 
         else

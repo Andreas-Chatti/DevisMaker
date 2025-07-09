@@ -51,7 +51,7 @@ public:
     void setFraisRoute(double fraisRoute) { m_fraisRoute = fraisRoute; }
     void setCoutMO(double coutMO) { m_coutMO = coutMO; }
     void setCoutFraisStationnement(double fraisStationnement) { m_fraisStationnement = fraisStationnement; }
-    void setPrixMetreCube(Prestation prestation, Nature nature, double distance, PricePreset preset);
+    void setPrixMetreCube(double prixM3) { m_prixMetreCube = prixM3; }
     void setCoutMonteMeubles(double prixMM) { m_prixMonteMeubles = prixMM; }
     void setPrixDechetterie(double prixDechetterie) { m_prixDechetterie = prixDechetterie; }
     void setPrixSuppAdresse(double prixSuppAdresse) { m_prixSuppAdresse = prixSuppAdresse; }

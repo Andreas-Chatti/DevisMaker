@@ -8,6 +8,8 @@ public:
     // Constantes métier principales
     static constexpr double INSURANCE_RATE_PER_M3{ 500.0 };
     static constexpr double MAX_INSURANCE_VALUE{ 45000.0 };
+    static constexpr double CONTRACTUELLE_INSURANCE_RATE{ 0.2 };
+    static constexpr double DOMMAGE_INSURANCE_RATE{ 0.5 };
     static constexpr double TVA_RATE{ 0.20 };
     static constexpr double ARRHES_RATE{ 0.30 };
     static constexpr double MAX_M3_PER_TRUCK{ 60.0 };
@@ -33,10 +35,66 @@ public:
 
     struct M3PriceUrban
     {
+        struct PriceSet
+        {
+            double cout_Camion;
+            double cout_Kilometrique;
+            double cout_Emballage;
+            double cout_LocMateriel;
+            double cout_FraisRoute;
+            double cout_MainOeuvre;
+            double cout_FraisStationnement;
+            double cout_MonteMeubles;
+            double cout_SupplementAdresse;
+        };
+
+        enum class PriceKey
+        {
+            CoutCamion,
+            CoutKilometrique,
+            CoutEmballage,
+            CoutLocMateriel,
+            CoutFraisRoute,
+            CoutMainOeuvre,
+            CoutFraisStationnement,
+            CoutMonteMeubles,
+            CoutSupplementAdresse,
+            max_PriceKey
+        };
+
+        static constexpr PriceSet BASSE_SAISON_PRESET{ 75.0, 1.3, 5.0, 0.5, 65.0, 220.0, 50.0, 250.0, 75.0 };
+        static constexpr PriceSet HAUTE_SAISON_PRESET{ 100.0, 1.5, 5.0, 0.5, 65.0, 300.0, 50.0, 250.0, 100.0 };
+
+        // Prix basse-saison
         static constexpr double M3_PRICE_ECO_LOW{ 30.0 };
         static constexpr double M3_PRICE_ECOPLUS_LOW{ 35.0 };
         static constexpr double M3_PRICE_STANDARD_LOW{ 40.0 };
         static constexpr double M3_PRICE_LUXE_LOW{ 50.0 };
+
+        // Prix haute-saison
+        static constexpr double M3_PRICE_ECO_HIGH{ 40.0 };
+        static constexpr double M3_PRICE_ECOPLUS_HIGH{ 50.0 };
+        static constexpr double M3_PRICE_STANDARD_HIGH{ 60.0 };
+        static constexpr double M3_PRICE_LUXE_HIGH{ 65.0 };
+
+
+        static double getPrice(PriceKey key, PricePreset preset)
+        {
+            const PriceSet& prices{ preset == PricePreset::BasseSaison ? BASSE_SAISON_PRESET : HAUTE_SAISON_PRESET };
+
+            switch (key)
+            {
+            case SettingsConstants::M3PriceUrban::PriceKey::CoutCamion: return prices.cout_Camion;
+            case SettingsConstants::M3PriceUrban::PriceKey::CoutKilometrique: return prices.cout_Kilometrique;
+            case SettingsConstants::M3PriceUrban::PriceKey::CoutEmballage: return prices.cout_Emballage;
+            case SettingsConstants::M3PriceUrban::PriceKey::CoutLocMateriel: return prices.cout_LocMateriel;
+            case SettingsConstants::M3PriceUrban::PriceKey::CoutFraisRoute: return prices.cout_FraisRoute;
+            case SettingsConstants::M3PriceUrban::PriceKey::CoutMainOeuvre: return prices.cout_MainOeuvre;
+            case SettingsConstants::M3PriceUrban::PriceKey::CoutFraisStationnement: return prices.cout_FraisStationnement;
+            case SettingsConstants::M3PriceUrban::PriceKey::CoutMonteMeubles: prices.cout_MonteMeubles;
+            case SettingsConstants::M3PriceUrban::PriceKey::CoutSupplementAdresse: prices.cout_SupplementAdresse;
+            }
+        }
     };
 
     // Capacités camions
@@ -79,4 +137,5 @@ public:
 private:
 
     SettingsConstants() = delete;
+    ~SettingsConstants() = delete;
 };

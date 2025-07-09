@@ -294,7 +294,8 @@ void MainWindow::updateClientVariables()
 
     // Déterminer le prix du mètre cube en fonctions des paramètres actuels
     PricePreset presetToUse{ determinePresetFromDates(ui.departDateEdit->date(), ui.livraisonDateEdit->date()) };
-    m_tarification.setPrixMetreCube(prestation, nature, m_client.getDistance(), presetToUse);
+    double prixM3{ m_calculateurDevis->calculerPrixMetreCube(presetToUse) };
+    m_tarification.setPrixMetreCube(prixM3);
 }
 
 

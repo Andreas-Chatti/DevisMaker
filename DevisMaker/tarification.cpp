@@ -83,47 +83,6 @@ void Tarification::saveSettings(PricePreset preset) const
 }
 
 
-void Tarification::setPrixMetreCube(Prestation prestation, Nature nature, double distance, PricePreset preset)
-{
-    if (nature == Nature::urbain)
-    {
-        switch (prestation)
-        {
-        case Prestation::eco:
-            m_prixMetreCube = preset == PricePreset::BasseSaison ? BasseSaison::prixM3_Eco_Default : HauteSaison::prixM3_Eco_Default;
-            return;
-        case Prestation::ecoPlus:
-            m_prixMetreCube = preset == PricePreset::BasseSaison ? BasseSaison::prixM3_EcoPlus_Default : HauteSaison::prixM3_EcoPlus_Default;
-            return;
-        case Prestation::standard:
-            m_prixMetreCube = preset == PricePreset::BasseSaison ? BasseSaison::prixM3_Standard_Default : HauteSaison::prixM3_Standard_Default;
-            return;
-        case Prestation::luxe:
-            m_prixMetreCube = preset == PricePreset::BasseSaison ? BasseSaison::prixM3_Luxe_Default : HauteSaison::prixM3_Luxe_Default;
-            return;
-        }
-    }
-
-    else if (nature == Nature::special || nature == Nature::groupage)
-    {
-        if (distance >= 150 && distance <= 400)
-            m_prixMetreCube = 65.0;
-
-        else if (distance > 400 && distance <= 600)
-            m_prixMetreCube = 75.0;
-
-        else if (distance > 600 && distance <= 760)
-            m_prixMetreCube = 80.0;
-
-        else if (distance > 760 && distance <= 900)
-            m_prixMetreCube = 100.0;
-
-        else if (distance > 900)
-            m_prixMetreCube = 120.0;
-    }
-}
-
-
 double Tarification::getDefaultValue(const QString& key, PricePreset preset) const
 {
 
