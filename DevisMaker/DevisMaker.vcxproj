@@ -124,7 +124,6 @@
     <QtMoc Include="InventoryAnalyzer.h" />
     <QtMoc Include="streetMap.h" />
     <ClInclude Include="pdfGenerator.h" />
-    <ClInclude Include="presetsPrices.h" />
     <ClInclude Include="resultatDevis.h" />
     <ClInclude Include="tarification.h" />
   </ItemGroup>

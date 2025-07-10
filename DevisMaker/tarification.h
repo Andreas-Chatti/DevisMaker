@@ -6,7 +6,6 @@
 #include <array>
 #include <cmath>
 #include "common.h"
-#include "presetsPrices.h"
 #include "constants.h"
 
 
@@ -29,6 +28,98 @@ public:
     {
         loadSettings(PricePreset::BasseSaison);
     }
+
+
+    enum PriceKey
+    {
+        CoutCamion,
+        CoutKilometrique,
+        CoutEmballage,
+        CoutLocMateriel,
+        CoutFraisRoute,
+        CoutMainOeuvre,
+        CoutFraisStationnement,
+        CoutMonteMeubles,
+        CoutSupplementAdresse,
+
+
+
+        max_PriceKey
+    };
+
+
+    struct Postes_DefaultPrices
+    {
+        struct BasseSaison
+        {
+            static constexpr double CAMION{ 75.0 };
+            static constexpr double KILOMETRAGE{ 1.3 };
+            static constexpr double EMBALLAGE{ 5.0 };
+            static constexpr double LOC_MATERIEL{ 0.5 };
+            static constexpr double FRAIS_ROUTE{ 65.0 };
+            static constexpr double MAIN_OEUVRE{ 220.0 };
+            static constexpr double STATIONNEMENT{ 50.0 };
+            static constexpr double MONTE_MEUBLES{ 250.0 };
+            static constexpr double SUPP_ADRESSE{ 75.0 };
+        };
+
+        struct HauteSaison
+        {
+            static constexpr double CAMION{ 100.0 };
+            static constexpr double KILOMETRAGE{ 1.3 };
+            static constexpr double EMBALLAGE{ 5.0 };
+            static constexpr double LOC_MATERIEL{ 0.5 };
+            static constexpr double FRAIS_ROUTE{ 65.0 };
+            static constexpr double MAIN_OEUVRE{ 300.0 };
+            static constexpr double STATIONNEMENT{ 50.0 };
+            static constexpr double MONTE_MEUBLES{ 300.0 };
+            static constexpr double SUPP_ADRESSE{ 100.0 };
+        };
+    };
+
+
+    struct M3_DefaultPrices
+    {
+        struct Route
+        {
+            struct BasseSaison
+            {
+                static constexpr double DISTANCE_150_400{ 65.0 }; // Prix M3 entre 150 et 400 kms
+                static constexpr double DISTANCE_401_600{ 75.0 }; // Prix M3 supérieur à 400 kms et inférieur ou égale à 600 kms
+                static constexpr double DISTANCE_601_760{ 80.0 }; // Prix M3 supérieur à 600 kms et inférieur ou égale à 760 kms
+                static constexpr double DISTANCE_761_900{ 100.0 }; // Prix M3 supérieur à 760 kms et inférieur ou égale à 900 kms
+                static constexpr double DISTANCE_901PLUS{ 120.0 }; // Prix M3 supérieur à 900 kms
+            };
+
+            struct HauteSaison
+            {
+                static constexpr double DISTANCE_150_400{ 70.0 };
+                static constexpr double DISTANCE_401_600{ 80.0 };
+                static constexpr double DISTANCE_601_760{ 85.0 };
+                static constexpr double DISTANCE_761_900{ 110.0 };
+                static constexpr double DISTANCE_901PLUS{ 130.0 };
+            };
+        };
+
+        struct Urbain
+        {
+            struct BasseSaison
+            {
+                static constexpr double ECO{ 30.0 };
+                static constexpr double ECOPLUS{ 35.0 };
+                static constexpr double STANDARD{ 40.0 };
+                static constexpr double LUXE{ 50.0 };
+            };
+
+            struct HauteSaison
+            {
+                static constexpr double ECO{ 40.0 };
+                static constexpr double ECOPLUS{ 50.0 };
+                static constexpr double STANDARD{ 60.0 };
+                static constexpr double LUXE{ 65.0 };
+            };
+        };
+    };
 
     
     double getCoutCamion() const { return m_coutCamion; }
@@ -83,6 +174,10 @@ private:
 
     void loadDefaultValues(PricePreset preset);
 
+
+    double getDefaultPrices_5Postes(PriceKey key, PricePreset preset) const;
+
+    double getDefaultPrices_M3(PricePreset preset, Nature nature, Prestation prestation, double distance) const;
 };
 
 #endif

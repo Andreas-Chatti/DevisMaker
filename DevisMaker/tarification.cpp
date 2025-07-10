@@ -20,15 +20,15 @@ void Tarification::loadSettings(PricePreset preset)
     if (checkFile.exists() && checkFile.isFile())
     {
         settings.beginGroup(sectionName);
-        m_coutCamion = settings.value("Camion", SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutCamion, preset)).toDouble();
-        m_coutKilometrique = settings.value("Kilometrage", SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutKilometrique, preset)).toDouble();
-        m_coutEmballage = settings.value("Emballage", SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutEmballage, preset)).toDouble();
-        m_prixLocMateriel = settings.value("Location_Materiel", SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutCamion, preset)).toDouble();
-        m_fraisRoute = settings.value("Frais_Route", SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutFraisRoute, preset)).toDouble();
-        m_coutMO = settings.value("Main_Oeuvre", SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutMainOeuvre, preset)).toDouble();
-        m_fraisStationnement = settings.value("Stationnement", SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutFraisStationnement, preset)).toDouble();
-        m_prixMonteMeubles = settings.value("Monte_Meubles", SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutMonteMeubles, preset)).toDouble();
-        m_prixSuppAdresse = settings.value("Supplement_Adresse", SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutFraisStationnement, preset)).toDouble();
+        m_coutCamion = settings.value("Camion", getDefaultPrices_5Postes(CoutCamion, preset)).toDouble();
+        m_coutKilometrique = settings.value("Kilometrage", getDefaultPrices_5Postes(CoutKilometrique, preset)).toDouble();
+        m_coutEmballage = settings.value("Emballage", getDefaultPrices_5Postes(CoutEmballage, preset)).toDouble();
+        m_prixLocMateriel = settings.value("Location_Materiel", getDefaultPrices_5Postes(CoutCamion, preset)).toDouble();
+        m_fraisRoute = settings.value("Frais_Route", getDefaultPrices_5Postes(CoutFraisRoute, preset)).toDouble();
+        m_coutMO = settings.value("Main_Oeuvre", getDefaultPrices_5Postes(CoutMainOeuvre, preset)).toDouble();
+        m_fraisStationnement = settings.value("Stationnement", getDefaultPrices_5Postes(CoutFraisStationnement, preset)).toDouble();
+        m_prixMonteMeubles = settings.value("Monte_Meubles", getDefaultPrices_5Postes(CoutMonteMeubles, preset)).toDouble();
+        m_prixSuppAdresse = settings.value("Supplement_Adresse", getDefaultPrices_5Postes(CoutFraisStationnement, preset)).toDouble();
         settings.endGroup();
     }
 
@@ -72,13 +72,56 @@ void Tarification::saveSettings(PricePreset preset) const
 
 void Tarification::loadDefaultValues(PricePreset preset)
 {
-    m_coutCamion = SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutCamion, preset);
-    m_coutKilometrique = SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutKilometrique, preset);
-    m_coutEmballage = SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutEmballage, preset);
-    m_prixLocMateriel = SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutLocMateriel, preset);
-    m_fraisRoute = SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutFraisRoute, preset);
-    m_coutMO = SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutMainOeuvre, preset);
-    m_fraisStationnement = SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutFraisStationnement, preset);
-    m_prixMonteMeubles = SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutMonteMeubles, preset);
-    m_prixSuppAdresse = SettingsConstants::M3PriceUrban::getDefaultPrices(SettingsConstants::M3PriceUrban::PriceKey::CoutSupplementAdresse, preset);
+    m_coutCamion = getDefaultPrices_5Postes(CoutCamion, preset);
+    m_coutKilometrique = getDefaultPrices_5Postes(CoutKilometrique, preset);
+    m_coutEmballage = getDefaultPrices_5Postes(CoutEmballage, preset);
+    m_prixLocMateriel = getDefaultPrices_5Postes(CoutLocMateriel, preset);
+    m_fraisRoute = getDefaultPrices_5Postes(CoutFraisRoute, preset);
+    m_coutMO = getDefaultPrices_5Postes(CoutMainOeuvre, preset);
+    m_fraisStationnement = getDefaultPrices_5Postes(CoutFraisStationnement, preset);
+    m_prixMonteMeubles = getDefaultPrices_5Postes(CoutMonteMeubles, preset);
+    m_prixSuppAdresse = getDefaultPrices_5Postes(CoutSupplementAdresse, preset);
+}
+
+
+double Tarification::getDefaultPrices_5Postes(PriceKey key, PricePreset preset) const
+{
+    bool basseSaison{ preset == PricePreset::BasseSaison };
+
+    switch (key)
+    {
+    case Tarification::CoutCamion: return basseSaison ? Postes_DefaultPrices::BasseSaison::CAMION : Postes_DefaultPrices::HauteSaison::CAMION;
+    case Tarification::CoutKilometrique: return basseSaison ? Postes_DefaultPrices::BasseSaison::KILOMETRAGE : Postes_DefaultPrices::HauteSaison::KILOMETRAGE;
+    case Tarification::CoutEmballage: return basseSaison ? Postes_DefaultPrices::BasseSaison::EMBALLAGE : Postes_DefaultPrices::HauteSaison::EMBALLAGE;
+    case Tarification::CoutLocMateriel: return basseSaison ? Postes_DefaultPrices::BasseSaison::LOC_MATERIEL : Postes_DefaultPrices::HauteSaison::LOC_MATERIEL;
+    case Tarification::CoutFraisRoute: return basseSaison ? Postes_DefaultPrices::BasseSaison::FRAIS_ROUTE : Postes_DefaultPrices::HauteSaison::FRAIS_ROUTE;
+    case Tarification::CoutMainOeuvre: return basseSaison ? Postes_DefaultPrices::BasseSaison::MAIN_OEUVRE : Postes_DefaultPrices::HauteSaison::MAIN_OEUVRE;
+    case Tarification::CoutFraisStationnement: return basseSaison ? Postes_DefaultPrices::BasseSaison::STATIONNEMENT : Postes_DefaultPrices::HauteSaison::STATIONNEMENT;
+    case Tarification::CoutMonteMeubles: return basseSaison ? Postes_DefaultPrices::BasseSaison::MONTE_MEUBLES : Postes_DefaultPrices::HauteSaison::MONTE_MEUBLES;
+    case Tarification::CoutSupplementAdresse: return basseSaison ? Postes_DefaultPrices::BasseSaison::SUPP_ADRESSE : Postes_DefaultPrices::HauteSaison::SUPP_ADRESSE;
+    }
+}
+
+
+double Tarification::getDefaultPrices_M3(PricePreset preset, Nature nature, Prestation prestation, double distance) const
+{
+    bool basseSaison{ preset == PricePreset::BasseSaison };
+
+    switch (nature)
+    {
+    case Nature::urbain:
+        switch (prestation)
+        {
+        case Prestation::eco: return basseSaison ? M3_DefaultPrices::Urbain::BasseSaison::ECO : M3_DefaultPrices::Urbain::HauteSaison::ECO;
+        case Prestation::ecoPlus: return basseSaison ? M3_DefaultPrices::Urbain::BasseSaison::ECOPLUS : M3_DefaultPrices::Urbain::HauteSaison::ECOPLUS;
+        case Prestation::standard: return basseSaison ? M3_DefaultPrices::Urbain::BasseSaison::STANDARD : M3_DefaultPrices::Urbain::HauteSaison::STANDARD;
+        case Prestation::luxe: return basseSaison ? M3_DefaultPrices::Urbain::BasseSaison::LUXE : M3_DefaultPrices::Urbain::HauteSaison::LUXE;
+        }
+
+    case Nature::special:
+        if(distance SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_1)
+
+    case Nature::groupage:
+        break;
+    }
 }

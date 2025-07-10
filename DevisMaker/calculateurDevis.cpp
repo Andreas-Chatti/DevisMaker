@@ -221,37 +221,34 @@ double CalculateurDevis::calculerPrixMetreCube(PricePreset preset) const
     const Prestation& prestation{ m_client.getPrestation() };
     const Nature& nature{ m_client.getNature() };
     double distance{ m_client.getDistance() };
+    bool basseSaison{ preset == PricePreset::BasseSaison };
 
     if (nature == Nature::urbain)
     {
         switch (prestation)
         {
-        case Prestation::eco:
-            return preset == PricePreset::BasseSaison ? BasseSaison::prixM3_Eco_Default : HauteSaison::prixM3_Eco_Default;
-        case Prestation::ecoPlus:
-            return preset == PricePreset::BasseSaison ? BasseSaison::prixM3_EcoPlus_Default : HauteSaison::prixM3_EcoPlus_Default;
-        case Prestation::standard:
-            return preset == PricePreset::BasseSaison ? BasseSaison::prixM3_Standard_Default : HauteSaison::prixM3_Standard_Default;
-        case Prestation::luxe:
-            return preset == PricePreset::BasseSaison ? BasseSaison::prixM3_Luxe_Default : HauteSaison::prixM3_Luxe_Default;
+        case Prestation::eco: return basseSaison ? Tarification::M3_DefaultPrices::Urbain::BasseSaison::ECO : Tarification::M3_DefaultPrices::Urbain::HauteSaison::ECO;
+        case Prestation::ecoPlus: return basseSaison ? Tarification::M3_DefaultPrices::Urbain::BasseSaison::ECOPLUS : Tarification::M3_DefaultPrices::Urbain::HauteSaison::ECOPLUS;
+        case Prestation::standard: return basseSaison ? Tarification::M3_DefaultPrices::Urbain::BasseSaison::STANDARD : Tarification::M3_DefaultPrices::Urbain::HauteSaison::STANDARD;
+        case Prestation::luxe: return basseSaison ? Tarification::M3_DefaultPrices::Urbain::BasseSaison::LUXE : Tarification::M3_DefaultPrices::Urbain::HauteSaison::LUXE;
         }
     }
 
     else if (nature == Nature::special || nature == Nature::groupage)
     {
         if (distance >= SettingsConstants::Distances::URBAN_DISTANCE_LIMIT && distance <= SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_1)
-            return SettingsConstants::M3PriceRoute::M3_PRICE_DISTANCE_1;
+            return basseSaison ? Tarification::M3_DefaultPrices::Route::BasseSaison::DISTANCE_150_400 : Tarification::M3_DefaultPrices::Route::HauteSaison::DISTANCE_150_400;
 
         else if (distance > SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_1 && distance <= SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_2)
-            return SettingsConstants::M3PriceRoute::M3_PRICE_DISTANCE_2;
+            return basseSaison ? Tarification::M3_DefaultPrices::Route::BasseSaison::DISTANCE_401_600 : Tarification::M3_DefaultPrices::Route::HauteSaison::DISTANCE_401_600;
 
         else if (distance > SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_2 && distance <= SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_3)
-            return SettingsConstants::M3PriceRoute::M3_PRICE_DISTANCE_3;
+            return basseSaison ? Tarification::M3_DefaultPrices::Route::BasseSaison::DISTANCE_601_760 : Tarification::M3_DefaultPrices::Route::HauteSaison::DISTANCE_601_760;
 
         else if (distance > SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_3 && distance <= SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_4)
-            return SettingsConstants::M3PriceRoute::M3_PRICE_DISTANCE_4;
+            return basseSaison ? Tarification::M3_DefaultPrices::Route::BasseSaison::DISTANCE_761_900 : Tarification::M3_DefaultPrices::Route::HauteSaison::DISTANCE_761_900;
 
         else if (distance > SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_4)
-            return SettingsConstants::M3PriceRoute::M3_PRICE_DISTANCE_5;
+            return basseSaison ? Tarification::M3_DefaultPrices::Route::BasseSaison::DISTANCE_901PLUS : Tarification::M3_DefaultPrices::Route::HauteSaison::DISTANCE_901PLUS;
     }
 }
