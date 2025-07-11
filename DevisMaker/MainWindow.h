@@ -85,7 +85,7 @@ private:
 
     void setupValidators();
 
-    void setupSettings();
+    void displaySettings();
 
     bool areAllFieldCompleted();
 

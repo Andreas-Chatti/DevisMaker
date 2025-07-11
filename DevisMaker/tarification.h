@@ -176,8 +176,6 @@ private:
 
 
     double getDefaultPrices_5Postes(PriceKey key, PricePreset preset) const;
-
-    double getDefaultPrices_M3(PricePreset preset, Nature nature, Prestation prestation, double distance) const;
 };
 
 #endif

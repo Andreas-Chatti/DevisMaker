@@ -101,27 +101,3 @@ double Tarification::getDefaultPrices_5Postes(PriceKey key, PricePreset preset) 
     case Tarification::CoutSupplementAdresse: return basseSaison ? Postes_DefaultPrices::BasseSaison::SUPP_ADRESSE : Postes_DefaultPrices::HauteSaison::SUPP_ADRESSE;
     }
 }
-
-
-double Tarification::getDefaultPrices_M3(PricePreset preset, Nature nature, Prestation prestation, double distance) const
-{
-    bool basseSaison{ preset == PricePreset::BasseSaison };
-
-    switch (nature)
-    {
-    case Nature::urbain:
-        switch (prestation)
-        {
-        case Prestation::eco: return basseSaison ? M3_DefaultPrices::Urbain::BasseSaison::ECO : M3_DefaultPrices::Urbain::HauteSaison::ECO;
-        case Prestation::ecoPlus: return basseSaison ? M3_DefaultPrices::Urbain::BasseSaison::ECOPLUS : M3_DefaultPrices::Urbain::HauteSaison::ECOPLUS;
-        case Prestation::standard: return basseSaison ? M3_DefaultPrices::Urbain::BasseSaison::STANDARD : M3_DefaultPrices::Urbain::HauteSaison::STANDARD;
-        case Prestation::luxe: return basseSaison ? M3_DefaultPrices::Urbain::BasseSaison::LUXE : M3_DefaultPrices::Urbain::HauteSaison::LUXE;
-        }
-
-    case Nature::special:
-        if(distance SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_1)
-
-    case Nature::groupage:
-        break;
-    }
-}

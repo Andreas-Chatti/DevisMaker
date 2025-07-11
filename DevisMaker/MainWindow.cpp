@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget* parent)
 
     setupValidators();
 
-    setupSettings();
+    displaySettings();
 
     ui.typeSaisonLabel->setText(""); // Cacher le texte si l'utilisateur n'a pas encore mis de dates
 }
@@ -98,7 +98,7 @@ void MainWindow::setupValidators()
 }
 
 
-void MainWindow::setupSettings()
+void MainWindow::displaySettings()
 {
     ui.prixCamionLineEdit->setText(QString::number(m_tarification.getCoutCamion()));
     ui.coutKmLineEdit->setText(QString::number(m_tarification.getCoutKilometrique()));
@@ -138,7 +138,7 @@ void MainWindow::on_generateDevisButton_clicked()
 
     const PricePreset presetToUse{ determinePresetFromDates(ui.departDateEdit->date(), ui.livraisonDateEdit->date()) };
     m_tarification.loadSettings(presetToUse);
-    setupSettings();
+    displaySettings();
     ui.pricePresetComboBox->setCurrentIndex(static_cast<int>(presetToUse));
 
 
@@ -617,7 +617,8 @@ void MainWindow::on_numTelLineEdit_editingFinished()
     if (text.isEmpty()) 
         return; // Champ vide, on ne fait rien
 
-    if (text.length() == 10 && text.startsWith("0")) 
+    constexpr int MAX_PHONE_NUMBER_LENGHT{ 10 };
+    if (text.length() == MAX_PHONE_NUMBER_LENGHT && text.startsWith("0")) 
     {
         // Numéro valide - formatage
         QString formatted{ QString("%1 %2 %3 %4 %5")
@@ -647,7 +648,7 @@ void MainWindow::on_pricePresetComboBox_currentIndexChanged(int index)
     PricePreset selectedPreset{ index };
     m_tarification.loadSettings(selectedPreset);
 
-    setupSettings();
+    displaySettings();
 }
 
 
