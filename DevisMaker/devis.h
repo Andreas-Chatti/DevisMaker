@@ -13,7 +13,7 @@ public:
         : m_client(client)
         , m_totalVolume(client.getVolume())
         , m_totalHT(results.prixTotalHT)
-        , m_TotalcoutMainOeuvre
+        , m_TotalcoutMainOeuvre{}
     {
     }
 

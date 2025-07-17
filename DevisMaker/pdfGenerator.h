@@ -14,11 +14,14 @@
 #include "client.h"
 #include "constants.h"
 
-class PDFGenerator
+class PDFGenerator : public QObject
 {
 public:
 
-    PDFGenerator() = default;
+    PDFGenerator()
+    {
+
+    }
 
     bool generateDevisPDF(const Client& client, const ResultatsDevis& resultats, const QString& outputPath = QString()) const;
 
@@ -32,4 +35,10 @@ private:
     QString formatCurrency(double value, const QString& suffix = " € H.T.") const;
     QString getCurrentDate() const;
     QString createSupplementsRows(const ResultatsDevis& resultats) const;
+    QString load_HTML_Template() const;
+    QString get_Default_HTML_Template() const;
+    bool createTemplateFile() const;
+    bool createTemplateDir(const QString& cheminFichier) const;
+
+    const QString HTML_TEMPLATE_LOCATION{ "templates/devis_template.html" };
 };
