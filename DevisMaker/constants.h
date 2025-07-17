@@ -65,6 +65,11 @@ public:
     static constexpr double TVA_MULTIPLIER{ 1.0 + TVA_RATE };
     static constexpr double EMISSION_CO2_PER_KM{ 0.42 };  // kg CO2/km
 
+    struct FileSettings
+    {
+        static inline const QString TEMPLATE_FILE_PATH{ "templates" };
+    };
+
 private:
 
     SettingsConstants() = delete;

@@ -1,7 +1,7 @@
 ﻿#include "pdfGenerator.h"
 
 
-bool PDFGenerator::generateDevisPDF(const Client& client, const ResultatsDevis& resultats, const QString& outputPath) const
+bool PDFGenerator::generateDevisPDF(const Client& client, const ResultatsDevis& resultats, const QString& outputPath)
 {
     // Déterminer le chemin de sortie
     QString finalPath{ outputPath };
@@ -29,15 +29,12 @@ bool PDFGenerator::generateDevisPDF(const Client& client, const ResultatsDevis& 
 }
 
 
-QString PDFGenerator::createHTMLTemplate(const Client& client, const ResultatsDevis& resultats) const
+QString PDFGenerator::createHTMLTemplate(const Client& client, const ResultatsDevis& resultats)
 {
-    QString htmlTemplate{ load_HTML_Template() };
+    QString supplementsRows{ createSupplementsRows(resultats) };
 
-    // Créer les lignes de suppléments seulement si nécessaire
-    QString supplementsRows = createSupplementsRows(resultats);
 
-    // Appliquer les remplacements
-    return htmlTemplate
+    return m_htmlTemplate
         .replace("%CLIENT_NUMBER%", "951")
         .replace("%DEVIS_NUMBER%", QString::number(QDateTime::currentSecsSinceEpoch() % 10000000))
         .replace("%DATE%", getCurrentDate())
@@ -177,12 +174,11 @@ QString PDFGenerator::load_HTML_Template() const
     QDir templateDir{ templateFileInfos.absoluteDir() };
 
     if (!templateDir.exists())
-        createTemplateDir(HTML_TEMPLATE_LOCATION);
+        createTemplateDir();
 
     if (!templateFile.exists())
         createTemplateFile();
 
-    // Ouvrir le fichier en mode lecture + texte
     if (!templateFile.open(QIODevice::ReadOnly | QIODevice::Text)) 
     {
         qDebug() << "Erreur: Impossible d'ouvrir le fichier template:" << HTML_TEMPLATE_LOCATION;
@@ -198,7 +194,7 @@ QString PDFGenerator::load_HTML_Template() const
 
 bool PDFGenerator::createTemplateFile() const
 {
-    // Créer le fichier template s'il n'existe pas
+
     QFile templateFile{ HTML_TEMPLATE_LOCATION };
 
     if (!templateFile.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -213,7 +209,7 @@ bool PDFGenerator::createTemplateFile() const
 
     ecrivain << get_Default_HTML_Template();
 
-    // Vérifier que l'écriture s'est bien passée
+
     if (ecrivain.status() != QTextStream::Ok) 
     {
         qDebug() << "Erreur lors de l'écriture du template";
@@ -225,15 +221,11 @@ bool PDFGenerator::createTemplateFile() const
 }
 
 
-bool PDFGenerator::createTemplateDir(const QString& cheminFichier) const
+bool PDFGenerator::createTemplateDir() const
 {
-    qDebug() << "Creation du dossier templates ...";
+    qDebug() << "Creation du dossier 'templates' ...";
 
-    QFileInfo fileInfos{ cheminFichier };
-    QDir templateDir{ fileInfos.absoluteDir() };
-
-    if (templateDir.exists())
-        return true;
+    QDir templateDir{ SettingsConstants::FileSettings::TEMPLATE_FILE_PATH };
 
     if(!templateDir.mkpath("."))
     {
