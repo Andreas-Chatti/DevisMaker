@@ -11,6 +11,12 @@ bool PDFGenerator::generateDevisPDF(const Client& client, const ResultatsDevis& 
     // Créer le contenu HTML
     QString htmlContent{ createHTMLTemplate(client, resultats) };
 
+    if (htmlContent.isEmpty())
+    {
+        emit pdfGenerationComplete(PdfGenerationState::blankFile);
+        return false;
+    }
+
     // Créer le document PDF
     QTextDocument document;
     document.setHtml(htmlContent);
@@ -24,6 +30,8 @@ bool PDFGenerator::generateDevisPDF(const Client& client, const ResultatsDevis& 
 
     // Générer le PDF
     document.print(&printer);
+
+    emit pdfGenerationComplete(PdfGenerationState::success);
 
     return QFile::exists(finalPath);
 }

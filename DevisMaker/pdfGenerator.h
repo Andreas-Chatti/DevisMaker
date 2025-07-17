@@ -25,10 +25,21 @@ public:
         m_htmlTemplate = load_HTML_Template();
     }
 
+    enum class PdfGenerationState
+    {
+        success,
+        blankFile,
+        fileNotFound
+    };
+
     bool generateDevisPDF(const Client& client, const ResultatsDevis& resultats, const QString& outputPath = QString());
 
     QString getNatureString(const Nature& nature) const;
     QString getPrestationString(const Prestation& prestation) const;
+
+signals:
+
+    void pdfGenerationComplete(PDFGenerator::PdfGenerationState generationState);
 
 private:
 

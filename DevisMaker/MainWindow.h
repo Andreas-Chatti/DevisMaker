@@ -66,6 +66,8 @@ private slots:
 
     void on_departDateEdit_editingFinished();
 
+    void onGenerateDevisFinished(PDFGenerator::PdfGenerationState generationState);
+
 private:
 
     Ui::MainWindowClass ui;

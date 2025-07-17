@@ -587,7 +587,7 @@ void MainWindow::populateDevisTable(ResultatsDevis resultat)
 
 void MainWindow::on_generatePdfButton_clicked()
 {
-    const auto& results{ m_calculateurDevis->getLastResults() };
+    const ResultatsDevis& devisResults{ m_calculateurDevis->getLastResults() };
 
     // DEMANDER à l'utilisateur où sauvegarder
     QString filePath{ QFileDialog::getSaveFileName(
@@ -601,10 +601,15 @@ void MainWindow::on_generatePdfButton_clicked()
     ) };
 
     if (filePath.isEmpty())
-        return;  // Utilisateur a annulé
+        return;
 
-    // PASSER le chemin choisi
-    m_PDFGenerator->generateDevisPDF(m_client, results, filePath);
+    m_PDFGenerator->generateDevisPDF(m_client, devisResults, filePath);
+}
+
+
+void MainWindow::onGenerateDevisFinished(PDFGenerator::PdfGenerationState generationState)
+{
+    
 }
 
 
