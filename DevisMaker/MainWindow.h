@@ -66,7 +66,7 @@ private slots:
 
     void on_departDateEdit_editingFinished();
 
-    void onGenerateDevisFinished(PDFGenerator::PdfGenerationState generationState);
+    void onGenerateDevisStatusReport(PDFGenerator::PdfGenerationState generationState);
 
 private:
 

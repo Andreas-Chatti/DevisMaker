@@ -16,9 +16,11 @@
 
 class PDFGenerator : public QObject
 {
+    Q_OBJECT
+
 public:
 
-    PDFGenerator()
+    PDFGenerator(QObject* parent = nullptr)
         : m_htmlTemplate{}
         , HTML_TEMPLATE_LOCATION{ SettingsConstants::FileSettings::TEMPLATE_FILE_PATH + "/devis_template.html" }
     {
@@ -29,7 +31,9 @@ public:
     {
         success,
         blankFile,
-        fileNotFound
+        errorLoadingFile,
+        errorCreatingTemplateFile,
+        errorCreatingTemplateDir,
     };
 
     bool generateDevisPDF(const Client& client, const ResultatsDevis& resultats, const QString& outputPath = QString());
@@ -39,19 +43,19 @@ public:
 
 signals:
 
-    void pdfGenerationComplete(PDFGenerator::PdfGenerationState generationState);
+    void pdfGenerationStatusReport(PDFGenerator::PdfGenerationState generationState);
 
 private:
 
-    QString createHTMLTemplate(const Client& client, const ResultatsDevis& resultats);
+    QString fillHTMLTemplate(const Client& client, const ResultatsDevis& resultats, QString& htmlTemplate);
     QString getDefaultOutputPath() const;
     QString formatCurrency(double value, const QString& suffix = " € H.T.") const;
     QString getCurrentDate() const;
     QString createSupplementsRows(const ResultatsDevis& resultats) const;
-    QString load_HTML_Template() const;
+    QString load_HTML_Template();
     QString get_Default_HTML_Template() const;
-    bool createTemplateFile() const;
-    bool createTemplateDir() const;
+    bool createTemplateFile();
+    bool createTemplateDir();
 
     const QString HTML_TEMPLATE_LOCATION;
     QString m_htmlTemplate;

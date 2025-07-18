@@ -14,8 +14,8 @@ MainWindow::MainWindow(QWidget* parent)
 
     m_openStreetMap = new OpenStreetMap(this);
 
-    m_PDFGenerator = new PDFGenerator();
-
+    m_PDFGenerator = new PDFGenerator(this);
+    connect(m_PDFGenerator, &PDFGenerator::pdfGenerationStatusReport, this, &MainWindow::onGenerateDevisStatusReport);
 
     // Calculer la distance après modification du champ d'adresse départ
     connect(ui.adresseDepartLineEdit, &QLineEdit::editingFinished, [this]() {
@@ -607,9 +607,29 @@ void MainWindow::on_generatePdfButton_clicked()
 }
 
 
-void MainWindow::onGenerateDevisFinished(PDFGenerator::PdfGenerationState generationState)
+void MainWindow::onGenerateDevisStatusReport(PDFGenerator::PdfGenerationState generationState)
 {
-    
+    QString notificationMessage{};
+
+    switch (generationState)
+    {
+    case PDFGenerator::PdfGenerationState::success: notificationMessage = "Devis creer avec succes.";
+        break;
+    case PDFGenerator::PdfGenerationState::blankFile: notificationMessage = "Error: blank file.";
+        break;
+    case PDFGenerator::PdfGenerationState::errorLoadingFile: notificationMessage = "Error loading file.";
+        break;
+    case PDFGenerator::PdfGenerationState::errorCreatingTemplateFile: notificationMessage = "Error creating template file.";
+        break;
+    case PDFGenerator::PdfGenerationState::errorCreatingTemplateDir: notificationMessage = "Error creating template directory.";
+        break;
+    }
+
+    if (generationState == PDFGenerator::PdfGenerationState::success)
+        QMessageBox::information(this, "Information", notificationMessage);
+
+    else
+        QMessageBox::warning(this, "Erreur", notificationMessage);
 }
 
 

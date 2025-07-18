@@ -122,7 +122,7 @@
     <QtMoc Include="MainWindow.h" />
     <QtMoc Include="InventoryAnalyzer.h" />
     <QtMoc Include="streetMap.h" />
-    <ClInclude Include="pdfGenerator.h" />
+    <QtMoc Include="pdfGenerator.h" />
     <ClInclude Include="resultatDevis.h" />
     <ClInclude Include="tarification.h" />
   </ItemGroup>
