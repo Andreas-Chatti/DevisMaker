@@ -206,6 +206,7 @@ void IA::loadConfigFile()
     if (error.error != QJsonParseError::NoError)
     {
         qDebug() << "Erreur parsing Json: " + error.errorString();
+        createDefaultConfigFile();
         return;
     }
 

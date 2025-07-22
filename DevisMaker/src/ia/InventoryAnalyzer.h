@@ -40,4 +40,6 @@ private:
     QJsonObject m_volumeReference;
 
     IA* m_ia;
+
+    QString m_userInventoryInput;
 };

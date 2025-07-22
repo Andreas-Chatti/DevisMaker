@@ -366,8 +366,6 @@ void MainWindow::on_AnalyseInventoryPushButton_clicked()
 
     // Lancer l'analyse avec l'IA
     m_inventoryAnalyzer->analyzeInventory(inventoryText);
-
-    qDebug() << "Lancement de l'analyse IA pour:" << inventoryText.left(50) + "...";
 }
 
 
@@ -439,19 +437,16 @@ void MainWindow::handleInventoryAnalysis(double totalVolume, const QStringList& 
     qDebug() << "Analyse IA terminée avec succès. Volume:" << totalVolume;
 }
 
-// Gestion des erreurs
+
 void MainWindow::handleInventoryAnalysisError(const QString& errorMessage)
 {
-    // Restaurer le bouton
     ui.AnalyseInventoryPushButton->setText("Analyser inventaire");
     ui.AnalyseInventoryPushButton->setEnabled(true);
 
-    // Afficher l'erreur
-    QString titre = "Erreur d'analyse IA";
-    QString message = QString("L'analyse de l'inventaire a echoue: %1").arg(errorMessage);
-    QMessageBox::critical(this, titre, message);
 
-    qDebug() << "Erreur lors de l'analyse IA:" << errorMessage;
+    QString titre{ "Erreur d'analyse IA" };
+    QString message{ QString{"L'analyse de l'inventaire a echoue: %1"}.arg(errorMessage) };
+    QMessageBox::critical(this, titre, message);
 }
 
 

@@ -17,7 +17,6 @@ class IA
 public:
 
     IA()
-        : m_currentModel{ m_primaryModel }
     {
         initializePrompt();
 
@@ -26,6 +25,8 @@ public:
 
         else
             loadConfigFile();
+
+        m_currentModel = m_primaryModel;
     }
 
     const QString& getCurrentModel() { return m_currentModel; }
@@ -71,9 +72,9 @@ private:
     QString m_apiKey;
 
 
-    void initializePrompt();   // Appelée uniquement dans le constructeur
-    QString loadPrompt();      // Utilisée uniquement en interne
-    QString getDefaultPrompt(); // Template par défaut, usage interne uniquement
+    void initializePrompt();
+    QString loadPrompt();
+    QString getDefaultPrompt();
 
     void createDefaultConfigFile();
     bool doesConfigFileExist();
