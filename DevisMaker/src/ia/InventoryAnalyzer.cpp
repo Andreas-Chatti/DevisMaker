@@ -88,7 +88,7 @@ void InventoryAnalyzer::handleGrokResponse(QNetworkReply* reply)
                         // Émettre le signal de complétion
                         emit analysisComplete(totalVolume, structuredItems);
 
-                        qDebug() << "Analyse Grok réussie. Volume total:" << totalVolume;
+                        qDebug() << "Analyse Grok reussie. Volume total:" << totalVolume;
                         reply->deleteLater();
                         return;
                     }
@@ -113,7 +113,7 @@ void InventoryAnalyzer::loadVolumeReference()
 
     if (!file.open(QIODevice::ReadOnly)) 
     {
-        qDebug() << "Impossible d'ouvrir le fichier de référence";
+        qDebug() << "Impossible d'ouvrir le fichier de reference";
         return;
     }
 
@@ -122,5 +122,5 @@ void InventoryAnalyzer::loadVolumeReference()
     m_volumeReference = doc.object();
     file.close();
 
-    qDebug() << "Référence de volumes chargée avec succès";
+    qDebug() << "Reference de volumes chargee avec succes";
 }

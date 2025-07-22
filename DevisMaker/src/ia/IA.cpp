@@ -2,7 +2,7 @@
 
 void IA::initializePrompt() 
 {
-    QFile promptFile(m_promptFilePath);
+    QFile promptFile(PROMPT_FILE_PATH);
 
     if (!promptFile.exists()) 
     {
@@ -10,7 +10,7 @@ void IA::initializePrompt()
 
         // Créer le fichier avec le prompt par défaut
         if (savePrompt(getDefaultPrompt())) 
-            qDebug() << "Fichier prompt cree :" << m_promptFilePath;
+            qDebug() << "Fichier prompt cree :" << PROMPT_FILE_PATH;
 
         else 
         {
@@ -22,12 +22,12 @@ void IA::initializePrompt()
 
     // Charger le prompt depuis le fichier
     m_currentPrompt = loadPrompt();
-    qDebug() << "Prompt charge depuis :" << m_promptFilePath;
+    qDebug() << "Prompt charge depuis :" << PROMPT_FILE_PATH;
 }
 
 QString IA::loadPrompt() 
 {
-    QFile promptFile(m_promptFilePath);
+    QFile promptFile(PROMPT_FILE_PATH);
 
     if (!promptFile.open(QIODevice::ReadOnly | QIODevice::Text)) 
     {
@@ -45,7 +45,7 @@ QString IA::loadPrompt()
 
 bool IA::savePrompt(const QString& promptContent) 
 {
-    QFile promptFile(m_promptFilePath);
+    QFile promptFile(PROMPT_FILE_PATH);
 
     if (!promptFile.open(QIODevice::WriteOnly | QIODevice::Text)) 
     {
@@ -91,11 +91,11 @@ INVENTAIRE À ANALYSER:
 
 void IA::reloadPrompt() 
 {
-    QFile promptFile(m_promptFilePath);
+    QFile promptFile(PROMPT_FILE_PATH);
 
     if (!promptFile.exists()) 
     {
-        qDebug() << "Attention: Fichier prompt introuvable !" << m_promptFilePath;
+        qDebug() << "Attention: Fichier prompt introuvable !" << PROMPT_FILE_PATH;
         qDebug() << "Utilisation du prompt actuel en memoire.";
         return;
     }
@@ -107,13 +107,13 @@ void IA::reloadPrompt()
     if (newPrompt == getDefaultPrompt() && oldPrompt != getDefaultPrompt()) 
     {
         qDebug() << "Erreur lors du rechargement - prompt par defaut utilise";
-        qDebug() << "Verifiez que le fichier " << m_promptFilePath << " est accessible\n";
+        qDebug() << "Verifiez que le fichier " << PROMPT_FILE_PATH << " est accessible\n";
     }
 
     if (newPrompt != oldPrompt) 
     {
         m_currentPrompt = newPrompt;
-        qDebug() << "Prompt recharge depuis : " << m_promptFilePath;
+        qDebug() << "Prompt recharge depuis : " << PROMPT_FILE_PATH;
         qDebug() << "Taille: " << newPrompt.length() << " caracteres";
     }
 
@@ -150,4 +150,72 @@ QNetworkRequest IA::buildRequest(const QString& inventoryText, const QString& js
     request.setAttribute(QNetworkRequest::User, doc.toJson());
 
     return request;
+}
+
+
+void IA::createDefaultConfigFile()
+{
+    QJsonObject jsonBody;
+ 
+    jsonBody["primary_model"] = "llama-3.3-70b-versatile";
+    jsonBody["fallback_model"] = "gemma2-9b-it";
+    jsonBody["url"] = "https://api.groq.com/openai/v1/chat/completions";
+    jsonBody["max_tokens"] = 4000;
+    jsonBody["temperature"] = 0.1;
+    jsonBody["api_key"] = "";
+    jsonBody["fallback_max_attempts"] = 3;
+
+    QJsonDocument jsonDocument{ jsonBody };
+
+    QFile jsonFile{ IA_CONFIG_FILE_PATH };
+
+    if (!jsonFile.open(QIODevice::WriteOnly)) 
+    {
+        qDebug() << "Erreur : impossible de creer le fichier config.json";
+        return;
+    }
+
+    jsonFile.write(jsonDocument.toJson(QJsonDocument::Indented));
+
+    qDebug() << "ia_config.json creer avec succes !";
+}
+
+
+bool IA::doesConfigFileExist()
+{
+    QFile jsonFile{ IA_CONFIG_FILE_PATH };
+    return jsonFile.exists();
+}
+
+
+void IA::loadConfigFile()
+{
+    QFile jsonFile{ IA_CONFIG_FILE_PATH };
+
+    if (!jsonFile.open(QIODevice::ReadOnly))
+    {
+        qDebug() << "Impossible d'ouvrir ia_config.json";
+        return;
+    }
+
+    QByteArray fileRawData{ jsonFile.readAll() };
+
+    QJsonParseError error;
+    QJsonDocument jsonDocument{ QJsonDocument::fromJson(fileRawData, &error) };
+
+    if (error.error != QJsonParseError::NoError)
+    {
+        qDebug() << "Erreur parsing Json: " + error.errorString();
+        return;
+    }
+
+    QJsonObject jsonBody{ jsonDocument.object() };
+
+    m_primaryModel = jsonBody["primary_model"].toString();
+    m_fallbackModel = jsonBody["fallback_model"].toString();
+    m_url = jsonBody["url"].toString();
+    m_maxTokens = jsonBody["max_tokens"].toInt();
+    m_temperature = jsonBody["temperature"].toDouble();
+    m_apiKey = jsonBody["api_key"].toString();
+    m_maxFallbackAttempts = jsonBody["fallback_max_attempts"].toInt();
 }

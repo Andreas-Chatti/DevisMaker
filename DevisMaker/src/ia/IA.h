@@ -20,6 +20,12 @@ public:
         : m_currentModel{ m_primaryModel }
     {
         initializePrompt();
+
+        if (!doesConfigFileExist())
+            createDefaultConfigFile();
+
+        else
+            loadConfigFile();
     }
 
     const QString& getCurrentModel() { return m_currentModel; }
@@ -49,21 +55,27 @@ public:
 
 private:
 
-    QString m_promptFilePath{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/prompt_template.txt" };
-    const QString m_primaryModel{ "llama-3.3-70b-versatile" };
-    const QString m_fallbackModel{ "gemma2-9b-it" };
+    const QString PROMPT_FILE_PATH{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/prompt_template.txt" };
+    const QString IA_CONFIG_FILE_PATH{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/ia_config.json" };
+
+    QString m_primaryModel;
+    QString m_fallbackModel;
     QString m_currentModel;
     QVector<double> m_fallbackResults;
     int m_fallbackAttempts{};
-    const int m_maxFallbackAttempts{ 3 };
-    int m_maxTokens{ 4000 };
-    double m_temperature{ 0.1 };
+    int m_maxFallbackAttempts;
+    int m_maxTokens;
+    double m_temperature;
     QString m_currentPrompt;
-    const QUrl m_url{ "https://api.groq.com/openai/v1/chat/completions" };
-    const QString m_apiKey{ "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" };
+    QUrl m_url;
+    QString m_apiKey;
 
 
     void initializePrompt();   // Appelée uniquement dans le constructeur
     QString loadPrompt();      // Utilisée uniquement en interne
     QString getDefaultPrompt(); // Template par défaut, usage interne uniquement
+
+    void createDefaultConfigFile();
+    bool doesConfigFileExist();
+    void loadConfigFile();
 };
