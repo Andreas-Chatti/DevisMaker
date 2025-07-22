@@ -9,7 +9,8 @@
 #include <QJsonArray>
 #include <QFile>
 #include <QDebug>
-#include "IA.h"
+#include "ia/IA.h"
+#include "utils/constants.h"
 
 class InventoryAnalyzer : public QObject
 {

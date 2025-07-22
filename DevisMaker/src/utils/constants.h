@@ -67,7 +67,8 @@ public:
 
     struct FileSettings
     {
-        static inline const QString TEMPLATE_FILE_PATH{ "templates" };
+        static inline const QString TEMPLATE_FILE_PATH{ "ressources/templates" };
+        static inline const QString DATA_FILE_PATH{ "ressources/data" };
     };
 
 private:

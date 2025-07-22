@@ -10,9 +10,9 @@
 #include <QUrl>
 #include <QDate>
 #include <QPrinter>
-#include "resultatDevis.h"
-#include "client.h"
-#include "constants.h"
+#include "utils/resultatDevis.h"
+#include "models/Client.h"
+#include "utils/constants.h"
 
 class PDFGenerator : public QObject
 {

@@ -1,8 +1,8 @@
 #pragma once
-#include "client.h"
-#include "tarification.h"
-#include "resultatDevis.h"
-#include "constants.h"
+#include "models/Client.h"
+#include "utils/tarification.h"
+#include "utils/resultatDevis.h"
+#include "utils/constants.h"
 
 
 class CalculateurDevis

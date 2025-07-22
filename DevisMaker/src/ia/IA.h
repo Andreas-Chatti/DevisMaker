@@ -9,6 +9,7 @@
 #include <QJsonArray>
 #include <QFile>
 #include <QDebug>
+#include "utils/constants.h"
 
 
 class IA
@@ -48,7 +49,7 @@ public:
 
 private:
 
-    QString m_promptFilePath{ "prompt_template.txt" };
+    QString m_promptFilePath{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/prompt_template.txt" };
     const QString m_primaryModel{ "llama-3.3-70b-versatile" };
     const QString m_fallbackModel{ "gemma2-9b-it" };
     QString m_currentModel;

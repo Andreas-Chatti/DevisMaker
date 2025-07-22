@@ -28,91 +28,82 @@
     </QtRcc>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="src\streetmap\addressCompleter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="client.cpp">
+    <ClCompile Include="src\calculator\calculateurDevis.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="inventaire.cpp">
+    <ClCompile Include="src\ia\IA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tarification.cpp">
+    <ClCompile Include="src\ia\InventoryAnalyzer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="devis.cpp">
+    <ClCompile Include="src\ui\MainWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MainWindow.cpp">
+    <ClCompile Include="src\generators\pdfGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="addressCompleter.cpp">
+    <ClCompile Include="src\streetmap\streetMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="InventoryAnalyzer.cpp">
+    <ClCompile Include="src\utils\tarification.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IA.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="streetMap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="calculateurDevis.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="pdfGenerator.cpp">
+    <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="client.h">
+    <ClInclude Include="src\calculator\calculateurDevis.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="devis.h">
+    <ClInclude Include="src\models\client.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inventaire.h">
+    <ClInclude Include="src\utils\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="tarification.h">
+    <ClInclude Include="src\utils\constants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="common.h">
+    <ClInclude Include="src\misc\devis.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IA.h">
+    <ClInclude Include="src\ia\IA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="calculateurDevis.h">
+    <ClInclude Include="src\misc\inventaire.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resultatDevis.h">
+    <ClInclude Include="src\utils\resultatDevis.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="pdfGenerator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="constants.h">
+    <ClInclude Include="src\utils\tarification.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="MainWindow.h">
+    <QtMoc Include="src\streetmap\addressCompleter.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="addressCompleter.h">
+    <QtMoc Include="src\ui\MainWindow.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="InventoryAnalyzer.h">
+    <QtMoc Include="src\ia\InventoryAnalyzer.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="streetMap.h">
+    <QtMoc Include="src\streetmap\streetMap.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="src\generators\pdfGenerator.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
-    <QtUic Include="MainWindow.ui">
+    <QtUic Include="src\ui\MainWindow.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

@@ -109,7 +109,7 @@ void InventoryAnalyzer::handleGrokResponse(QNetworkReply* reply)
 
 void InventoryAnalyzer::loadVolumeReference() 
 {
-    QFile file("volumes_reference.json");
+    QFile file(SettingsConstants::FileSettings::DATA_FILE_PATH + "/volumes_reference.json");
 
     if (!file.open(QIODevice::ReadOnly)) 
     {

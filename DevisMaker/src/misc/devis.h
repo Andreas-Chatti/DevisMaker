@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Client.h"
-#include "resultatDevis.h"
+#include "models/Client.h"
+#include "utils/resultatDevis.h"
 #include <qstring.h>
 
 class Devis 

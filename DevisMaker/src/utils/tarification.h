@@ -5,8 +5,8 @@
 #include <QFileInfo>
 #include <array>
 #include <cmath>
-#include "common.h"
-#include "constants.h"
+#include "utils/common.h"
+#include "utils/constants.h"
 
 
 class Tarification 

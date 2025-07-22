@@ -12,16 +12,14 @@
 #include <QMessageBox>
 #include <QTimer>
 #include <cmath>
-#include "AddressCompleter.h"
+#include "streetmap/AddressCompleter.h"
 #include "ui_MainWindow.h"
-#include "Client.h"
-#include "Inventaire.h"
-#include "Tarification.h"
-#include "Devis.h"
-#include "InventoryAnalyzer.h"
-#include "streetMap.h"
-#include "calculateurDevis.h"
-#include "pdfGenerator.h"
+#include "models/Client.h"
+#include "utils/tarification.h"
+#include "ia/InventoryAnalyzer.h"
+#include "streetmap/streetMap.h"
+#include "calculator/calculateurDevis.h"
+#include "generators/pdfGenerator.h"
 
 
 
@@ -72,7 +70,6 @@ private:
 
     Ui::MainWindowClass ui;
     Client m_client;
-    Inventaire m_inventaire;
     Tarification m_tarification;
     QNetworkAccessManager* m_networkManager{ nullptr };
     InventoryAnalyzer* m_inventoryAnalyzer;
