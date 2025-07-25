@@ -1,6 +1,4 @@
-﻿// InventoryAnalyzer.cpp
-#include "InventoryAnalyzer.h"
-
+﻿#include "InventoryAnalyzer.h"
 
 InventoryAnalyzer::InventoryAnalyzer(QObject* parent)
     : QObject(parent)
@@ -12,22 +10,22 @@ InventoryAnalyzer::InventoryAnalyzer(QObject* parent)
     loadVolumeReference();
 
     connect(m_networkManager, &QNetworkAccessManager::finished, this, &InventoryAnalyzer::handleGrokResponse);
+
+    connect(this, &InventoryAnalyzer::resultsAnalysis, this, &InventoryAnalyzer::calculateAverageVolume);
 }
 
 
 void InventoryAnalyzer::analyzeInventory(const QString& inventoryText)
 {
-    if (m_ia->getFallbackAttempts() >= m_ia->getMaxFallbackAttempts())
-    {
-        emit analysisError("Les trois tentatives de l'IA ont echoues");
-        m_ia->clearFallbackAttempts();
-        return;
-    }
+    m_request = createRequest(inventoryText);
 
-    m_ia->addFallbackAttempt();
+    // Envoyer la requête
+    m_networkManager->post(m_request.request, m_request.jsonData);
+}
 
-    m_userInventoryInput = inventoryText;
 
+InventoryAnalyzer::Request InventoryAnalyzer::createRequest(const QString& inventoryText)
+{
     // Convertir la référence JSON en string
     QJsonDocument refDoc(m_volumeReference);
     QString jsonReference = refDoc.toJson(QJsonDocument::Compact);
@@ -38,87 +36,125 @@ void InventoryAnalyzer::analyzeInventory(const QString& inventoryText)
 
     // Supprimer l'attribut temporaire
     request.setAttribute(QNetworkRequest::User, QVariant());
+ 
+    return { request, jsonData };
+}
 
-    // Envoyer la requête
-    qDebug() << "Envoi de la requête avec modèle:" << m_ia->getCurrentModel();
-    m_networkManager->post(request, jsonData);
+
+std::optional<InventoryAnalyzer::ReplyInfos> InventoryAnalyzer::extractReplyInfos(QNetworkReply* reply)
+{
+    QByteArray data{ reply->readAll() };
+
+    QJsonDocument doc{ QJsonDocument::fromJson(data) };
+    QJsonObject response{ doc.object() };
+
+    // Extraire la réponse de Grok
+    if (response.contains("choices") && response["choices"].isArray())
+    {
+        QJsonArray choices{ response["choices"].toArray() };
+
+        if (!choices.isEmpty())
+        {
+            QJsonObject firstChoice{ choices[0].toObject() };
+            QString responseText{ firstChoice["message"].toObject()["content"].toString() };
+
+            // Extraire le JSON de la réponse
+            // Chercher le début et la fin du JSON dans la réponse
+            int jsonStart = responseText.indexOf("{");
+            int jsonEnd = responseText.lastIndexOf("}") + 1;
+
+
+            if (jsonStart >= 0 && jsonEnd > jsonStart)
+            {
+                QString jsonText = responseText.mid(jsonStart, jsonEnd - jsonStart);
+
+                QJsonDocument itemsDoc = QJsonDocument::fromJson(jsonText.toUtf8());
+                QJsonObject itemsObj = itemsDoc.object();
+
+                if (itemsObj.contains("items") && itemsObj.contains("totalVolume"))
+                {
+                    // Extraire le volume total
+                    double totalVolume = itemsObj["totalVolume"].toDouble();
+
+                    // Extraire les éléments structurés
+                    QStringList structuredItems;
+                    QJsonArray items = itemsObj["items"].toArray();
+
+                    for (const QJsonValue& item : items)
+                    {
+                        QJsonObject itemObj = item.toObject();
+                        QString name = itemObj["name"].toString();
+                        double volume = itemObj["volume"].toDouble();
+                        structuredItems.append(QString("%1 - %2 m\u00B3").arg(name).arg(volume));
+                    }
+
+                    return std::make_optional<ReplyInfos>({ totalVolume, structuredItems });
+                }
+            }
+        }
+    }
+    return std::nullopt;
 }
 
 
 void InventoryAnalyzer::handleGrokResponse(QNetworkReply* reply)
 {
-    if (reply->error() != QNetworkReply::NoError)
-    {
-        emit analysisError("Erreur API Grok: " + reply->errorString());
-        analyzeInventory(m_userInventoryInput);
-
-        return;
-    }
-
-   QByteArray data = reply->readAll();
-   qDebug() << "Reponse Grok recue:" << data;
-
-   QJsonDocument doc{ QJsonDocument::fromJson(data) };
-   QJsonObject response{ doc.object() };
-
-   // Extraire la réponse de Grok
-   if (response.contains("choices") && response["choices"].isArray()) 
+   if (reply->error() != QNetworkReply::NoError)
    {
-       QJsonArray choices = response["choices"].toArray();
+       emit analysisError("Erreur API Grok: " + reply->errorString());
+       reply->deleteLater();
+       return;
+   }
 
-       if (!choices.isEmpty()) 
+   auto replyInfos{ extractReplyInfos(reply) };
+   if (!replyInfos)
+   {
+       emit analysisError("Format de reponse Grok inattendu");
+
+       m_ia->setCurrentModel(IA::fallback);
+       analyzeInventory(m_request.request.attribute(QNetworkRequest::User).toJsonObject().value("content").toString());
+   }
+
+   else
+   {
+       double volume{ replyInfos.value().volume };
+       QStringList structuredItems{ replyInfos.value().structuredItems };
+
+       addFallbackResult(volume);
+       addFallbackAttempt();
+
+       bool hasReachedMaxAttempts{ getFallbackAttempts() >= m_ia->getMaxFallbackAttempts() };
+       if (hasReachedMaxAttempts)
+           emit resultsAnalysis(getFallbackResults(), structuredItems);
+
+
+       else
        {
-           QJsonObject firstChoice{ choices[0].toObject() };
-           QString responseText{ firstChoice["message"].toObject()["content"].toString() };
+           std::function<void()> sendRequest{[this]() {
+               m_networkManager->post(m_request.request, m_request.jsonData); }};
 
-           qDebug() << "Contenu de la reponse: " << responseText;
-
-           // Extraire le JSON de la réponse
-           // Chercher le début et la fin du JSON dans la réponse
-           int jsonStart = responseText.indexOf("{");
-           int jsonEnd = responseText.lastIndexOf("}") + 1;
-
-
-           if (jsonStart >= 0 && jsonEnd > jsonStart) 
-           {
-               QString jsonText = responseText.mid(jsonStart, jsonEnd - jsonStart);
-
-               QJsonDocument itemsDoc = QJsonDocument::fromJson(jsonText.toUtf8());
-               QJsonObject itemsObj = itemsDoc.object();
-
-               if (itemsObj.contains("items") && itemsObj.contains("totalVolume")) 
-               {
-                   // Extraire le volume total
-                   double totalVolume = itemsObj["totalVolume"].toDouble();
-
-                   // Extraire les éléments structurés
-                   QStringList structuredItems;
-                   QJsonArray items = itemsObj["items"].toArray();
-
-                   for (const QJsonValue& item : items) {
-                       QJsonObject itemObj = item.toObject();
-                       QString name = itemObj["name"].toString();
-                       double volume = itemObj["volume"].toDouble();
-                       structuredItems.append(QString("%1 - %2 m\u00B3").arg(name).arg(volume));
-                   }
-
-                   // Émettre le signal de complétion
-                   emit analysisComplete(totalVolume, structuredItems);
-
-                   qDebug() << "Analyse Grok reussie. Volume total:" << totalVolume;
-                   reply->deleteLater();
-
-                   m_ia->clearFallbackAttempts();
-                   return;
-               }
-           }
+           QTimer::singleShot(NETWORK_REQUEST_DELAY, this, sendRequest);
        }
    }
 
-   emit analysisError("Format de reponse Grok inattendu");
-   analyzeInventory(m_userInventoryInput);
-
     reply->deleteLater();
+}
+
+
+void InventoryAnalyzer::calculateAverageVolume(QVector<double> results, const QStringList& structuredItems)
+{
+    double finalVolume{};
+    double resultsNumber{ static_cast<double>(results.size()) };
+
+    for (double value : results)
+        finalVolume += value;
+
+    finalVolume /= resultsNumber;
+
+    emit analysisComplete(finalVolume, structuredItems);
+
+    clearFallbackAttempts();
+    clearFallbackResults();
 }
 
 

@@ -220,3 +220,14 @@ void IA::loadConfigFile()
     m_apiKey = jsonBody["api_key"].toString();
     m_maxFallbackAttempts = jsonBody["fallback_max_attempts"].toInt();
 }
+
+
+void IA::setCurrentModel(ModelType modelType)
+{
+    switch (modelType)
+    {
+    case IA::primary: m_currentModel = m_primaryModel;
+        break;
+    case IA::fallback: m_currentModel = m_fallbackModel;
+    }
+}
