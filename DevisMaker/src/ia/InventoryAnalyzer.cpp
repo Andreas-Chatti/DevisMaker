@@ -17,6 +17,10 @@ InventoryAnalyzer::InventoryAnalyzer(QObject* parent)
 
 void InventoryAnalyzer::analyzeInventory(const QString& inventoryText)
 {
+    bool isNewInventoryText{ inventoryText != m_userInventoryInput };
+    if (isNewInventoryText)
+        m_userInventoryInput = inventoryText;
+
     m_request = createRequest(inventoryText);
 
     // Envoyer la requête
@@ -112,7 +116,7 @@ void InventoryAnalyzer::handleGrokResponse(QNetworkReply* reply)
        emit analysisError("Format de reponse Grok inattendu");
 
        m_ia->setCurrentModel(IA::fallback);
-       analyzeInventory(m_request.request.attribute(QNetworkRequest::User).toJsonObject().value("content").toString());
+       analyzeInventory(m_userInventoryInput);
    }
 
    else
@@ -125,8 +129,15 @@ void InventoryAnalyzer::handleGrokResponse(QNetworkReply* reply)
 
        bool hasReachedMaxAttempts{ getFallbackAttempts() >= m_ia->getMaxFallbackAttempts() };
        if (hasReachedMaxAttempts)
+       {
            emit resultsAnalysis(getFallbackResults(), structuredItems);
+           
+           if (m_ia->getCurrentModel() == m_ia->getFallbackModel())
+               m_ia->setCurrentModel(IA::primary);
 
+           clearFallbackAttempts();
+           clearFallbackResults();
+       }
 
        else
        {
@@ -152,9 +163,6 @@ void InventoryAnalyzer::calculateAverageVolume(QVector<double> results, const QS
     finalVolume /= resultsNumber;
 
     emit analysisComplete(finalVolume, structuredItems);
-
-    clearFallbackAttempts();
-    clearFallbackResults();
 }
 
 
@@ -163,15 +171,10 @@ void InventoryAnalyzer::loadVolumeReference()
     QFile file(SettingsConstants::FileSettings::DATA_FILE_PATH + "/volumes_reference.json");
 
     if (!file.open(QIODevice::ReadOnly)) 
-    {
-        qDebug() << "Impossible d'ouvrir le fichier de reference";
         return;
-    }
 
     QByteArray data = file.readAll();
     QJsonDocument doc = QJsonDocument::fromJson(data);
     m_volumeReference = doc.object();
     file.close();
-
-    qDebug() << "Reference de volumes chargee avec succes";
 }
