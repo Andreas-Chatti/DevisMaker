@@ -120,7 +120,7 @@
     <ClInclude Include="src\utils\common.h" />
     <ClInclude Include="src\utils\constants.h" />
     <ClInclude Include="src\misc\devis.h" />
-    <ClInclude Include="src\ia\IA.h" />
+    <QtMoc Include="src\ia\IA.h" />
     <ClInclude Include="src\misc\inventaire.h" />
     <QtMoc Include="src\ui\MainWindow.h" />
     <QtMoc Include="src\ia\InventoryAnalyzer.h" />

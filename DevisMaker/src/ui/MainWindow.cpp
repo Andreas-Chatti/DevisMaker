@@ -46,6 +46,7 @@ MainWindow::MainWindow(QWidget* parent)
     m_inventoryAnalyzer = new InventoryAnalyzer(this);
     connect(m_inventoryAnalyzer, &InventoryAnalyzer::analysisComplete, this, &MainWindow::handleInventoryAnalysis);
     connect(m_inventoryAnalyzer, &InventoryAnalyzer::analysisError, this, &MainWindow::handleInventoryAnalysisError);
+    connect(m_inventoryAnalyzer, &InventoryAnalyzer::error, this, &MainWindow::onCriticalError);
 
 
     setupValidators();
@@ -735,4 +736,12 @@ void MainWindow::updateSeasonTypeLabel(const QDate& dateLivraison) const
     bool hauteSaison{ isHauteSaison(dateLivraison) };
     ui.typeSaisonLabel->setText(hauteSaison ? "HAUTE SAISON" : "BASSE SAISON");
     ui.typeSaisonLabel->setStyleSheet(hauteSaison ? "color: red; font-weight: bold;" : "color: blue; font-weight: bold;");
+}
+
+
+void MainWindow::onCriticalError(const QString& errorMessage)
+{
+    QString title{ "Error" };
+    QString description{ errorMessage };
+    QMessageBox::critical(this, title, description);
 }

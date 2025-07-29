@@ -41,11 +41,13 @@ signals:
     void analysisComplete(double totalVolume, const QStringList& structuredItems);
     void analysisError(const QString& errorMessage);
     void resultsAnalysis(QVector<double> results, const QStringList& structuredItems);
+    void error(const QString& errorMessage);
 
 private slots:
 
     void handleGrokResponse(QNetworkReply* reply);
     void calculateAverageVolume(QVector<double> results, const QStringList& structuredItems);
+    void testF(const QString& message) { qDebug() << message; }
 
 private:
 

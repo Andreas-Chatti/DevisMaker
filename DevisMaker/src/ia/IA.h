@@ -12,8 +12,10 @@
 #include "utils/constants.h"
 
 
-class IA
+class IA : public QObject
 {
+    Q_OBJECT
+
 public:
 
     enum ModelType
@@ -23,7 +25,8 @@ public:
         max_model_types,
     };
 
-    IA()
+    IA(QObject* parent = nullptr)
+        : QObject(parent)
     {
         initializePrompt();
 
@@ -53,6 +56,9 @@ public:
     bool savePrompt(const QString& promptContent);  // Pour sauvegarder un nouveau prompt
     QNetworkRequest buildRequest(const QString& inventoryText, const QString& jsonReference);
 
+signals:
+
+    void error(const QString& errorMessage);
 
 private:
 
@@ -77,4 +83,12 @@ private:
     void createDefaultConfigFile();
     bool doesConfigFileExist();
     void loadConfigFile();
+
+
+    const QString DEFAULT_PRIMARY_MODEL{ "llama-3.3-70b-versatile" };
+    const QString DEFAULT_FALLBACK_MODEL{ "gemma2-9b-it" };
+    const QString DEFAULT_API_URL{ "https://api.groq.com/openai/v1/chat/completions" };
+    const int DEFAULT_MAX_TOKENS{ 4000 };
+    const double DEFAULT_TEMPERATURE{ 0.1 };
+    const int DEFAULT_MAX_FALLBACK_ATTEMPTS{ 3 };
 };

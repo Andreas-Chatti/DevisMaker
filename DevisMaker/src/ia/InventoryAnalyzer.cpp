@@ -5,13 +5,17 @@ InventoryAnalyzer::InventoryAnalyzer(QObject* parent)
 {
     m_networkManager = new QNetworkAccessManager(this);
 
-    m_ia = new IA{};
-
-    loadVolumeReference();
+    //m_ia = new IA{this};
 
     connect(m_networkManager, &QNetworkAccessManager::finished, this, &InventoryAnalyzer::handleGrokResponse);
 
     connect(this, &InventoryAnalyzer::resultsAnalysis, this, &InventoryAnalyzer::calculateAverageVolume);
+
+    connect(m_ia, &IA::error, this, &InventoryAnalyzer::testF);
+
+    m_ia = new IA{ this };
+
+    loadVolumeReference();
 }
 
 
@@ -23,7 +27,6 @@ void InventoryAnalyzer::analyzeInventory(const QString& inventoryText)
 
     m_request = createRequest(inventoryText);
 
-    // Envoyer la requête
     m_networkManager->post(m_request.request, m_request.jsonData);
 }
 

@@ -72,9 +72,6 @@
     <ClInclude Include="src\misc\devis.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ia\IA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\misc\inventaire.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -99,6 +96,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="src\generators\pdfGenerator.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="src\ia\IA.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

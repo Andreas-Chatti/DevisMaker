@@ -157,21 +157,22 @@ void IA::createDefaultConfigFile()
 {
     QJsonObject jsonBody;
  
-    jsonBody["primary_model"] = "llama-3.3-70b-versatile";
-    jsonBody["fallback_model"] = "gemma2-9b-it";
-    jsonBody["url"] = "https://api.groq.com/openai/v1/chat/completions";
-    jsonBody["max_tokens"] = 4000;
-    jsonBody["temperature"] = 0.1;
+    jsonBody["primary_model"] = DEFAULT_PRIMARY_MODEL;
+    jsonBody["fallback_model"] = DEFAULT_FALLBACK_MODEL;
+    jsonBody["url"] = DEFAULT_API_URL;
+    jsonBody["max_tokens"] = DEFAULT_MAX_TOKENS;
+    jsonBody["temperature"] = DEFAULT_TEMPERATURE;
     jsonBody["api_key"] = "";
-    jsonBody["fallback_max_attempts"] = 3;
+    jsonBody["fallback_max_attempts"] = DEFAULT_MAX_FALLBACK_ATTEMPTS;
 
     QJsonDocument jsonDocument{ jsonBody };
 
     QFile jsonFile{ IA_CONFIG_FILE_PATH };
 
-    if (!jsonFile.open(QIODevice::WriteOnly)) 
+    if (/*!*/jsonFile.open(QIODevice::WriteOnly))
     {
-        qDebug() << "Erreur : impossible de creer le fichier config.json";
+        emit error(QString{ "Couldn't create config.json" });
+        qDebug() << "ERREUR : impossible de creer le fichier config.json ( createDefaultConfigFile() )";
         return;
     }
 

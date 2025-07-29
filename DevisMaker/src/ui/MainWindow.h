@@ -66,6 +66,8 @@ private slots:
 
     void onGenerateDevisStatusReport(PDFGenerator::PdfGenerationState generationState);
 
+    void onCriticalError(const QString& errorMessage);
+
 private:
 
     Ui::MainWindowClass ui;
