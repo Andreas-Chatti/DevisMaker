@@ -4,16 +4,12 @@ InventoryAnalyzer::InventoryAnalyzer(QObject* parent)
     : QObject(parent)
 {
     m_networkManager = new QNetworkAccessManager(this);
-
-    //m_ia = new IA{this};
-
     connect(m_networkManager, &QNetworkAccessManager::finished, this, &InventoryAnalyzer::handleGrokResponse);
 
-    connect(this, &InventoryAnalyzer::resultsAnalysis, this, &InventoryAnalyzer::calculateAverageVolume);
-
-    connect(m_ia, &IA::error, this, &InventoryAnalyzer::testF);
-
     m_ia = new IA{ this };
+    connect(m_ia, &IA::error, this, &InventoryAnalyzer::error);
+
+    connect(this, &InventoryAnalyzer::resultsAnalysis, this, &InventoryAnalyzer::calculateAverageVolume);
 
     loadVolumeReference();
 }
@@ -21,6 +17,12 @@ InventoryAnalyzer::InventoryAnalyzer(QObject* parent)
 
 void InventoryAnalyzer::analyzeInventory(const QString& inventoryText)
 {
+    if (m_ia->getAPI_Key().isEmpty())
+    {
+        emit analysisError("API key not found in ia_config.json");
+        return;
+    }
+
     bool isNewInventoryText{ inventoryText != m_userInventoryInput };
     if (isNewInventoryText)
         m_userInventoryInput = inventoryText;
@@ -135,7 +137,7 @@ void InventoryAnalyzer::handleGrokResponse(QNetworkReply* reply)
        {
            emit resultsAnalysis(getFallbackResults(), structuredItems);
            
-           if (m_ia->getCurrentModel() == m_ia->getFallbackModel())
+           if (m_ia->getCurrentModelString() == m_ia->getFallbackModel())
                m_ia->setCurrentModel(IA::primary);
 
            clearFallbackAttempts();

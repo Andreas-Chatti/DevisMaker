@@ -47,7 +47,6 @@ private slots:
 
     void handleGrokResponse(QNetworkReply* reply);
     void calculateAverageVolume(QVector<double> results, const QStringList& structuredItems);
-    void testF(const QString& message) { qDebug() << message; }
 
 private:
 

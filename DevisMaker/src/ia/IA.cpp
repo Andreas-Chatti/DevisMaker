@@ -6,23 +6,11 @@ void IA::initializePrompt()
 
     if (!promptFile.exists()) 
     {
-        qDebug() << "Fichier prompt introuvable, creation avec template par defaut...";
-
-        // Créer le fichier avec le prompt par défaut
-        if (savePrompt(getDefaultPrompt())) 
-            qDebug() << "Fichier prompt cree :" << PROMPT_FILE_PATH;
-
-        else 
-        {
-            qDebug() << "Erreur lors de la creation du fichier prompt !";
-            m_currentPrompt = getDefaultPrompt(); // Fallback en mémoire
-            return;
-        }
+        if (!savePrompt(getDefaultPrompt()))
+            m_currentPrompt = getDefaultPrompt();
     }
 
-    // Charger le prompt depuis le fichier
     m_currentPrompt = loadPrompt();
-    qDebug() << "Prompt charge depuis :" << PROMPT_FILE_PATH;
 }
 
 QString IA::loadPrompt() 
@@ -31,12 +19,12 @@ QString IA::loadPrompt()
 
     if (!promptFile.open(QIODevice::ReadOnly | QIODevice::Text)) 
     {
-        qDebug() << "Impossible d'ouvrir le fichier prompt !";
-        return getDefaultPrompt(); // Fallback
+        QTimer::singleShot(500, this, [this]() { emit error("Can't open prompt file.\n Loading default prompt.");});
+        return getDefaultPrompt();
     }
 
     QTextStream in(&promptFile);
-    in.setEncoding(QStringConverter::Utf8); // Support des caractères français
+    in.setEncoding(QStringConverter::Utf8);
     QString content = in.readAll();
     promptFile.close();
 
@@ -49,7 +37,7 @@ bool IA::savePrompt(const QString& promptContent)
 
     if (!promptFile.open(QIODevice::WriteOnly | QIODevice::Text)) 
     {
-        qDebug() << "Impossible de creer/ecrire le fichier prompt !";
+        QTimer::singleShot(500, this, [this]() { emit error("Couldn't create prompt_template.txt !");});
         return false;
     }
 
@@ -95,30 +83,15 @@ void IA::reloadPrompt()
 
     if (!promptFile.exists()) 
     {
-        qDebug() << "Attention: Fichier prompt introuvable !" << PROMPT_FILE_PATH;
-        qDebug() << "Utilisation du prompt actuel en memoire.";
+        QTimer::singleShot(500, this, [this]() { emit error("Couldn't reload prompt.\n Cannot find prompt file's path !");});
         return;
     }
 
     QString oldPrompt{ m_currentPrompt };
     QString newPrompt{ loadPrompt() };
 
-    // Vérifier si le chargement a réussi (loadPrompt retourne le default si erreur)
-    if (newPrompt == getDefaultPrompt() && oldPrompt != getDefaultPrompt()) 
-    {
-        qDebug() << "Erreur lors du rechargement - prompt par defaut utilise";
-        qDebug() << "Verifiez que le fichier " << PROMPT_FILE_PATH << " est accessible\n";
-    }
-
     if (newPrompt != oldPrompt) 
-    {
         m_currentPrompt = newPrompt;
-        qDebug() << "Prompt recharge depuis : " << PROMPT_FILE_PATH;
-        qDebug() << "Taille: " << newPrompt.length() << " caracteres";
-    }
-
-    else 
-        qDebug() << "Prompt recharge - aucun changement detecte";
 }
 
 
@@ -169,33 +142,31 @@ void IA::createDefaultConfigFile()
 
     QFile jsonFile{ IA_CONFIG_FILE_PATH };
 
-    if (/*!*/jsonFile.open(QIODevice::WriteOnly))
+    if (!jsonFile.open(QIODevice::WriteOnly))
     {
-        emit error(QString{ "Couldn't create config.json" });
-        qDebug() << "ERREUR : impossible de creer le fichier config.json ( createDefaultConfigFile() )";
+        QTimer::singleShot(500, this, [this]() { emit error("Cannot create ia_config.json");});
         return;
     }
 
     jsonFile.write(jsonDocument.toJson(QJsonDocument::Indented));
-
-    qDebug() << "ia_config.json creer avec succes !";
 }
 
 
-bool IA::doesConfigFileExist()
+void IA::loadConfigFile(int loadAttempts)
 {
-    QFile jsonFile{ IA_CONFIG_FILE_PATH };
-    return jsonFile.exists();
-}
+    if (loadAttempts >= 3)
+        return;
 
-
-void IA::loadConfigFile()
-{
     QFile jsonFile{ IA_CONFIG_FILE_PATH };
+
+    if (!jsonFile.exists())
+        createDefaultConfigFile();
 
     if (!jsonFile.open(QIODevice::ReadOnly))
     {
-        qDebug() << "Impossible d'ouvrir ia_config.json";
+        QTimer::singleShot(500, this, [this]() { emit error("Cannot open or access ia_config.json.");});
+        createDefaultConfigFile();
+        loadConfigFile(++loadAttempts);
         return;
     }
 
@@ -206,8 +177,11 @@ void IA::loadConfigFile()
 
     if (error.error != QJsonParseError::NoError)
     {
-        qDebug() << "Erreur parsing Json: " + error.errorString();
+        QTimer::singleShot(500, this, [this, error]() { emit IA::error("Error parsing ia_config.json: " + error.errorString());});
+        jsonFile.close();
+
         createDefaultConfigFile();
+        loadConfigFile(++loadAttempts);
         return;
     }
 
@@ -220,6 +194,9 @@ void IA::loadConfigFile()
     m_temperature = jsonBody["temperature"].toDouble();
     m_apiKey = jsonBody["api_key"].toString();
     m_maxFallbackAttempts = jsonBody["fallback_max_attempts"].toInt();
+    m_currentModel = m_primaryModel;
+
+    jsonFile.close();
 }
 
 

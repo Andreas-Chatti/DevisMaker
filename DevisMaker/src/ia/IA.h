@@ -9,6 +9,7 @@
 #include <QJsonArray>
 #include <QFile>
 #include <QDebug>
+#include <qtimer.h>
 #include "utils/constants.h"
 
 
@@ -30,16 +31,10 @@ public:
     {
         initializePrompt();
 
-        if (!doesConfigFileExist())
-            createDefaultConfigFile();
-
-        else
-            loadConfigFile();
-
-        m_currentModel = m_primaryModel;
+        loadConfigFile();
     }
 
-    const QString& getCurrentModel() { return m_currentModel; }
+    const QString& getCurrentModelString() { return m_currentModel; }
     const QString& getPrimaryModel() { return m_primaryModel; }
     const QString& getFallbackModel() { return m_fallbackModel; }
     int getMaxFallbackAttempts() { return m_maxFallbackAttempts; }
@@ -62,9 +57,6 @@ signals:
 
 private:
 
-    const QString PROMPT_FILE_PATH{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/prompt_template.txt" };
-    const QString IA_CONFIG_FILE_PATH{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/ia_config.json" };
-
     QString m_primaryModel;
     QString m_fallbackModel;
     QString m_currentModel;
@@ -76,19 +68,20 @@ private:
     QString m_apiKey;
 
 
-    void initializePrompt();
-    QString loadPrompt();
-    QString getDefaultPrompt();
-
-    void createDefaultConfigFile();
-    bool doesConfigFileExist();
-    void loadConfigFile();
-
-
+    const QString PROMPT_FILE_PATH{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/prompt_template.txt" };
+    const QString IA_CONFIG_FILE_PATH{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/ia_config.json" };
     const QString DEFAULT_PRIMARY_MODEL{ "llama-3.3-70b-versatile" };
     const QString DEFAULT_FALLBACK_MODEL{ "gemma2-9b-it" };
     const QString DEFAULT_API_URL{ "https://api.groq.com/openai/v1/chat/completions" };
     const int DEFAULT_MAX_TOKENS{ 4000 };
     const double DEFAULT_TEMPERATURE{ 0.1 };
     const int DEFAULT_MAX_FALLBACK_ATTEMPTS{ 3 };
+
+
+    void initializePrompt();
+    QString loadPrompt();
+    QString getDefaultPrompt();
+
+    void createDefaultConfigFile();
+    void loadConfigFile(int loadAttempts);
 };

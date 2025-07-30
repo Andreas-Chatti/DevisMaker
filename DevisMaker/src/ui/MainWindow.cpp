@@ -426,14 +426,13 @@ void MainWindow::handleInventoryAnalysis(double totalVolume, const QStringList& 
     header->setSectionResizeMode(1, QHeaderView::ResizeToContents);  // Objet : contenu
     header->setSectionResizeMode(2, QHeaderView::Stretch);           // Volume : étirement
 
-    // Restaurer le bouton
-    ui.AnalyseInventoryPushButton->setText("Analyser inventaire");
-    ui.AnalyseInventoryPushButton->setEnabled(true);
-
     // Message de succès
     QString titre = "Analyse terminee";
     QString message = QString("Volume total calcule par l'IA: %1 m3, %2 objets detectes").arg(totalVolume).arg(structuredItems.size());
     QMessageBox::information(this, titre, message);
+
+    ui.AnalyseInventoryPushButton->setText("Analyser inventaire");
+    ui.AnalyseInventoryPushButton->setEnabled(true);
 
     qDebug() << "Analyse IA terminée avec succès. Volume:" << totalVolume;
 }
@@ -441,13 +440,12 @@ void MainWindow::handleInventoryAnalysis(double totalVolume, const QStringList& 
 
 void MainWindow::handleInventoryAnalysisError(const QString& errorMessage)
 {
+    QString titre{ "Erreur d'analyse IA" };
+    QString message{ errorMessage };
+    QMessageBox::critical(this, titre, message);
+
     ui.AnalyseInventoryPushButton->setText("Analyser inventaire");
     ui.AnalyseInventoryPushButton->setEnabled(true);
-
-
-    QString titre{ "Erreur d'analyse IA" };
-    QString message{ QString{"L'analyse de l'inventaire a echoue: %1"}.arg(errorMessage) };
-    QMessageBox::critical(this, titre, message);
 }
 
 
