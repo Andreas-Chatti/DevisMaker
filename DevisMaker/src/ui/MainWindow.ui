@@ -47,8 +47,11 @@
       <property name="toolTip">
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
+      <property name="toolTipDuration">
+       <number>1</number>
+      </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="InformationsClient">
        <property name="enabled">
@@ -206,7 +209,7 @@
                </property>
                <property name="dateTime">
                 <datetime>
-                 <hour>17</hour>
+                 <hour>15</hour>
                  <minute>0</minute>
                  <second>0</second>
                  <year>2025</year>
@@ -216,7 +219,7 @@
                </property>
                <property name="maximumDateTime">
                 <datetime>
-                 <hour>4</hour>
+                 <hour>3</hour>
                  <minute>0</minute>
                  <second>59</second>
                  <year>2030</year>
@@ -226,7 +229,7 @@
                </property>
                <property name="minimumDateTime">
                 <datetime>
-                 <hour>21</hour>
+                 <hour>20</hour>
                  <minute>0</minute>
                  <second>0</second>
                  <year>2024</year>
@@ -411,7 +414,7 @@
                 </datetime>
                </property>
                <property name="timeSpec">
-                <enum>Qt::TimeSpec::UTC</enum>
+                <enum>Qt::TimeSpec::LocalTime</enum>
                </property>
                <property name="date">
                 <date>
@@ -699,7 +702,7 @@
              <item>
               <widget class="QLabel" name="valeurAssuranceLabel">
                <property name="text">
-                <string>Valeur</string>
+                <string>Valeur totale maximale mobilier (€)</string>
                </property>
               </widget>
              </item>
@@ -879,7 +882,35 @@
        </attribute>
        <layout class="QGridLayout" name="gridLayout_4">
         <item row="1" column="0">
-         <widget class="QTextEdit" name="inventaireTextEdit"/>
+         <widget class="QTextEdit" name="inventaireTextEdit">
+          <property name="acceptDrops">
+           <bool>true</bool>
+          </property>
+          <property name="toolTip">
+           <string/>
+          </property>
+          <property name="toolTipDuration">
+           <number>-1</number>
+          </property>
+          <property name="statusTip">
+           <string/>
+          </property>
+          <property name="whatsThis">
+           <string/>
+          </property>
+          <property name="accessibleName">
+           <string/>
+          </property>
+          <property name="accessibleDescription">
+           <string/>
+          </property>
+          <property name="accessibleIdentifier">
+           <string/>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+         </widget>
         </item>
         <item row="0" column="0">
          <widget class="QLabel" name="SaisirInventaire">

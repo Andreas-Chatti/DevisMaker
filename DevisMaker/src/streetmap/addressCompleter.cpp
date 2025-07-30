@@ -10,7 +10,7 @@ AddressCompleter::AddressCompleter(QLineEdit* lineEdit, QObject* parent)
     m_completer = new QCompleter(m_model, this);
     m_completer->setCaseSensitivity(Qt::CaseInsensitive);
     m_completer->setCompletionMode(QCompleter::PopupCompletion); // Forcer l'affichage du popup
-    m_completer->setMaxVisibleItems(10); // Afficher plus de suggestions
+    m_completer->setMaxVisibleItems(MAX_VISIBLE_ITEMS); // Afficher plus de suggestions
     m_completer->setFilterMode(Qt::MatchContains); // Correspondance partielle n'importe où
     m_lineEdit->setCompleter(m_completer);
 
@@ -18,10 +18,10 @@ AddressCompleter::AddressCompleter(QLineEdit* lineEdit, QObject* parent)
     m_networkManager = new QNetworkAccessManager(this);
     connect(m_networkManager, &QNetworkAccessManager::finished, this, &AddressCompleter::handleNetworkReply);
 
-    // Réduire le délai à 300ms pour plus de réactivité
+    // Setup du délais
     m_debounceTimer = new QTimer(this);
     m_debounceTimer->setSingleShot(true);
-    m_debounceTimer->setInterval(300);
+    m_debounceTimer->setInterval(TIMER_DELAY);
     connect(m_debounceTimer, &QTimer::timeout, this, &AddressCompleter::onTextChanged);
 
     // Connecter à CHAQUE changement de texte

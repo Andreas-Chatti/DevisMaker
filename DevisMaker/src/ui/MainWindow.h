@@ -103,4 +103,6 @@ private:
     PricePreset determinePresetFromDates(const QDate& dateChargement, const QDate& dateLivraison) const;
 
     void updateSeasonTypeLabel(const QDate& dateLivraison) const;
+
+    void setupPlaceholderText() const;
 };

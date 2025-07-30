@@ -152,10 +152,13 @@ void IA::createDefaultConfigFile()
 }
 
 
-void IA::loadConfigFile(int loadAttempts)
+void IA::loadConfigFile(int loadAttempts, QString errorMessage)
 {
     if (loadAttempts >= 3)
+    {
+        QTimer::singleShot(500, this, [this, errorMessage]() { emit error("Config file not loaded. Logs:\n\n" + errorMessage);});
         return;
+    }
 
     QFile jsonFile{ IA_CONFIG_FILE_PATH };
 
@@ -164,24 +167,19 @@ void IA::loadConfigFile(int loadAttempts)
 
     if (!jsonFile.open(QIODevice::ReadOnly))
     {
-        QTimer::singleShot(500, this, [this]() { emit error("Cannot open or access ia_config.json.");});
         createDefaultConfigFile();
-        loadConfigFile(++loadAttempts);
+        loadConfigFile(++loadAttempts, errorMessage += QString{ "Attempt #%1: Cannot open or access ia_config.json.\n" }.arg(loadAttempts));
         return;
     }
 
     QByteArray fileRawData{ jsonFile.readAll() };
-
     QJsonParseError error;
     QJsonDocument jsonDocument{ QJsonDocument::fromJson(fileRawData, &error) };
 
     if (error.error != QJsonParseError::NoError)
     {
-        QTimer::singleShot(500, this, [this, error]() { emit IA::error("Error parsing ia_config.json: " + error.errorString());});
-        jsonFile.close();
-
         createDefaultConfigFile();
-        loadConfigFile(++loadAttempts);
+        loadConfigFile(++loadAttempts, errorMessage += ("Attempt #%1: Error parsing ia_config.json: " + error.errorString() + "\n"));
         return;
     }
 
@@ -195,8 +193,6 @@ void IA::loadConfigFile(int loadAttempts)
     m_apiKey = jsonBody["api_key"].toString();
     m_maxFallbackAttempts = jsonBody["fallback_max_attempts"].toInt();
     m_currentModel = m_primaryModel;
-
-    jsonFile.close();
 }
 
 

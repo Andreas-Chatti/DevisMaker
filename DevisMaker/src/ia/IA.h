@@ -47,8 +47,8 @@ public:
 
     void setCurrentModel(ModelType modelType);
 
-    void reloadPrompt();  // Si l'utilisateur modifie le fichier externement
-    bool savePrompt(const QString& promptContent);  // Pour sauvegarder un nouveau prompt
+    void reloadPrompt();
+    bool savePrompt(const QString& promptContent);
     QNetworkRequest buildRequest(const QString& inventoryText, const QString& jsonReference);
 
 signals:
@@ -83,5 +83,5 @@ private:
     QString getDefaultPrompt();
 
     void createDefaultConfigFile();
-    void loadConfigFile(int loadAttempts);
+    void loadConfigFile(int loadAttempts = 0, QString errorMessage = "");
 };

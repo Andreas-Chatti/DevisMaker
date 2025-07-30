@@ -53,7 +53,7 @@ MainWindow::MainWindow(QWidget* parent)
 
     displaySettings();
 
-    ui.typeSaisonLabel->setText(""); // Cacher le texte si l'utilisateur n'a pas encore mis de dates
+    setupPlaceholderText();
 }
 
 
@@ -742,4 +742,30 @@ void MainWindow::onCriticalError(const QString& errorMessage)
     QString title{ "Error" };
     QString description{ errorMessage };
     QMessageBox::critical(this, title, description);
+}
+
+
+void MainWindow::setupPlaceholderText() const
+{
+    ui.typeSaisonLabel->setText(""); // Cacher le texte si l'utilisateur n'a pas encore mis de dates
+
+    ui.inventaireTextEdit->setPlaceholderText(
+        "Saisissez l'inventaire ici.\n\n"
+        "Précisez le nombre (chiffre ou lettre) et le type d'objet séparés par des virgules.\n"
+        "Exemple: 1 canapé trois place, 3 fauteuils, une chaise, une table 4 personnes, 4 chaises, etc...\n\n"
+        "Notes: Il est possible de noter plusieurs fois les mêmes objets. Ils seront automatiquement comptés et additionés correctements dans le volume."
+    );
+
+    ui.nomLineEdit->setPlaceholderText("David");
+    
+    ui.prenomLineEdit->setPlaceholderText("Dupont");
+
+    ui.numTelLineEdit->setPlaceholderText("0199887766");
+
+    ui.adresseDepartLineEdit->setPlaceholderText("Avenue de la Division Leclerc, 92160 ANTONY");
+    ui.adresseLivraisonLineEdit->setPlaceholderText("Avenue de la Division Leclerc, 92160 ANTONY");
+
+    ui.distanceLineEdit->setPlaceholderText("406");
+    ui.volumelineEdit->setPlaceholderText("30.4");
+    ui.valeurAssuranceLineEdit->setPlaceholderText("25000");
 }

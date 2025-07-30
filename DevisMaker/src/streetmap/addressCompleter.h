@@ -33,4 +33,7 @@ private:
     QNetworkAccessManager* m_networkManager;
     QTimer* m_debounceTimer;
     QStringList m_pendingSuggestions;  // Pour stocker les suggestions combinées
+
+    const int MAX_VISIBLE_ITEMS{ 10 };
+    const int TIMER_DELAY{ 300 };
 };
