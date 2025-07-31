@@ -58,11 +58,16 @@ void AddressCompleter::onTextChanged()
     // 2. Envoyer la première requête (avec virgule)
     QUrl url1(m_streetMap->getUrl());
     QUrlQuery query1;
-    query1.addQueryItem("format", "json");
+    query1.addQueryItem("format", "jsonv2");
     query1.addQueryItem("q", textWithComma);
-    query1.addQueryItem("limit", "7");  // Réduire pour éviter trop de résultats
+    query1.addQueryItem("limit", "10");  // Réduire pour éviter trop de résultats
     query1.addQueryItem("countrycodes", "fr");
     query1.addQueryItem("addressdetails", "1");
+    query1.addQueryItem("accept-language", "fr,fr-FR;q=0.9,en;q=0.8");
+    query1.addQueryItem("dedupe", "1");
+    query1.addQueryItem("layer", "address");
+    query1.addQueryItem("featureType", "settlement");
+    query1.addQueryItem("email", "blackmindeu@gmail.com");
 
     url1.setQuery(query1);
 
@@ -71,13 +76,18 @@ void AddressCompleter::onTextChanged()
     request1.setRawHeader("QueryType", "with_comma");
 
     // 3. Envoyer la deuxième requête (texte original)
-    QUrl url2("https://nominatim.openstreetmap.org/search");
+    QUrl url2(m_streetMap->getUrl());
     QUrlQuery query2;
-    query2.addQueryItem("format", "json");
+    query2.addQueryItem("format", "jsonv2");
     query2.addQueryItem("q", text);  // Texte original
-    query2.addQueryItem("limit", "7");
+    query2.addQueryItem("limit", "10");
     query2.addQueryItem("countrycodes", "fr");
     query2.addQueryItem("addressdetails", "1");
+    query2.addQueryItem("accept-language", "fr,fr-FR;q=0.9,en;q=0.8");
+    query2.addQueryItem("dedupe", "1");
+    query2.addQueryItem("layer", "address");
+    query2.addQueryItem("featureType", "settlement");
+    query2.addQueryItem("email", "blackmindeu@gmail.com");
 
     url2.setQuery(query2);
 
