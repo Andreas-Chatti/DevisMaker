@@ -43,68 +43,23 @@ void AddressCompleter::onTextChanged()
     // Vider la liste des suggestions en attente
     m_pendingSuggestions.clear();
 
-    // 1. Créer la version avec virgule si nécessaire
-    QString textWithComma{ text };
-    QRegularExpression regexNumero("^(\\d+)\\s+(.+)$");
-    QRegularExpressionMatch match = regexNumero.match(text);
+    QUrl url(m_streetMap->getUrl());
+    QUrlQuery query;
+    query.addQueryItem("format", "jsonv2");
+    query.addQueryItem("q", text);
+    query.addQueryItem("limit", "10");
+    query.addQueryItem("countrycodes", "fr");
+    query.addQueryItem("addressdetails", "1");
+    query.addQueryItem("accept-language", "fr,fr-FR;q=0.9,en;q=0.8");
+    query.addQueryItem("dedupe", "1");
+    query.addQueryItem("layer", "address");
 
-    if (match.hasMatch()) 
-    {
-        QString numero = match.captured(1);
-        QString rue = match.captured(2);
-        textWithComma = numero + ", " + rue;
-    }
+    url.setQuery(query);
 
-    // 2. Envoyer la première requête (avec virgule)
-    QUrl url1(m_streetMap->getUrl());
-    QUrlQuery query1;
-    query1.addQueryItem("format", "jsonv2");
-    query1.addQueryItem("q", textWithComma);
-    query1.addQueryItem("limit", "10");  // Réduire pour éviter trop de résultats
-    query1.addQueryItem("countrycodes", "fr");
-    query1.addQueryItem("addressdetails", "1");
-    query1.addQueryItem("accept-language", "fr,fr-FR;q=0.9,en;q=0.8");
-    query1.addQueryItem("dedupe", "1");
-    query1.addQueryItem("layer", "address");
-    query1.addQueryItem("featureType", "settlement");
-    query1.addQueryItem("email", "blackmindeu@gmail.com");
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::UserAgentHeader, "DevisMaker");
 
-    url1.setQuery(query1);
-
-    QNetworkRequest request1(url1);
-    request1.setHeader(QNetworkRequest::UserAgentHeader, "DevisMaker/1.0");
-    request1.setRawHeader("QueryType", "with_comma");
-
-    // 3. Envoyer la deuxième requête (texte original)
-    QUrl url2(m_streetMap->getUrl());
-    QUrlQuery query2;
-    query2.addQueryItem("format", "jsonv2");
-    query2.addQueryItem("q", text);  // Texte original
-    query2.addQueryItem("limit", "10");
-    query2.addQueryItem("countrycodes", "fr");
-    query2.addQueryItem("addressdetails", "1");
-    query2.addQueryItem("accept-language", "fr,fr-FR;q=0.9,en;q=0.8");
-    query2.addQueryItem("dedupe", "1");
-    query2.addQueryItem("layer", "address");
-    query2.addQueryItem("featureType", "settlement");
-    query2.addQueryItem("email", "blackmindeu@gmail.com");
-
-    url2.setQuery(query2);
-
-    QNetworkRequest request2(url2);
-    request2.setHeader(QNetworkRequest::UserAgentHeader, "DevisMaker/1.0");
-    request2.setRawHeader("QueryType", "original");
-
-    // 4. Envoyer les deux requêtes
-    m_networkManager->get(request1);
-
-    // Important : ajouter un petit délai entre les requêtes pour respecter les limites d'API
-    QTimer::singleShot(200, this, [this, request2]() 
-        {
-        m_networkManager->get(request2);
-        });
-
-    qDebug() << "Requetes envoyees pour: " << text << " et " << textWithComma;
+    m_networkManager->get(request);
 }
 
 
@@ -112,24 +67,22 @@ void AddressCompleter::handleNetworkReply(QNetworkReply* reply)
 {
     if (reply->error() == QNetworkReply::NoError) 
     {
-        QByteArray data = reply->readAll();
-        QJsonDocument doc = QJsonDocument::fromJson(data);
-        QJsonArray array = doc.array();
+        QByteArray data{ reply->readAll() };
+        QJsonDocument doc{ QJsonDocument::fromJson(data) };
+        QJsonArray array{ doc.array() };
 
-        // Traiter les résultats comme avant
+
         QStringList suggestions;
         for (const QJsonValue& value : array) 
         {
-            QJsonObject obj = value.toObject();
+            QJsonObject obj{ value.toObject() };
 
-            // Format simplifié
             QString formattedAddress;
 
             if (obj.contains("address")) 
             {
                 QJsonObject address{ obj["address"].toObject() };
 
-                // Numéro, rue, code postal, ville
                 QString houseNumber{ address.contains("house_number") ? address["house_number"].toString() : "" };
 
                 QString road{ address.contains("road") ? address["road"].toString() : "" };
@@ -137,10 +90,12 @@ void AddressCompleter::handleNetworkReply(QNetworkReply* reply)
                 QString postcode{ address.contains("postcode") ? address["postcode"].toString() : "" };
 
                 QString city;
-                if (address.contains("city"))
+                if (address.contains("city")) 
                     city = address["city"].toString();
+
                 else if (address.contains("town"))
                     city = address["town"].toString();
+
                 else if (address.contains("village"))
                     city = address["village"].toString();
 
@@ -168,8 +123,7 @@ void AddressCompleter::handleNetworkReply(QNetworkReply* reply)
             }
 
             // Si le format personnalisé échoue, simplifier l'adresse complète
-            QString fullAddress = obj["display_name"].toString();
-            // [code de simplification d'adresse comme avant]
+            QString fullAddress{ obj["display_name"].toString() };
             suggestions.append(fullAddress);
         }
 
@@ -184,6 +138,7 @@ void AddressCompleter::handleNetworkReply(QNetworkReply* reply)
         m_model->setStringList(m_pendingSuggestions);
 
         // Forcer l'affichage du popup
+        m_completer->setCompletionPrefix("");
         m_completer->complete();
     }
 
@@ -215,7 +170,6 @@ void AddressCompleter::setupCompleter()
     m_completer->setCaseSensitivity(Qt::CaseInsensitive);
     m_completer->setCompletionMode(QCompleter::PopupCompletion); // Forcer l'affichage du popup
     m_completer->setMaxVisibleItems(MAX_VISIBLE_ITEMS); // Afficher plus de suggestions
-    m_completer->setFilterMode(Qt::MatchContains); // Correspondance partielle n'importe où
 
     for (auto* lineEdit : QVector<QLineEdit*>{ m_lineEditChargement, m_lineEditLivraison })
     {

@@ -20,7 +20,7 @@ void OpenStreetMap::calculateDistance(const QString& adresseDepart, const QStrin
     url.setQuery(query);
 
     QNetworkRequest request(url);
-    request.setHeader(QNetworkRequest::UserAgentHeader, "DevisMaker/1.0");
+    request.setHeader(QNetworkRequest::UserAgentHeader, "DevisMaker");
 
     QNetworkReply* reply{ m_networkManager->get(request) };
     reply->setProperty("adresseArrivee", adresseArrivee);
@@ -99,7 +99,7 @@ void OpenStreetMap::requestRouteDistance(const QString& startCoords, const QStri
     QString osrmUrl{ QString("http://router.project-osrm.org/route/v1/driving/%1;%2?overview=false&geometries=geojson").arg(startCoords, endCoords) };
 
     QNetworkRequest request(osrmUrl);
-    request.setHeader(QNetworkRequest::UserAgentHeader, "DevisMaker/1.0");
+    request.setHeader(QNetworkRequest::UserAgentHeader, "DevisMaker");
 
     QNetworkReply* reply{ m_networkManager->get(request) };
     reply->setProperty("requestType", "routeCalculation");

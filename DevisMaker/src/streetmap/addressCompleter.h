@@ -45,13 +45,13 @@ private:
     QStringListModel* m_model;
     QNetworkAccessManager* m_networkManager;
     QTimer* m_debounceTimer;
-    QStringList m_pendingSuggestions;  // Pour stocker les suggestions combinées
+    QStringList m_pendingSuggestions;
     OpenStreetMap* m_streetMap;
     LineEditType m_currentModifiedLineEdit;
 
     const int MAX_VISIBLE_ITEMS{ 10 };
-    const int TIMER_DELAY{ 300 };
-    const int MIN_TEXT_LENGTH_TRIGGER{ 3 };
+    const int TIMER_DELAY{ 400 };
+    const int MIN_TEXT_LENGTH_TRIGGER{ 5 };
 
 
     void setupCompleter();
