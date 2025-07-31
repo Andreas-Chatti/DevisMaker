@@ -7,39 +7,15 @@ MainWindow::MainWindow(QWidget* parent)
 {
     ui.setupUi(this);
 
-    m_departCompleter = new AddressCompleter(ui.adresseDepartLineEdit, this);
-    m_arriveeCompleter = new AddressCompleter(ui.adresseLivraisonLineEdit, this);
+    m_addressCompleter = new AddressCompleter(ui.adresseDepartLineEdit, ui.adresseLivraisonLineEdit, this);
 
     m_calculateurDevis = new CalculateurDevis(m_client, m_tarification);
-
-    m_openStreetMap = new OpenStreetMap(this);
 
     m_PDFGenerator = new PDFGenerator(this);
     connect(m_PDFGenerator, &PDFGenerator::pdfGenerationStatusReport, this, &MainWindow::onGenerateDevisStatusReport);
 
-    // Calculer la distance après modification du champ d'adresse départ
-    connect(ui.adresseDepartLineEdit, &QLineEdit::editingFinished, [this]() {
-
-        QString depart{ ui.adresseDepartLineEdit->text() };
-        QString arrivee{ ui.adresseLivraisonLineEdit->text() };
-
-        if (!depart.isEmpty() && !arrivee.isEmpty())
-            m_openStreetMap->calculateDistance(depart, arrivee);
-        });
-
-
-    // Calculer la distance après modification du champ d'adresse d'arrivée
-    connect(ui.adresseLivraisonLineEdit, &QLineEdit::editingFinished, [this]() {
-
-        QString depart{ ui.adresseDepartLineEdit->text() };
-        QString arrivee{ ui.adresseLivraisonLineEdit->text() };
-
-        if (!depart.isEmpty() && !arrivee.isEmpty())
-            m_openStreetMap->calculateDistance(depart, arrivee);
-        });
-
-    connect(m_openStreetMap, &OpenStreetMap::distanceCalculated, this, &MainWindow::onDistanceCalculated);
-    connect(m_openStreetMap, &OpenStreetMap::calculationError, this, &MainWindow::onDistanceError);
+    connect(m_addressCompleter->getStreetMap(), &OpenStreetMap::distanceCalculated, this, &MainWindow::onDistanceCalculated);
+    connect(m_addressCompleter->getStreetMap(), &OpenStreetMap::calculationError, this, &MainWindow::onDistanceError);
 
 
     // Initialiser l'analyseur IA

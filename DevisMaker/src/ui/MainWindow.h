@@ -75,13 +75,11 @@ private:
     Tarification m_tarification;
     QNetworkAccessManager* m_networkManager{ nullptr };
     InventoryAnalyzer* m_inventoryAnalyzer;
-    OpenStreetMap* m_openStreetMap;
     CalculateurDevis* m_calculateurDevis;
     PDFGenerator* m_PDFGenerator;
 
 
-    AddressCompleter* m_departCompleter{ nullptr };
-    AddressCompleter* m_arriveeCompleter{ nullptr };
+    AddressCompleter* m_addressCompleter;
 
 
     void setupValidators();

@@ -20,21 +20,19 @@ public:
     {
         m_networkManager = new QNetworkAccessManager(this);
 
-        connect(m_networkManager, &QNetworkAccessManager::finished,
-            this, [this](QNetworkReply* reply) {
+        connect(m_networkManager, &QNetworkAccessManager::finished, this, [this](QNetworkReply* reply) {
+
                 QString requestType{ reply->property("requestType").toString() };
 
                 if (requestType == "routeCalculation")
-                {
                     handleRouteResponse(reply);
-                }
+
                 else
-                {
                     handleDistanceReply(reply);
-                }
             });
     }
 
+    const QUrl& getUrl() { return m_baseUrl; }
 
 signals:
 

@@ -1,47 +1,43 @@
 ﻿#include "addressCompleter.h"
 
-AddressCompleter::AddressCompleter(QLineEdit* lineEdit, QObject* parent)
-    : QObject(parent), m_lineEdit(lineEdit)
+AddressCompleter::AddressCompleter(QLineEdit* lineEditChargement, QLineEdit* lineEditLivraison, QObject* parent)
+    : QObject(parent)
+    , m_lineEditChargement(lineEditChargement)
+    , m_lineEditLivraison(lineEditLivraison)
 {
+    m_streetMap = new OpenStreetMap{ this };
+
     // Créer le modèle pour les suggestions
     m_model = new QStringListModel(this);
 
-    // Créer le completer et l'attacher au champ avec une configuration améliorée
-    m_completer = new QCompleter(m_model, this);
-    m_completer->setCaseSensitivity(Qt::CaseInsensitive);
-    m_completer->setCompletionMode(QCompleter::PopupCompletion); // Forcer l'affichage du popup
-    m_completer->setMaxVisibleItems(MAX_VISIBLE_ITEMS); // Afficher plus de suggestions
-    m_completer->setFilterMode(Qt::MatchContains); // Correspondance partielle n'importe où
-    m_lineEdit->setCompleter(m_completer);
+    setupCompleter();
 
-    // Créer le gestionnaire réseau
     m_networkManager = new QNetworkAccessManager(this);
     connect(m_networkManager, &QNetworkAccessManager::finished, this, &AddressCompleter::handleNetworkReply);
 
-    // Setup du délais
-    m_debounceTimer = new QTimer(this);
-    m_debounceTimer->setSingleShot(true);
-    m_debounceTimer->setInterval(TIMER_DELAY);
+    connect(m_lineEditChargement, &QLineEdit::textEdited, this, &AddressCompleter::startTimer);
+    connect(m_lineEditChargement, &QLineEdit::textEdited, this, &AddressCompleter::setCurrentModifiedLineEdit);
+
+    connect(m_lineEditLivraison, &QLineEdit::textEdited, this, &AddressCompleter::startTimer);
+    connect(m_lineEditLivraison, &QLineEdit::textEdited, this, &AddressCompleter::setCurrentModifiedLineEdit);
+
+    setupDebounceTimer();
     connect(m_debounceTimer, &QTimer::timeout, this, &AddressCompleter::onTextChanged);
 
-    // Connecter à CHAQUE changement de texte
-    connect(m_lineEdit, &QLineEdit::textEdited, this, [this](const QString& text) {
-        if (text.length() >= 3) 
-        {
-            qDebug() << "Texte modifié, démarrage du timer: " << text;
-            m_debounceTimer->start();
-        }
-        });
-
     // Utiliser textEdited au lieu de textChanged pour n'intercepter que les saisies utilisateur
+
+
+    // Calculer la distance après modification du champ d'adresse départ
+    connect(m_lineEditChargement, &QLineEdit::editingFinished, this, &AddressCompleter::onEditingFinished);
+    connect(m_lineEditLivraison, &QLineEdit::editingFinished, this, &AddressCompleter::onEditingFinished);
 }
 
 
 void AddressCompleter::onTextChanged()
 {
-    QString text{ m_lineEdit->text() };
+    QString text{ m_currentModifiedLineEdit == LineEditType::chargement ? m_lineEditChargement->text() : m_lineEditLivraison->text() };
 
-    if (text.length() < 3)
+    if (text.length() < MIN_TEXT_LENGTH_TRIGGER)
         return;
 
     // Vider la liste des suggestions en attente
@@ -60,7 +56,7 @@ void AddressCompleter::onTextChanged()
     }
 
     // 2. Envoyer la première requête (avec virgule)
-    QUrl url1("https://nominatim.openstreetmap.org/search");
+    QUrl url1(m_streetMap->getUrl());
     QUrlQuery query1;
     query1.addQueryItem("format", "json");
     query1.addQueryItem("q", textWithComma);
@@ -182,4 +178,51 @@ void AddressCompleter::handleNetworkReply(QNetworkReply* reply)
     }
 
     reply->deleteLater();
+}
+
+
+void AddressCompleter::startTimer(const QString& lineEditText)
+{
+    if (lineEditText.length() >= MIN_TEXT_LENGTH_TRIGGER)
+        m_debounceTimer->start();
+}
+
+
+void AddressCompleter::onEditingFinished()
+{
+    QString depart{ m_lineEditChargement->text() };
+    QString arrivee{ m_lineEditLivraison->text() };
+
+    if (!depart.isEmpty() && !arrivee.isEmpty())
+        m_streetMap->calculateDistance(depart, arrivee);
+}
+
+
+void AddressCompleter::setupCompleter()
+{
+    // Créer le completer et l'attacher au champ avec une configuration améliorée
+    m_completer = new QCompleter(m_model, this);
+    m_completer->setCaseSensitivity(Qt::CaseInsensitive);
+    m_completer->setCompletionMode(QCompleter::PopupCompletion); // Forcer l'affichage du popup
+    m_completer->setMaxVisibleItems(MAX_VISIBLE_ITEMS); // Afficher plus de suggestions
+    m_completer->setFilterMode(Qt::MatchContains); // Correspondance partielle n'importe où
+
+    for (auto* lineEdit : QVector<QLineEdit*>{ m_lineEditChargement, m_lineEditLivraison })
+    {
+        lineEdit->setCompleter(m_completer);
+    }
+}
+
+
+void AddressCompleter::setupDebounceTimer()
+{
+    m_debounceTimer = new QTimer(this);
+    m_debounceTimer->setSingleShot(true);
+    m_debounceTimer->setInterval(TIMER_DELAY);
+}
+
+
+void AddressCompleter::setCurrentModifiedLineEdit(const QString& lineEditText)
+{
+    m_currentModifiedLineEdit = (lineEditText == m_lineEditChargement->text() ? LineEditType::chargement : LineEditType::livraison);
 }
