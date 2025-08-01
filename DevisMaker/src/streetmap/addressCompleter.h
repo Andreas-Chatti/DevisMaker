@@ -56,4 +56,5 @@ private:
 
     void setupCompleter();
     void setupDebounceTimer();
+    QNetworkRequest createRequest(const QString& queryItem);
 };

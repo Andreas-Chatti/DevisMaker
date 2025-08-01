@@ -404,7 +404,7 @@ void MainWindow::handleInventoryAnalysis(double totalVolume, const QStringList& 
 
     // Message de succès
     QString titre = "Analyse terminee";
-    QString message = QString("Volume total calcule par l'IA: %1 m3, %2 objets detectes").arg(totalVolume).arg(structuredItems.size());
+    QString message = QString("Volume total calcule par l'IA: %1 m3, %2 objets detectes").arg(QString::number(totalVolume, 'f', 2)).arg(structuredItems.size());
     QMessageBox::information(this, titre, message);
 
     ui.AnalyseInventoryPushButton->setText("Analyser inventaire");
@@ -732,9 +732,9 @@ void MainWindow::setupPlaceholderText() const
         "Notes: Il est possible de noter plusieurs fois les mêmes objets. Ils seront automatiquement comptés et additionés correctements dans le volume."
     );
 
-    ui.nomLineEdit->setPlaceholderText("David");
+    ui.nomLineEdit->setPlaceholderText("Dupont");
     
-    ui.prenomLineEdit->setPlaceholderText("Dupont");
+    ui.prenomLineEdit->setPlaceholderText("David");
 
     ui.numTelLineEdit->setPlaceholderText("0199887766");
 

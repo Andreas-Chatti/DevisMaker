@@ -1,5 +1,5 @@
 {
-    "api_key": "",
+    "api_key": "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",
     "fallback_max_attempts": 3,
     "fallback_model": "gemma2-9b-it",
     "max_tokens": 4000,
