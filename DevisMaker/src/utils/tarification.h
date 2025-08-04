@@ -93,11 +93,11 @@ public:
 
             struct HauteSaison
             {
-                static constexpr double DISTANCE_150_400{ 70.0 };
-                static constexpr double DISTANCE_401_600{ 80.0 };
-                static constexpr double DISTANCE_601_760{ 85.0 };
-                static constexpr double DISTANCE_761_900{ 110.0 };
-                static constexpr double DISTANCE_901PLUS{ 130.0 };
+                static constexpr double DISTANCE_150_400{ 74.75 };
+                static constexpr double DISTANCE_401_600{ 86.25 };
+                static constexpr double DISTANCE_601_760{ 97.75 };
+                static constexpr double DISTANCE_761_900{ 126.5 };
+                static constexpr double DISTANCE_901PLUS{ 149.5 };
             };
         };
 
@@ -113,10 +113,10 @@ public:
 
             struct HauteSaison
             {
-                static constexpr double ECO{ 40.0 };
-                static constexpr double ECOPLUS{ 50.0 };
-                static constexpr double STANDARD{ 60.0 };
-                static constexpr double LUXE{ 65.0 };
+                static constexpr double ECO{ 36.0 };
+                static constexpr double ECOPLUS{ 42.0 };
+                static constexpr double STANDARD{ 48.0 };
+                static constexpr double LUXE{ 60.0 };
             };
         };
     };
@@ -170,6 +170,10 @@ private:
     double m_prixMetreCube; // Prix du m3
     double m_prixMonteMeubles; // Prix d'un monte-meuble en demi-journée PAR adresse
     double m_prixSuppAdresse; // Prix supplément PAR adresse
+
+    const QString CONFIG_FILE_PATH{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/PricePresets_config.ini" };
+    const QString CONFIG_SECTION_BASSE_SAISON{ "5Postes_Basse_Saison" };
+    const QString CONFIG_SECTION_HAUTE_SAISON{ "5Postes_Haute_Saison" };
 
 
     void loadDefaultValues(PricePreset preset);

@@ -2,23 +2,18 @@
 
 void Tarification::loadSettings(PricePreset preset)
 {
-    // Définir le chemin du fichier de configuration
-    QString settingsPath{ QDir::homePath() + "/DevisMaker/config.ini" };
-    QFileInfo checkFile(settingsPath);
+    QFileInfo configFileInfos(CONFIG_FILE_PATH);
 
-    // Créer le dossier s'il n'existe pas
-    QDir().mkpath(QDir::homePath() + "/DevisMaker");
+    QDir dataFile{ SettingsConstants::FileSettings::DATA_FILE_PATH };
+    if (!dataFile.exists())
+        QDir().mkpath(SettingsConstants::FileSettings::DATA_FILE_PATH);
 
-    // Initialiser QSettings
-    QSettings settings(settingsPath, QSettings::IniFormat);
+    QSettings settings(CONFIG_FILE_PATH, QSettings::IniFormat);
 
-    // Déterminer le nom de la section selon le preset
-    QString sectionName{ preset == PricePreset::BasseSaison ? "Tarification_Basse_Saison" : "Tarification_Haute_Saison" };
-  
-
-    // Si le fichier existe, charger les paramètres du preset demandé
-    if (checkFile.exists() && checkFile.isFile())
+    if (configFileInfos.exists() && configFileInfos.isFile())
     {
+        QString sectionName{ preset == PricePreset::BasseSaison ? CONFIG_SECTION_BASSE_SAISON : CONFIG_SECTION_HAUTE_SAISON };
+
         settings.beginGroup(sectionName);
         m_coutCamion = settings.value("Camion", getDefaultPrices_5Postes(CoutCamion, preset)).toDouble();
         m_coutKilometrique = settings.value("Kilometrage", getDefaultPrices_5Postes(CoutKilometrique, preset)).toDouble();
@@ -33,30 +28,21 @@ void Tarification::loadSettings(PricePreset preset)
     }
 
     else
-    {
-        // Fichier n'existe pas, charger les valeurs par défaut et sauvegarder les deux presets
-        loadDefaultValues(PricePreset::BasseSaison);
-        saveSettings(PricePreset::BasseSaison);
-
-        loadDefaultValues(PricePreset::HauteSaison);
-        saveSettings(PricePreset::HauteSaison);
-    }
+        for (const auto& pricePreset : QVector<PricePreset>{ PricePreset::BasseSaison, PricePreset::HauteSaison })
+        {
+            loadDefaultValues(pricePreset);
+            saveSettings(pricePreset);
+        }
 }
 
 
 void Tarification::saveSettings(PricePreset preset) const
 {
-    // Définir le chemin du fichier de configuration
-    QString settingsPath{ QDir::homePath() + "/DevisMaker/config.ini" };
+    QSettings settings{ CONFIG_FILE_PATH, QSettings::IniFormat };
 
-    // Initialiser QSettings
-    QSettings settings{ settingsPath, QSettings::IniFormat };
-
-    // Déterminer le nom de la section selon le preset
-    QString sectionName{ preset == PricePreset::BasseSaison ? "Tarification_Basse_Saison" : "Tarification_Haute_Saison" };
+    QString sectionName{ preset == PricePreset::BasseSaison ? CONFIG_SECTION_BASSE_SAISON : CONFIG_SECTION_HAUTE_SAISON };
     
-
-    // Sauvegarder les paramètres dans la section correspondante
+    // TASK : METTRE LES KEYS EN TYPE-SAFE
     settings.beginGroup(sectionName);
     settings.setValue("Camion", m_coutCamion);
     settings.setValue("Kilometrage", m_coutKilometrique);
