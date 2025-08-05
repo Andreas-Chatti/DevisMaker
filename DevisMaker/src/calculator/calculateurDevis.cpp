@@ -49,7 +49,7 @@ double CalculateurDevis::calculerPrixStationnement() const
     double fraisStationnement{};
     bool autStatChargement{ m_client.getAdresseDepart().m_autStationnement };
     bool autStatLivraison{ m_client.getAdresseArrivee().m_autStationnement };
-    double coutFraisStationnement_Unitaire{ m_tarification.getCoutFraisStationnement() };
+    double coutFraisStationnement_Unitaire{ m_tarification->getCoutFraisStationnement() };
 
     for (const auto autStat : std::vector<bool>{ autStatChargement, autStatLivraison })
     {
@@ -67,7 +67,7 @@ double CalculateurDevis::calculerSupplementMM() const
 
     const Adresse& aChargement{ m_client.getAdresseDepart() };
     const Adresse& aLivraison{ m_client.getAdresseArrivee() };
-    double prixMM_Unitaire{ m_tarification.getCoutMonteMeubles() };
+    double prixMM_Unitaire{ m_tarification->getCoutMonteMeubles() };
 
     for (const auto& adresse : std::vector<Adresse>{ aChargement, aLivraison })
     {

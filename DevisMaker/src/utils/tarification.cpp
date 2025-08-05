@@ -41,18 +41,22 @@ void Tarification::saveSettings(PricePreset preset) const
     QSettings settings{ CONFIG_FILE_PATH, QSettings::IniFormat };
 
     QString sectionName{ preset == PricePreset::BasseSaison ? CONFIG_SECTION_BASSE_SAISON : CONFIG_SECTION_HAUTE_SAISON };
-    
-    // TASK : METTRE LES KEYS EN TYPE-SAFE
+
+    QMap<PriceKey, double> keyMap{ {PriceKey::CoutCamion, m_coutCamion} };
+    QVector<PriceKey>keyVector{ CoutCamion, CoutKilometrique, CoutEmballage, CoutLocMateriel, CoutFraisRoute, CoutMainOeuvre, CoutFraisStationnement, CoutMonteMeubles, CoutSupplementAdresse};
+    for (const auto& key : keyVector)
+        settings.setValue(enumToString(key), keyMap.value(key));
+
     settings.beginGroup(sectionName);
-    settings.setValue("Camion", m_coutCamion);
-    settings.setValue("Kilometrage", m_coutKilometrique);
-    settings.setValue("Emballage", m_coutEmballage);
-    settings.setValue("Location_Materiel", m_prixLocMateriel);
-    settings.setValue("Frais_Route", m_fraisRoute);
-    settings.setValue("Main_Oeuvre", m_coutMO);
-    settings.setValue("Stationnement", m_fraisStationnement);
-    settings.setValue("Monte_Meubles", m_prixMonteMeubles);
-    settings.setValue("Supplement_Adresse", m_prixSuppAdresse);
+    settings.setValue(enumToString(PriceKey::CoutCamion), m_coutCamion);
+    settings.setValue(enumToString(PriceKey::CoutKilometrique), m_coutKilometrique);
+    settings.setValue(enumToString(PriceKey::CoutEmballage), m_coutEmballage);
+    settings.setValue(enumToString(PriceKey::CoutLocMateriel), m_prixLocMateriel);
+    settings.setValue(enumToString(PriceKey::CoutFraisRoute), m_fraisRoute);
+    settings.setValue(enumToString(PriceKey::CoutMainOeuvre), m_coutMO);
+    settings.setValue(enumToString(PriceKey::CoutFraisStationnement), m_fraisStationnement);
+    settings.setValue(enumToString(PriceKey::CoutMonteMeubles), m_prixMonteMeubles);
+    settings.setValue(enumToString(PriceKey::CoutSupplementAdresse), m_prixSuppAdresse);
     settings.endGroup();
 }
 

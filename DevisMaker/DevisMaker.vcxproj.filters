@@ -78,9 +78,6 @@
     <ClInclude Include="src\utils\resultatDevis.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\utils\tarification.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="src\streetmap\addressCompleter.h">
@@ -99,6 +96,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="src\ia\IA.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="src\utils\tarification.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

@@ -9,6 +9,8 @@ MainWindow::MainWindow(QWidget* parent)
 
     m_addressCompleter = new AddressCompleter(ui.adresseDepartLineEdit, ui.adresseLivraisonLineEdit, this);
 
+    m_tarification = new Tarification(this);
+
     m_calculateurDevis = new CalculateurDevis(m_client, m_tarification);
 
     m_PDFGenerator = new PDFGenerator(this);
@@ -77,15 +79,15 @@ void MainWindow::setupValidators()
 
 void MainWindow::displaySettings()
 {
-    ui.prixCamionLineEdit->setText(QString::number(m_tarification.getCoutCamion()));
-    ui.coutKmLineEdit->setText(QString::number(m_tarification.getCoutKilometrique()));
-    ui.prixEmballageLineEdit->setText(QString::number(m_tarification.getCoutEmballage()));
-    ui.prixLocMatLineEdit->setText(QString::number(m_tarification.getPrixLocMateriel()));
-    ui.coutFraisRouteLineEdit->setText(QString::number(m_tarification.getFraisRoute()));
-    ui.moLineEdit->setText(QString::number(m_tarification.getCoutMO()));
-    ui.fraisStatLineEdit->setText(QString::number(m_tarification.getCoutFraisStationnement()));
-    ui.MMeublesLineEdit->setText(QString::number(m_tarification.getCoutMonteMeubles()));
-    ui.suppAdresseLineEdit->setText(QString::number(m_tarification.getPrixSuppAdresse()));
+    ui.prixCamionLineEdit->setText(QString::number(m_tarification->getCoutCamion()));
+    ui.coutKmLineEdit->setText(QString::number(m_tarification->getCoutKilometrique()));
+    ui.prixEmballageLineEdit->setText(QString::number(m_tarification->getCoutEmballage()));
+    ui.prixLocMatLineEdit->setText(QString::number(m_tarification->getPrixLocMateriel()));
+    ui.coutFraisRouteLineEdit->setText(QString::number(m_tarification->getFraisRoute()));
+    ui.moLineEdit->setText(QString::number(m_tarification->getCoutMO()));
+    ui.fraisStatLineEdit->setText(QString::number(m_tarification->getCoutFraisStationnement()));
+    ui.MMeublesLineEdit->setText(QString::number(m_tarification->getCoutMonteMeubles()));
+    ui.suppAdresseLineEdit->setText(QString::number(m_tarification->getPrixSuppAdresse()));
 }
 
 
@@ -114,7 +116,7 @@ void MainWindow::on_generateDevisButton_clicked()
     */
 
     const PricePreset presetToUse{ determinePresetFromDates(ui.departDateEdit->date(), ui.livraisonDateEdit->date()) };
-    m_tarification.loadSettings(presetToUse);
+    m_tarification->loadSettings(presetToUse);
     displaySettings();
     ui.pricePresetComboBox->setCurrentIndex(static_cast<int>(presetToUse));
 
@@ -265,7 +267,7 @@ void MainWindow::updateClientVariables()
     // Déterminer le prix du mètre cube en fonctions des paramètres actuels
     PricePreset presetToUse{ determinePresetFromDates(ui.departDateEdit->date(), ui.livraisonDateEdit->date()) };
     double prixM3{ m_calculateurDevis->calculerPrixMetreCube(presetToUse) };
-    m_tarification.setPrixMetreCube(prixM3);
+    m_tarification->setPrixMetreCube(prixM3);
 }
 
 
@@ -276,39 +278,39 @@ Puis met à jour les variables dans la classe Tarification
 void MainWindow::updateSettingsVariables()
 {
     double prixCamion{ ui.prixCamionLineEdit->text().toDouble() };
-    m_tarification.setCoutCamion(prixCamion);
+    m_tarification->setCoutCamion(prixCamion);
 
 
     double prixKilometrage{ ui.coutKmLineEdit->text().toDouble() };
-    m_tarification.setCoutKilometrique(prixKilometrage);
+    m_tarification->setCoutKilometrique(prixKilometrage);
 
 
     double prixEmballage{ ui.prixEmballageLineEdit->text().toDouble() };
-    m_tarification.setCoutEmballage(prixEmballage);
+    m_tarification->setCoutEmballage(prixEmballage);
 
 
     double prixLocMateriel{ ui.prixLocMatLineEdit->text().toDouble() };
-    m_tarification.setPrixLocMateriel(prixLocMateriel);
+    m_tarification->setPrixLocMateriel(prixLocMateriel);
 
 
     double prixFraisRoute{ ui.coutFraisRouteLineEdit->text().toDouble() };
-    m_tarification.setFraisRoute(prixFraisRoute);
+    m_tarification->setFraisRoute(prixFraisRoute);
 
 
     double prixMO{ ui.moLineEdit->text().toDouble() };
-    m_tarification.setCoutMO(prixMO);
+    m_tarification->setCoutMO(prixMO);
 
 
     double prixFraisStationnement{ ui.fraisStatLineEdit->text().toDouble() };
-    m_tarification.setCoutFraisStationnement(prixFraisStationnement);
+    m_tarification->setCoutFraisStationnement(prixFraisStationnement);
 
 
     double prixMonteMeubles{ ui.MMeublesLineEdit->text().toDouble() };
-    m_tarification.setCoutMonteMeubles(prixMonteMeubles);
+    m_tarification->setCoutMonteMeubles(prixMonteMeubles);
 
 
     double prixSuppAdresse{ ui.suppAdresseLineEdit->text().toDouble() };
-    m_tarification.setPrixSuppAdresse(prixSuppAdresse);
+    m_tarification->setPrixSuppAdresse(prixSuppAdresse);
 }
 
 
@@ -641,7 +643,7 @@ void MainWindow::on_numTelLineEdit_editingFinished()
 void MainWindow::on_pricePresetComboBox_currentIndexChanged(int index)
 {
     PricePreset selectedPreset{ index };
-    m_tarification.loadSettings(selectedPreset);
+    m_tarification->loadSettings(selectedPreset);
 
     displaySettings();
 }
@@ -665,7 +667,7 @@ void MainWindow::on_saveSettingsPushButton_clicked()
     updateSettingsVariables();
 
     PricePreset selectedPreset{ ui.pricePresetComboBox->currentIndex() };
-    m_tarification.saveSettings(selectedPreset);
+    m_tarification->saveSettings(selectedPreset);
 }
 
 

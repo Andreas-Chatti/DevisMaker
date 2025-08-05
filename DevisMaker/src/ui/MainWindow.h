@@ -72,7 +72,7 @@ private:
 
     Ui::MainWindowClass ui;
     Client m_client;
-    Tarification m_tarification;
+    Tarification* m_tarification;
     QNetworkAccessManager* m_networkManager{ nullptr };
     InventoryAnalyzer* m_inventoryAnalyzer;
     CalculateurDevis* m_calculateurDevis;

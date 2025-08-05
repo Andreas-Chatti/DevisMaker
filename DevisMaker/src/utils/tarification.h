@@ -5,17 +5,20 @@
 #include <QFileInfo>
 #include <array>
 #include <cmath>
+#include <QMetaEnum>
 #include "utils/common.h"
 #include "utils/constants.h"
 
 
-class Tarification 
+class Tarification : public QObject
 {
+    Q_OBJECT
 
 public:
 
-    Tarification()
-        : m_coutCamion{}
+    Tarification(QObject* parent = nullptr)
+        : QObject{parent}
+        , m_coutCamion{}
         , m_coutKilometrique{}
         , m_coutEmballage{}
         , m_prixLocMateriel{}
@@ -46,7 +49,7 @@ public:
 
         max_PriceKey
     };
-
+    Q_ENUM(PriceKey)
 
     struct Postes_DefaultPrices
     {
@@ -180,6 +183,8 @@ private:
 
 
     double getDefaultPrices_5Postes(PriceKey key, PricePreset preset) const;
+
+    QString enumToString(const PriceKey& key) const { return QMetaEnum::fromType<PriceKey>().valueToKey(key); }
 };
 
 #endif
