@@ -32,6 +32,11 @@ public:
         loadSettings(PricePreset::BasseSaison);
     }
 
+    enum class PriceCalculation
+    {
+        postes,
+        m3,
+    };
 
     enum PriceKey
     {
@@ -45,7 +50,11 @@ public:
         CoutMonteMeubles,
         CoutSupplementAdresse,
 
-
+        distance150_400,
+        distance401_600,
+        distance601_760,
+        distance761_900,
+        distance901PLUS,
 
         max_PriceKey
     };
@@ -94,7 +103,7 @@ public:
                 static constexpr double DISTANCE_901PLUS{ 120.0 }; // Prix M3 supérieur à 900 kms
             };
 
-            struct HauteSaison
+            struct HauteSaison // +15% par rapport au prix basse-saison
             {
                 static constexpr double DISTANCE_150_400{ 74.75 };
                 static constexpr double DISTANCE_401_600{ 86.25 };
@@ -114,7 +123,7 @@ public:
                 static constexpr double LUXE{ 50.0 };
             };
 
-            struct HauteSaison
+            struct HauteSaison // +20% par rapport au prix basse-saison
             {
                 static constexpr double ECO{ 36.0 };
                 static constexpr double ECOPLUS{ 42.0 };
@@ -136,6 +145,9 @@ public:
     double getCoutMonteMeubles() const { return m_prixMonteMeubles; }
     double getPrixSuppAdresse() const { return m_prixSuppAdresse; }
 
+    double getPrixM3Route(PriceKey&& key);
+    double getPrixM3Urbain(Prestation&& prestation);
+
     
     void setCoutCamion(double coutCamion) { m_coutCamion = coutCamion; }
     void setCoutKilometrique(double coutKilometrique) { m_coutKilometrique = coutKilometrique; }
@@ -148,17 +160,19 @@ public:
     void setCoutMonteMeubles(double prixMM) { m_prixMonteMeubles = prixMM; }
     void setPrixSuppAdresse(double prixSuppAdresse) { m_prixSuppAdresse = prixSuppAdresse; }
 
+    void setPrixM3Route(PriceKey&& key, double price);
+    void setPrixM3Urbain(Prestation&& prestation, double price);
 
     /*
     Charger les paramètres depuis le fichier.ini
     OU
     Créer un nouveau fichier .ini avec les paramètres par défaut si celui-ci n'existe pas
     */
-    void loadSettings(PricePreset preset);
+    void loadSettings(PricePreset preset, PriceCalculation priceCalculation);
 
 
     // Sauvegarde des paramètres de tarification dans un fichier .ini
-    void saveSettings(PricePreset preset) const;
+    void saveSettings(PricePreset preset, PriceCalculation priceCalculation) const;
 
 
 private:
@@ -174,15 +188,34 @@ private:
     double m_prixMonteMeubles; // Prix d'un monte-meuble en demi-journée PAR adresse
     double m_prixSuppAdresse; // Prix supplément PAR adresse
 
+    double m_prixM3_150_400;
+    double m_prixM3_401_600;
+    double m_prixM3_601_760;
+    double m_prixM3_761_900;
+    double m_prixM3_901PLUS;
+
+    double m_prixM3_eco;
+    double m_prixM3_ecoPlus;
+    double m_prixM3_standard;
+    double m_prixM3_luxe;
+
     const QString CONFIG_FILE_PATH{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/PricePresets_config.ini" };
-    const QString CONFIG_SECTION_BASSE_SAISON{ "5Postes_Basse_Saison" };
-    const QString CONFIG_SECTION_HAUTE_SAISON{ "5Postes_Haute_Saison" };
+    const QString CONFIG_SECTION_M3_PREFIX{ "m3" };
+    const QString CONFIG_SECTION_POSTES_PREFIX{ "POSTES" };
+    const QString CONFIG_SECTION_BASSE_SAISON_SUFFIX{ "Basse_Saison" };
+    const QString CONFIG_SECTION_HAUTE_SAISON_SUFFIX{ "Haute_Saison" };
 
 
-    void loadDefaultValues(PricePreset preset);
+    void loadDefaultValues(PricePreset preset, PriceCalculation priceCalculation);
 
 
-    double getDefaultPrices_5Postes(PriceKey key, PricePreset preset) const;
+    double getDefaultPrices(PriceKey key, PricePreset preset, PriceCalculation priceCalculation, Nature nature, Prestation prestation) const;
+
+    double getDefaultPrice_5Postes(PriceKey key, PricePreset preset) const;
+    double getDefaultPrice_M3(PriceKey key, PricePreset preset, Nature nature, Prestation prestation) const;
+
+    void loadSettings_5Postes(QSettings& settings, PricePreset preset);
+    void loadSettings_M3(QSettings& settings, PricePreset preset, Nature&& nature);
 
     QString enumToString(const PriceKey& key) const { return QMetaEnum::fromType<PriceKey>().valueToKey(key); }
 };
