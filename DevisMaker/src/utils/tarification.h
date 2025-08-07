@@ -29,13 +29,14 @@ public:
         , m_prixMonteMeubles{}
         , m_prixSuppAdresse{}
     {
-        loadSettings(PricePreset::BasseSaison);
+        loadSettings(PricePreset::BasseSaison, PriceCalculation::postes);
+        loadSettings(PricePreset::BasseSaison, PriceCalculation::m3);
     }
 
     enum class PriceCalculation
     {
-        postes,
         m3,
+        postes,
     };
 
     enum PriceKey
@@ -55,6 +56,11 @@ public:
         distance601_760,
         distance761_900,
         distance901PLUS,
+
+        m3Eco,
+        m3EcoPlus,
+        m3Standard,
+        m3Luxe,
 
         max_PriceKey
     };
@@ -208,11 +214,8 @@ private:
 
     void loadDefaultValues(PricePreset preset, PriceCalculation priceCalculation);
 
-
-    double getDefaultPrices(PriceKey key, PricePreset preset, PriceCalculation priceCalculation, Nature nature, Prestation prestation) const;
-
     double getDefaultPrice_5Postes(PriceKey key, PricePreset preset) const;
-    double getDefaultPrice_M3(PriceKey key, PricePreset preset, Nature nature, Prestation prestation) const;
+    double getDefaultPrice_M3(PriceKey key, PricePreset preset, Nature&& nature, Prestation&& prestation = Prestation::eco) const;
 
     void loadSettings_5Postes(QSettings& settings, PricePreset preset);
     void loadSettings_M3(QSettings& settings, PricePreset preset, Nature&& nature);

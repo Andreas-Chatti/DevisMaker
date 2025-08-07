@@ -116,7 +116,8 @@ void MainWindow::on_generateDevisButton_clicked()
     */
 
     const PricePreset presetToUse{ determinePresetFromDates(ui.departDateEdit->date(), ui.livraisonDateEdit->date()) };
-    m_tarification->loadSettings(presetToUse);
+    const Tarification::PriceCalculation calculationMethod{ ui.priceCalculationComboBox->currentIndex() };
+    m_tarification->loadSettings(presetToUse, calculationMethod);
     displaySettings();
     ui.pricePresetComboBox->setCurrentIndex(static_cast<int>(presetToUse));
 
