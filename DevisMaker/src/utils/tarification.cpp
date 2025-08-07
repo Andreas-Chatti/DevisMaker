@@ -38,7 +38,7 @@ void Tarification::saveSettings(PricePreset preset, PriceCalculation priceCalcul
     switch (priceCalculation)
     {
     case Tarification::PriceCalculation::postes:
-        settings.beginGroup(CONFIG_SECTION_POSTES_PREFIX + " " + sectionNameSuffix);
+        settings.beginGroup(CONFIG_SECTION_POSTES_PREFIX + "_" + sectionNameSuffix);
         settings.setValue(enumToString(CoutCamion), m_coutCamion);
         settings.setValue(enumToString(CoutKilometrique), m_coutKilometrique);
         settings.setValue(enumToString(CoutEmballage), m_coutEmballage);
@@ -52,7 +52,7 @@ void Tarification::saveSettings(PricePreset preset, PriceCalculation priceCalcul
         break;
 
     case Tarification::PriceCalculation::m3:
-        settings.beginGroup(CONFIG_SECTION_M3_PREFIX + " " + sectionNameSuffix);
+        settings.beginGroup(CONFIG_SECTION_M3_PREFIX + "_" + sectionNameSuffix);
         settings.setValue(enumToString(distance150_400), m_prixM3_150_400);
         settings.setValue(enumToString(distance401_600), m_prixM3_401_600);
         settings.setValue(enumToString(distance601_760), m_prixM3_601_760);
@@ -81,6 +81,7 @@ void Tarification::loadDefaultValues(PricePreset preset, PriceCalculation priceC
         m_fraisStationnement = getDefaultPrice_5Postes(CoutFraisStationnement, preset);
         m_prixMonteMeubles = getDefaultPrice_5Postes(CoutMonteMeubles, preset);
         m_prixSuppAdresse = getDefaultPrice_5Postes(CoutSupplementAdresse, preset);
+        break;
 
     case Tarification::PriceCalculation::m3:
         m_prixM3_150_400 = getDefaultPrice_M3(distance150_400, preset, Nature::special);
@@ -171,8 +172,8 @@ void Tarification::loadSettings_M3(QSettings& settings, PricePreset preset, Natu
         m_prixM3_standard = settings.value("standard", getDefaultPrice_M3(m3Standard, preset, Nature::urbain, Prestation::standard)).toDouble();
         m_prixM3_luxe = settings.value("luxe", getDefaultPrice_M3(m3Luxe, preset, Nature::urbain, Prestation::luxe)).toDouble();
         settings.endGroup();
-
-    case Nature::groupage: [[fallthrough]]
+        break;
+    case Nature::groupage: [[Fallthrough]]
     case Nature::special:
         settings.beginGroup(CONFIG_SECTION_M3_PREFIX + "_Route" + "_" + sectionNameSuffix);
         m_prixM3_150_400 = settings.value(enumToString(distance150_400), getDefaultPrice_M3(distance150_400, preset, Nature::special)).toDouble();
@@ -215,9 +216,13 @@ void Tarification::setPrixM3Route(PriceKey&& key, double price)
     switch (key)
     {
     case distance150_400: m_prixM3_150_400 = price;
+        break;
     case distance401_600: m_prixM3_401_600 = price;
+        break;
     case distance601_760: m_prixM3_601_760 = price;
+        break;
     case distance761_900: m_prixM3_761_900 = price;
+        break;
     case distance901PLUS: m_prixM3_901PLUS = price;
     }
 }
@@ -228,8 +233,11 @@ void Tarification::setPrixM3Urbain(Prestation&& prestation, double price)
     switch (prestation)
     {
     case Prestation::eco: m_prixM3_eco = price;
+        break;
     case Prestation::ecoPlus: m_prixM3_ecoPlus = price;
+        break;
     case Prestation::standard: m_prixM3_standard = price;
+        break;
     case Prestation::luxe: m_prixM3_luxe = price;
     }
 }

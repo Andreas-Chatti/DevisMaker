@@ -88,6 +88,17 @@ void MainWindow::displaySettings()
     ui.fraisStatLineEdit->setText(QString::number(m_tarification->getCoutFraisStationnement()));
     ui.MMeublesLineEdit->setText(QString::number(m_tarification->getCoutMonteMeubles()));
     ui.suppAdresseLineEdit->setText(QString::number(m_tarification->getPrixSuppAdresse()));
+
+    ui.prix150_400LineEdit->setText(QString::number(m_tarification->getPrixM3Route(Tarification::PriceKey::distance150_400)));
+    ui.prix401_600LineEdit->setText(QString::number(m_tarification->getPrixM3Route(Tarification::PriceKey::distance401_600)));
+    ui.prix601_760LineEdit->setText(QString::number(m_tarification->getPrixM3Route(Tarification::PriceKey::distance601_760)));
+    ui.prix761_900LineEdit->setText(QString::number(m_tarification->getPrixM3Route(Tarification::PriceKey::distance761_900)));
+    ui.prix901PlusLineEdit->setText(QString::number(m_tarification->getPrixM3Route(Tarification::PriceKey::distance901PLUS)));
+
+    ui.prixm3EcoLineEdit->setText(QString::number(m_tarification->getPrixM3Urbain(Prestation::eco)));
+    ui.prixm3EcoPlusLineEdit->setText(QString::number(m_tarification->getPrixM3Urbain(Prestation::ecoPlus)));
+    ui.prixm3StandardLineEdit->setText(QString::number(m_tarification->getPrixM3Urbain(Prestation::standard)));
+    ui.prixm3LuxeLineEdit->setText(QString::number(m_tarification->getPrixM3Urbain(Prestation::luxe)));
 }
 
 
@@ -644,7 +655,8 @@ void MainWindow::on_numTelLineEdit_editingFinished()
 void MainWindow::on_pricePresetComboBox_currentIndexChanged(int index)
 {
     PricePreset selectedPreset{ index };
-    m_tarification->loadSettings(selectedPreset);
+    Tarification::PriceCalculation calculationMethod{ ui.priceCalculationComboBox->currentIndex() };
+    m_tarification->loadSettings(selectedPreset, calculationMethod);
 
     displaySettings();
 }
@@ -668,7 +680,8 @@ void MainWindow::on_saveSettingsPushButton_clicked()
     updateSettingsVariables();
 
     PricePreset selectedPreset{ ui.pricePresetComboBox->currentIndex() };
-    m_tarification->saveSettings(selectedPreset);
+    m_tarification->saveSettings(selectedPreset, Tarification::PriceCalculation::postes);
+    m_tarification->saveSettings(selectedPreset, Tarification::PriceCalculation::m3);
 }
 
 
