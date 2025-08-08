@@ -128,7 +128,7 @@ void MainWindow::on_generateDevisButton_clicked()
 
     const PricePreset presetToUse{ determinePresetFromDates(ui.departDateEdit->date(), ui.livraisonDateEdit->date()) };
     const Tarification::PriceCalculation calculationMethod{ ui.priceCalculationComboBox->currentIndex() };
-    m_tarification->loadSettings(presetToUse, calculationMethod);
+    m_tarification->loadSettings(presetToUse);
     displaySettings();
     ui.pricePresetComboBox->setCurrentIndex(static_cast<int>(presetToUse));
 
@@ -291,38 +291,44 @@ void MainWindow::updateSettingsVariables()
 {
     double prixCamion{ ui.prixCamionLineEdit->text().toDouble() };
     m_tarification->setCoutCamion(prixCamion);
-
-
     double prixKilometrage{ ui.coutKmLineEdit->text().toDouble() };
     m_tarification->setCoutKilometrique(prixKilometrage);
-
-
     double prixEmballage{ ui.prixEmballageLineEdit->text().toDouble() };
     m_tarification->setCoutEmballage(prixEmballage);
-
-
     double prixLocMateriel{ ui.prixLocMatLineEdit->text().toDouble() };
     m_tarification->setPrixLocMateriel(prixLocMateriel);
-
-
     double prixFraisRoute{ ui.coutFraisRouteLineEdit->text().toDouble() };
     m_tarification->setFraisRoute(prixFraisRoute);
-
-
     double prixMO{ ui.moLineEdit->text().toDouble() };
     m_tarification->setCoutMO(prixMO);
-
-
     double prixFraisStationnement{ ui.fraisStatLineEdit->text().toDouble() };
     m_tarification->setCoutFraisStationnement(prixFraisStationnement);
-
-
     double prixMonteMeubles{ ui.MMeublesLineEdit->text().toDouble() };
     m_tarification->setCoutMonteMeubles(prixMonteMeubles);
-
-
     double prixSuppAdresse{ ui.suppAdresseLineEdit->text().toDouble() };
     m_tarification->setPrixSuppAdresse(prixSuppAdresse);
+
+
+    double m3_150_400{ ui.prix150_400LineEdit->text().toDouble() };
+    m_tarification->setPrixM3Route(Tarification::PriceKey::distance150_400, m3_150_400);
+    double m3_401_600{ ui.prix401_600LineEdit->text().toDouble() };
+    m_tarification->setPrixM3Route(Tarification::PriceKey::distance401_600, m3_401_600);
+    double m3_601_760{ ui.prix601_760LineEdit->text().toDouble() };
+    m_tarification->setPrixM3Route(Tarification::PriceKey::distance601_760, m3_601_760);
+    double m3_761_900{ ui.prix761_900LineEdit->text().toDouble() };
+    m_tarification->setPrixM3Route(Tarification::PriceKey::distance761_900, m3_761_900);
+    double m3_901Plus{ ui.prix901PlusLineEdit->text().toDouble() };
+    m_tarification->setPrixM3Route(Tarification::PriceKey::distance901PLUS, m3_901Plus);
+
+
+    double m3Eco{ ui.prixm3EcoLineEdit->text().toDouble() };
+    m_tarification->setPrixM3Urbain(Prestation::eco, m3Eco);
+    double m3EcoPlus{ ui.prixm3EcoPlusLineEdit->text().toDouble() };
+    m_tarification->setPrixM3Urbain(Prestation::ecoPlus, m3EcoPlus);
+    double m3Standard{ ui.prixm3StandardLineEdit->text().toDouble() };
+    m_tarification->setPrixM3Urbain(Prestation::standard, m3Standard);
+    double m3Luxe{ ui.prixm3LuxeLineEdit->text().toDouble() };
+    m_tarification->setPrixM3Urbain(Prestation::luxe, m3Luxe);
 }
 
 
@@ -655,8 +661,7 @@ void MainWindow::on_numTelLineEdit_editingFinished()
 void MainWindow::on_pricePresetComboBox_currentIndexChanged(int index)
 {
     PricePreset selectedPreset{ index };
-    Tarification::PriceCalculation calculationMethod{ ui.priceCalculationComboBox->currentIndex() };
-    m_tarification->loadSettings(selectedPreset, calculationMethod);
+    m_tarification->loadSettings(selectedPreset);
 
     displaySettings();
 }

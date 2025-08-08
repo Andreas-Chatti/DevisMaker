@@ -29,8 +29,7 @@ public:
         , m_prixMonteMeubles{}
         , m_prixSuppAdresse{}
     {
-        loadSettings(PricePreset::BasseSaison, PriceCalculation::postes);
-        loadSettings(PricePreset::BasseSaison, PriceCalculation::m3);
+        loadSettings(PricePreset::BasseSaison);
     }
 
     enum class PriceCalculation
@@ -174,7 +173,7 @@ public:
     OU
     Créer un nouveau fichier .ini avec les paramètres par défaut si celui-ci n'existe pas
     */
-    void loadSettings(PricePreset preset, PriceCalculation priceCalculation);
+    void loadSettings(PricePreset preset);
 
 
     // Sauvegarde des paramètres de tarification dans un fichier .ini

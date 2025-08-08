@@ -1,6 +1,6 @@
 #include "Tarification.h"
 
-void Tarification::loadSettings(PricePreset preset, PriceCalculation priceCalculation)
+void Tarification::loadSettings(PricePreset preset)
 {
     QFileInfo configFileInfos(CONFIG_FILE_PATH);
 
@@ -163,26 +163,24 @@ void Tarification::loadSettings_M3(QSettings& settings, PricePreset preset, Natu
 {
     QString sectionNameSuffix{ preset == PricePreset::BasseSaison ? CONFIG_SECTION_BASSE_SAISON_SUFFIX : CONFIG_SECTION_HAUTE_SAISON_SUFFIX };
 
+    settings.beginGroup(CONFIG_SECTION_M3_PREFIX + "_" + sectionNameSuffix);
     switch (nature)
     {
     case Nature::urbain:
-        settings.beginGroup(CONFIG_SECTION_M3_PREFIX + "_Urbain" + "_" + sectionNameSuffix);
-        m_prixM3_eco = settings.value("eco", getDefaultPrice_M3(m3Eco, preset, Nature::urbain, Prestation::eco)).toDouble();
-        m_prixM3_ecoPlus = settings.value("ecoPlus", getDefaultPrice_M3(m3EcoPlus, preset, Nature::urbain, Prestation::ecoPlus)).toDouble();
-        m_prixM3_standard = settings.value("standard", getDefaultPrice_M3(m3Standard, preset, Nature::urbain, Prestation::standard)).toDouble();
-        m_prixM3_luxe = settings.value("luxe", getDefaultPrice_M3(m3Luxe, preset, Nature::urbain, Prestation::luxe)).toDouble();
-        settings.endGroup();
+        m_prixM3_eco = settings.value(enumToString(m3Eco), getDefaultPrice_M3(m3Eco, preset, Nature::urbain, Prestation::eco)).toDouble();
+        m_prixM3_ecoPlus = settings.value(enumToString(m3EcoPlus), getDefaultPrice_M3(m3EcoPlus, preset, Nature::urbain, Prestation::ecoPlus)).toDouble();
+        m_prixM3_standard = settings.value(enumToString(m3Standard), getDefaultPrice_M3(m3Standard, preset, Nature::urbain, Prestation::standard)).toDouble();
+        m_prixM3_luxe = settings.value(enumToString(m3Luxe), getDefaultPrice_M3(m3Luxe, preset, Nature::urbain, Prestation::luxe)).toDouble();
         break;
     case Nature::groupage: [[Fallthrough]]
     case Nature::special:
-        settings.beginGroup(CONFIG_SECTION_M3_PREFIX + "_Route" + "_" + sectionNameSuffix);
         m_prixM3_150_400 = settings.value(enumToString(distance150_400), getDefaultPrice_M3(distance150_400, preset, Nature::special)).toDouble();
         m_prixM3_401_600 = settings.value(enumToString(distance401_600), getDefaultPrice_M3(distance401_600, preset, Nature::special)).toDouble();
         m_prixM3_601_760 = settings.value(enumToString(distance601_760), getDefaultPrice_M3(distance601_760, preset, Nature::special)).toDouble();
         m_prixM3_761_900 = settings.value(enumToString(distance761_900), getDefaultPrice_M3(distance761_900, preset, Nature::special)).toDouble();
         m_prixM3_901PLUS = settings.value(enumToString(distance901PLUS), getDefaultPrice_M3(distance901PLUS, preset, Nature::special)).toDouble();
-        settings.endGroup();
     }
+    settings.endGroup();
 }
 
 

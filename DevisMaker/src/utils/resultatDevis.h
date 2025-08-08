@@ -19,3 +19,8 @@ struct ResultatsDevis
     double arrhes;
     double prixMetreCube;
 };
+
+struct ResultatsDevis_M3
+{
+
+};

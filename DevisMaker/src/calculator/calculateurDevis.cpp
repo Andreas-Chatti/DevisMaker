@@ -1,38 +1,33 @@
 #include "calculateurDevis.h"
 
-const ResultatsDevis& CalculateurDevis::calculateDevis(const PricePreset& preset)
+const ResultatsDevis& CalculateurDevis::calculateDevis(const PricePreset& preset, Tarification::PriceCalculation calculationMethod)
 {
-    double volumeParPersonne{ calculerVolumeParPersonne() };
-    int nombreCamion{ calculerNombreCamion() };
-    int nombreMO{ calculerNombreMO(nombreCamion) };
+    switch (calculationMethod)
+    {
+    case Tarification::PriceCalculation::m3:
+        break;
 
-    double coutMOTotal{ calculerCoutMainOeuvreTotal() };
+    case Tarification::PriceCalculation::postes:
+        double volumeParPersonne{ calculerVolumeParPersonne() };
+        int nombreCamion{ calculerNombreCamion() };
+        int nombreMO{ calculerNombreMO(nombreCamion) };
+        double coutMOTotal{ calculerCoutMainOeuvreTotal() };
+        double coutCamionTotal{ calculerCoutCamionTotal() };
+        double coutAutStatTotal{ calculerPrixStationnement() };
+        double fraisRouteTotal{ calculerFraisRouteTotal() };
+        double coutAssurance{ calculerCoutAssurance() };
+        double fraisMMeubles{ calculerSupplementMM() };
+        double prixSuppAdresse{ calculerSuppAdresseTotal() };
+        double prixKilometrage{ calculerCoutKilometrageTotal() };
+        double prixTotalHT{ calculerCoutTotalHT() };
+        double arrhes{ calculerArrhes() };
+        double prixMetreCube{ calculerPrixMetreCube(preset) };
 
-    double coutCamionTotal{ calculerCoutCamionTotal() };
+        m_lastResults = { volumeParPersonne, nombreCamion, nombreMO, coutMOTotal, coutCamionTotal,
+            coutAutStatTotal, fraisRouteTotal, coutAssurance, fraisMMeubles, prixSuppAdresse, prixKilometrage, prixTotalHT, arrhes, prixMetreCube };
 
-    double coutAutStatTotal{ calculerPrixStationnement() };
-
-    double fraisRouteTotal{ calculerFraisRouteTotal() };
-
-    double coutAssurance{ calculerCoutAssurance() };
-
-    double fraisMMeubles{ calculerSupplementMM() };
-
-    double prixSuppAdresse{ calculerSuppAdresseTotal() };
-
-    double prixKilometrage{ calculerCoutKilometrageTotal() };
-
-    double prixTotalHT{ calculerCoutTotalHT() };
-
-    double arrhes{ calculerArrhes() };
-
-    double prixMetreCube{ calculerPrixMetreCube(preset) };
-
-    m_lastResults = { volumeParPersonne, nombreCamion, nombreMO, coutMOTotal, coutCamionTotal,
-        coutAutStatTotal, fraisRouteTotal, coutAssurance, fraisMMeubles, prixSuppAdresse, prixKilometrage, prixTotalHT, arrhes, prixMetreCube };
-
-
-    return m_lastResults;
+        return m_lastResults;
+    }
 }
 
 
