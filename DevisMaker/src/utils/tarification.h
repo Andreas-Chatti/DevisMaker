@@ -138,6 +138,8 @@ public:
         };
     };
 
+    static constexpr double ASSURANCE_VALUE_PER_M3{ 500.0 };
+
     
     double getCoutCamion() const { return m_coutCamion; }
     double getCoutKilometrique() const { return m_coutKilometrique; }

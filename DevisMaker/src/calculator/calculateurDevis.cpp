@@ -2,32 +2,32 @@
 
 const ResultatsDevis& CalculateurDevis::calculateDevis(const PricePreset& preset, Tarification::PriceCalculation calculationMethod)
 {
-    switch (calculationMethod)
-    {
-    case Tarification::PriceCalculation::m3:
-        break;
+    double coutAutStatTotal{ calculerPrixStationnement() };
+    double fraisRouteTotal{ calculerFraisRouteTotal() };
+    double coutAssurance{ calculerCoutAssurance() };
+    double fraisMMeubles{ calculerSupplementMM() };
+    double prixSuppAdresse{ calculerSuppAdresseTotal() };
 
-    case Tarification::PriceCalculation::postes:
+    ResultatsDevis_CinqPostes resultatsCinqPostes{};
+    if (calculationMethod == Tarification::PriceCalculation::postes)
+    {
         double volumeParPersonne{ calculerVolumeParPersonne() };
         int nombreCamion{ calculerNombreCamion() };
         int nombreMO{ calculerNombreMO(nombreCamion) };
         double coutMOTotal{ calculerCoutMainOeuvreTotal() };
         double coutCamionTotal{ calculerCoutCamionTotal() };
-        double coutAutStatTotal{ calculerPrixStationnement() };
-        double fraisRouteTotal{ calculerFraisRouteTotal() };
-        double coutAssurance{ calculerCoutAssurance() };
-        double fraisMMeubles{ calculerSupplementMM() };
-        double prixSuppAdresse{ calculerSuppAdresseTotal() };
         double prixKilometrage{ calculerCoutKilometrageTotal() };
-        double prixTotalHT{ calculerCoutTotalHT() };
-        double arrhes{ calculerArrhes() };
-        double prixMetreCube{ calculerPrixMetreCube(preset) };
 
-        m_lastResults = { volumeParPersonne, nombreCamion, nombreMO, coutMOTotal, coutCamionTotal,
-            coutAutStatTotal, fraisRouteTotal, coutAssurance, fraisMMeubles, prixSuppAdresse, prixKilometrage, prixTotalHT, arrhes, prixMetreCube };
-
-        return m_lastResults;
+        resultatsCinqPostes = { volumeParPersonne, nombreCamion, nombreMO, coutMOTotal, coutCamionTotal, prixKilometrage };
     }
+
+    double prixMetreCube{ calculerPrixMetreCube(preset) };
+    double prixTotalHT{ calculerCoutTotalHT(calculationMethod) };
+    double arrhes{ calculerArrhes(prixTotalHT) };
+
+    m_lastResults = { coutAutStatTotal, fraisRouteTotal, coutAssurance, fraisMMeubles, prixSuppAdresse, prixMetreCube, prixTotalHT, arrhes, resultatsCinqPostes };
+
+    return m_lastResults;
 }
 
 
@@ -245,5 +245,34 @@ double CalculateurDevis::calculerPrixMetreCube(PricePreset preset) const
 
         else if (distance > SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_4)
             return basseSaison ? Tarification::M3_DefaultPrices::Route::BasseSaison::DISTANCE_901PLUS : Tarification::M3_DefaultPrices::Route::HauteSaison::DISTANCE_901PLUS;
+    }
+}
+
+
+double CalculateurDevis::calculerCoutTotalHT(const Tarification::PriceCalculation& calculationMethod) const
+{
+    double prixM3{ m_tarification->getPrixMetreCube() };
+    double volumeTotal{ m_client.getVolume() };
+
+    double prixTotalAssurance{ calculerCoutAssurance() };
+    double prixTotalStationnement{ calculerPrixStationnement() };
+    double prixTotalMonteMeubles{ calculerSupplementMM() };
+    double prixTotalFraisRoute{ calculerFraisRouteTotal() };
+    double prixTotalSuppAdresse{ calculerSuppAdresseTotal() };
+    double prixTotalSupplements{ prixTotalAssurance + prixTotalStationnement + prixTotalMonteMeubles + prixTotalFraisRoute + prixTotalSuppAdresse };
+
+    switch (calculationMethod)
+    {
+    case Tarification::PriceCalculation::m3:
+        return volumeTotal * prixM3 + prixTotalSupplements;
+
+    case Tarification::PriceCalculation::postes:
+        double coutCamion{ calculerCoutCamionTotal() };
+        double coutKilometrique{ calculerCoutKilometrageTotal() };
+        double coutLocMateriel{ calculerCoutLocMaterielTotal() };
+        double coutMainOeuvre{ calculerCoutMainOeuvreTotal() };
+        double coutEmballage{ calculerCoutEmballageTotal() };
+
+        return coutCamion + coutKilometrique + coutLocMateriel + coutMainOeuvre + coutEmballage + prixTotalSupplements;
     }
 }

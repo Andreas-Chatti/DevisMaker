@@ -340,7 +340,8 @@ void MainWindow::displayingResults()
     setupDevisTable();
 
     const PricePreset preset{ determinePresetFromDates(ui.departDateEdit->date(), ui.livraisonDateEdit->date()) };
-    ResultatsDevis result{ m_calculateurDevis->calculateDevis(preset) };
+    const Tarification::PriceCalculation calculationMethod{ ui.priceCalculationComboBox->currentIndex() };
+    ResultatsDevis result{ m_calculateurDevis->calculateDevis(preset, calculationMethod) };
 
     populateDevisTable(result);
 }

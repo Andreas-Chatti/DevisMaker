@@ -18,11 +18,14 @@ public:
 
 	const ResultatsDevis& calculateDevis(const PricePreset& preset, Tarification::PriceCalculation calculationMethod);
 
+	const ResultatsDevis& calculateDevis_Postes(const PricePreset& preset, Tarification::PriceCalculation calculationMethod);
+	const ResultatsDevis_M3& calculateDevis_M3(const PricePreset& preset, Tarification::PriceCalculation calculationMethod);
+
 	const ResultatsDevis& getLastResults() const { return m_lastResults; }
 
-	double calculerValeurAssurance() const { return m_client.getVolume() * 500.0; }
+	double calculerValeurAssurance() const { return m_client.getVolume() * Tarification::ASSURANCE_VALUE_PER_M3; }
 
-	double calculerValeurAssurance(double volume) const { return volume * 500.0; }
+	double calculerValeurAssurance(double volume) const { return volume * Tarification::ASSURANCE_VALUE_PER_M3; }
 
 	double calculerVolumeParPersonne() const;
 
@@ -30,18 +33,7 @@ public:
 
 	int calculerNombreMO(int nombreCamions) const;
 
-	double calculerCoutTotalHT() const
-	{
-		double volume{ m_client.getVolume() };
-		double prixM3{ m_tarification->getPrixMetreCube() };
-		double prixTotalAssurance{ calculerCoutAssurance() };
-		double prixTotalStationnement{ calculerPrixStationnement() };
-		double prixTotalMonteMeubles{ calculerSupplementMM() };
-		double prixTotalFraisRoute{ calculerFraisRouteTotal() };
-		double prixTotalSuppAdresse{ calculerSuppAdresseTotal() };
-
-		return volume * prixM3 + prixTotalAssurance + prixTotalStationnement + prixTotalMonteMeubles + prixTotalFraisRoute + prixTotalSuppAdresse;
-	}
+	double calculerCoutTotalHT(const Tarification::PriceCalculation& calculationMethod) const;
 
 	double calculerCoutCamionTotal() const { return m_tarification->getCoutCamion() * calculerNombreCamion(); }
 
@@ -57,6 +49,8 @@ public:
 
 	double calculerCoutLocMaterielTotal() const { return m_client.getVolume() * m_tarification->getPrixLocMateriel(); }
 
+	double calculerCoutEmballageTotal() const { return m_client.getVolume() * m_tarification->getCoutEmballage(); }
+
 	double calculerFraisRouteTotal() const 
 	{ 
 		const Nature& nature{ m_client.getNature() };
@@ -66,7 +60,7 @@ public:
 		return nature != Nature::urbain ? fraisRouteTotal : 0;
 	}
 
-	double calculerArrhes() const { return (calculerCoutTotalHT() * 1.2) * 0.3; }
+	double calculerArrhes(double coutTotalHT) const { return (coutTotalHT * 1.2) * 0.3; }
 
 	double calculerCoutAssurance() const;
 

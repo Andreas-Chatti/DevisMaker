@@ -1,26 +1,26 @@
 #pragma once
 
-struct ResultatsDevis
+struct ResultatsDevis_CinqPostes
 {
     double volumeParPersonne;
     int nombreCamion;
     int nombreMO;
-
     double coutMainOeuvre;
     double coutCamion;
+    double prixKilometrage;
+};
+
+struct ResultatsDevis
+{
     double coutStationnement;
     double fraisRoute;
     double coutAssurance;
     double fraisMonteMeubles;
     double prixSuppAdresse;
-    double prixKilometrage;
 
+    double prixMetreCube;
     double prixTotalHT;
     double arrhes;
-    double prixMetreCube;
-};
 
-struct ResultatsDevis_M3
-{
-
+    ResultatsDevis_CinqPostes resultatsCinqPostes;
 };
