@@ -96,7 +96,7 @@ private:
 
     void setupDevisTable();
 
-    void populateDevisTable(ResultatsDevis resultat);
+    void populateDevisTable(const ResultatsDevis& resultat, const Tarification::PriceCalculation& calculationMethod);
 
     PricePreset determinePresetFromDates(const QDate& dateChargement, const QDate& dateLivraison) const;
 

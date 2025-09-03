@@ -10,16 +10,7 @@ const ResultatsDevis& CalculateurDevis::calculateDevis(const PricePreset& preset
 
     ResultatsDevis_CinqPostes resultatsCinqPostes{};
     if (calculationMethod == Tarification::PriceCalculation::postes)
-    {
-        double volumeParPersonne{ calculerVolumeParPersonne() };
-        int nombreCamion{ calculerNombreCamion() };
-        int nombreMO{ calculerNombreMO(nombreCamion) };
-        double coutMOTotal{ calculerCoutMainOeuvreTotal() };
-        double coutCamionTotal{ calculerCoutCamionTotal() };
-        double prixKilometrage{ calculerCoutKilometrageTotal() };
-
-        resultatsCinqPostes = { volumeParPersonne, nombreCamion, nombreMO, coutMOTotal, coutCamionTotal, prixKilometrage };
-    }
+        resultatsCinqPostes = calculateDevis_Postes(preset, calculationMethod);
 
     double prixMetreCube{ calculerPrixMetreCube(preset) };
     double prixTotalHT{ calculerCoutTotalHT(calculationMethod) };
@@ -275,4 +266,17 @@ double CalculateurDevis::calculerCoutTotalHT(const Tarification::PriceCalculatio
 
         return coutCamion + coutKilometrique + coutLocMateriel + coutMainOeuvre + coutEmballage + prixTotalSupplements;
     }
+}
+
+
+ResultatsDevis_CinqPostes CalculateurDevis::calculateDevis_Postes(const PricePreset& preset, const Tarification::PriceCalculation& calculationMethod)
+{
+    double volumeParPersonne{ calculerVolumeParPersonne() };
+    int nombreCamion{ calculerNombreCamion() };
+    int nombreMO{ calculerNombreMO(nombreCamion) };
+    double coutMOTotal{ calculerCoutMainOeuvreTotal() };
+    double coutCamionTotal{ calculerCoutCamionTotal() };
+    double prixKilometrage{ calculerCoutKilometrageTotal() };
+
+    return { volumeParPersonne, nombreCamion, nombreMO, coutMOTotal, coutCamionTotal, prixKilometrage };
 }

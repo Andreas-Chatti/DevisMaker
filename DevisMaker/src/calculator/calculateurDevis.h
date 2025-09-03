@@ -18,8 +18,7 @@ public:
 
 	const ResultatsDevis& calculateDevis(const PricePreset& preset, Tarification::PriceCalculation calculationMethod);
 
-	const ResultatsDevis& calculateDevis_Postes(const PricePreset& preset, Tarification::PriceCalculation calculationMethod);
-	const ResultatsDevis_M3& calculateDevis_M3(const PricePreset& preset, Tarification::PriceCalculation calculationMethod);
+	ResultatsDevis_CinqPostes calculateDevis_Postes(const PricePreset& preset, const Tarification::PriceCalculation& calculationMethod);
 
 	const ResultatsDevis& getLastResults() const { return m_lastResults; }
 

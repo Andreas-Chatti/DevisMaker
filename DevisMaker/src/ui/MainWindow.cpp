@@ -119,6 +119,10 @@ void MainWindow::on_generateDevisButton_clicked()
 
     updateClientVariables();
 
+    // Déterminer le prix du mètre cube en fonctions des paramètres actuels
+    const PricePreset presetToUse{ determinePresetFromDates(ui.departDateEdit->date(), ui.livraisonDateEdit->date()) };
+    double prixM3{ m_calculateurDevis->calculerPrixMetreCube(presetToUse) };
+    m_tarification->setPrixMetreCube(prixM3);
 
     /* 
         * 2. Sélection du preset de tarifs HAUTE ou BASSE saison en fonction de la date
@@ -126,7 +130,6 @@ void MainWindow::on_generateDevisButton_clicked()
         * Puis ensuite mise à jour de l'affichage des valeurs dans les champs des PARAMETRES
     */
 
-    const PricePreset presetToUse{ determinePresetFromDates(ui.departDateEdit->date(), ui.livraisonDateEdit->date()) };
     const Tarification::PriceCalculation calculationMethod{ ui.priceCalculationComboBox->currentIndex() };
     m_tarification->loadSettings(presetToUse);
     displaySettings();
@@ -274,12 +277,6 @@ void MainWindow::updateClientVariables()
     // Récupérer le nombre d'adresses supplémentaires (si checkbox == true)
     int nbAdresseSupp{ ui.suppAdresseCheckBox->isChecked() ? ui.suppAdresseSpinBox->value() : 0 };
     m_client.setNbAdresseSupp(nbAdresseSupp);
-
-
-    // Déterminer le prix du mètre cube en fonctions des paramètres actuels
-    PricePreset presetToUse{ determinePresetFromDates(ui.departDateEdit->date(), ui.livraisonDateEdit->date()) };
-    double prixM3{ m_calculateurDevis->calculerPrixMetreCube(presetToUse) };
-    m_tarification->setPrixMetreCube(prixM3);
 }
 
 
@@ -343,7 +340,7 @@ void MainWindow::displayingResults()
     const Tarification::PriceCalculation calculationMethod{ ui.priceCalculationComboBox->currentIndex() };
     ResultatsDevis result{ m_calculateurDevis->calculateDevis(preset, calculationMethod) };
 
-    populateDevisTable(result);
+    populateDevisTable(result, calculationMethod);
 }
 
 
@@ -486,25 +483,33 @@ void MainWindow::setupDevisTable()
 }
 
 
-void MainWindow::populateDevisTable(ResultatsDevis resultat)
+void MainWindow::populateDevisTable(const ResultatsDevis& resultat, const Tarification::PriceCalculation& calculationMethod)
 {
-    QVector<QPair<QString, QString>> devisItems{
-        // ═══ SECTION INFORMATIONS GÉNÉRALES ═══
-        {"Volume total", QString::number(m_client.getVolume(), 'f', 2) + " m³"},
-        {"Personnel affecté", QString::number(resultat.nombreMO) + " déménageur" + (resultat.nombreMO > 1 ? "s" : "")},
-        {"Nombre camion(s)", QString::number(resultat.nombreCamion) + " camion" + (resultat.nombreCamion > 1 ? "s" : "")},
-
-        // ═══ SECTION COÛTS PRINCIPAUX ═══
-        {"Main d'œuvre", QString::number(resultat.coutMainOeuvre, 'f', 2) + " € H.T."},
-        {"Camion(s)", QString::number(resultat.coutCamion, 'f', 2) + " € H.T."},
-        {"Assurance mobilier", QString::number(resultat.coutAssurance, 'f', 2) + " € H.T."}
+    QVector<QPair<QString, QString>> devisItems
+    {
+        {"Méthode de calcul",  calculationMethod == Tarification::PriceCalculation::m3 ? "Prix par mètre cube" : "Cinq postes"},
+        {"Volume total", QString::number(m_client.getVolume(), 'f', 2) + " m³"}
     };
 
-    // AJOUTER conditionnellement (SANS séparateurs vides)
+    if (calculationMethod == Tarification::PriceCalculation::postes)
+    {
+        devisItems.push_back({ "Personnel affecté", QString::number(resultat.resultatsCinqPostes.nombreMO) + " déménageur" + (resultat.resultatsCinqPostes.nombreMO > 1 ? "s" : "") });
+        devisItems.push_back({ "Nombre camion(s)", QString::number(resultat.resultatsCinqPostes.nombreCamion) + " camion" + (resultat.resultatsCinqPostes.nombreCamion > 1 ? "s" : "") });
+        devisItems.push_back({ "Main d'œuvre", QString::number(resultat.resultatsCinqPostes.coutMainOeuvre, 'f', 2) + " € H.T." });
+        devisItems.push_back({ "Camion(s)", QString::number(resultat.resultatsCinqPostes.coutCamion, 'f', 2) + " € H.T." });
+    }
+
+    else
+    {
+        devisItems.push_back({ "Prix du m³", QString::number(resultat.prixMetreCube, 'f', 2) + " m³" });
+        devisItems.push_back({ "Prix forfaitaire", QString::number(resultat.prixMetreCube * m_client.getVolume(), 'f', 2) + "€ H.T."});
+    }
+
+    devisItems.push_back({ "Assurance mobilier", QString::number(resultat.coutAssurance, 'f', 2) + " € H.T." });
+
     if (resultat.fraisRoute > 0)
         devisItems.push_back({ "Frais de route", QString::number(resultat.fraisRoute, 'f', 2) + " € H.T." });
 
-    // SECTION SUPPLÉMENTS
     if (resultat.coutStationnement > 0)
         devisItems.push_back({ "Autorisation de stationnement", QString::number(resultat.coutStationnement, 'f', 2) + " € H.T." });
 
@@ -517,7 +522,6 @@ void MainWindow::populateDevisTable(ResultatsDevis resultat)
         devisItems.push_back({ "Supplément adresse (" + nbAdresses + ")", QString::number(resultat.prixSuppAdresse, 'f', 2) + " € H.T." });
     }
 
-    // SECTION TOTAUX
     devisItems.push_back({ "Arrhes (30%)", QString::number(resultat.arrhes, 'f', 2) + " € T.T.C." });
     devisItems.push_back({ "TOTAL H.T.", QString::number(resultat.prixTotalHT, 'f', 2) + " € H.T." });
 
