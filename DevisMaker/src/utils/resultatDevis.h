@@ -8,6 +8,8 @@ struct ResultatsDevis_CinqPostes
     double coutMainOeuvre;
     double coutCamion;
     double prixKilometrage;
+    double prixEmballage;
+    double prixLocMateriel;
 };
 
 struct ResultatsDevis

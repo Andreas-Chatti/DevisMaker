@@ -21,10 +21,13 @@ class PDFGenerator : public QObject
 public:
 
     PDFGenerator(QObject* parent = nullptr)
-        : m_htmlTemplate{}
-        , HTML_TEMPLATE_LOCATION{ SettingsConstants::FileSettings::TEMPLATE_FILE_PATH + "/devis_template.html" }
+        : m_htmlTemplate_m3{}
+        , m_htmlTemplate_Postes{}
+        , HTML_TEMPLATE_LOCATION_M3{ SettingsConstants::FileSettings::TEMPLATE_FILE_PATH + "/devis_template_m3.html" }
+        , HTML_TEMPLATE_LOCATION_POSTES{ SettingsConstants::FileSettings::TEMPLATE_FILE_PATH + "/devis_template_postes.html" }
     {
-        m_htmlTemplate = load_HTML_Template();
+        m_htmlTemplate_m3 = load_HTML_Template(TypeDevis::PRIX_PAR_M3);
+        m_htmlTemplate_Postes = load_HTML_Template(TypeDevis::CINQ_POSTES);
     }
 
     enum class PdfGenerationState
@@ -36,7 +39,13 @@ public:
         errorCreatingTemplateDir,
     };
 
-    bool generateDevisPDF(const Client& client, const ResultatsDevis& resultats, const QString& outputPath = QString());
+    enum class TypeDevis 
+    {
+        PRIX_PAR_M3,
+        CINQ_POSTES
+    };
+
+    bool generateDevisPDF(const Client& client, const ResultatsDevis& resultats, const TypeDevis& typeDevis, const QString& outputPath = QString());
 
     QString getNatureString(const Nature& nature) const;
     QString getPrestationString(const Prestation& prestation) const;
@@ -52,11 +61,13 @@ private:
     QString formatCurrency(double value, const QString& suffix = " € H.T.") const;
     QString getCurrentDate() const;
     QString createSupplementsRows(const ResultatsDevis& resultats) const;
-    QString load_HTML_Template();
-    QString get_Default_HTML_Template() const;
-    bool createTemplateFile();
+    QString load_HTML_Template(const TypeDevis& typeDevis);
+    QString get_Default_HTML_Template(const TypeDevis& typeDevis) const;
+    bool createTemplateFile(const TypeDevis& typeDevis);
     bool createTemplateDir();
 
-    const QString HTML_TEMPLATE_LOCATION;
-    QString m_htmlTemplate;
+    const QString HTML_TEMPLATE_LOCATION_M3;
+    const QString HTML_TEMPLATE_LOCATION_POSTES;
+    QString m_htmlTemplate_m3;
+    QString m_htmlTemplate_Postes;
 };

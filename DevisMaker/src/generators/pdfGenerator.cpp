@@ -1,13 +1,14 @@
 ﻿#include "pdfGenerator.h"
 
 
-bool PDFGenerator::generateDevisPDF(const Client& client, const ResultatsDevis& resultats, const QString& outputPath)
+bool PDFGenerator::generateDevisPDF(const Client& client, const ResultatsDevis& resultats, const TypeDevis& typeDevis, const QString& outputPath)
 {
     // Déterminer le chemin de sortie
     QString finalPath{ outputPath };
     if (finalPath.isEmpty()) 
         finalPath = getDefaultOutputPath();
 
+    QString m_htmlTemplate{ typeDevis == TypeDevis::PRIX_PAR_M3 ? m_htmlTemplate_m3 : m_htmlTemplate_Postes };
     if (m_htmlTemplate.isEmpty())
     {
         emit pdfGenerationStatusReport(PdfGenerationState::blankFile);
@@ -65,7 +66,9 @@ QString PDFGenerator::fillHTMLTemplate(const Client& client, const ResultatsDevi
         .replace("%PRESTATION%", getPrestationString(client.getPrestation()))
         .replace("%MAIN_OEUVRE%", QString::number(resultats.resultatsCinqPostes.coutMainOeuvre, 'f', 2))
         .replace("%COUT_CAMION%", QString::number(resultats.resultatsCinqPostes.coutCamion, 'f', 2))
-        .replace("%COUT_KILOMETRE%", QString::number(resultats.fraisRoute, 'f', 2))
+        .replace("%COUT_EMBALLAGE%", QString::number(resultats.resultatsCinqPostes.prixEmballage, 'f', 2))
+        .replace("%COUT_LOCATION_MATERIEL%", QString::number(resultats.resultatsCinqPostes.prixLocMateriel, 'f', 2))
+        .replace("%COUT_KILOMETRE%", QString::number(resultats.resultatsCinqPostes.prixKilometrage, 'f', 2))
         .replace("%ASSURANCE%", QString::number(resultats.coutAssurance, 'f', 2))
         .replace("%SUPPLEMENTS_ROWS%", supplementsRows)
         .replace("%TOTAL_HT%", QString::number(resultats.prixTotalHT, 'f', 2))
@@ -174,8 +177,9 @@ QString PDFGenerator::getDefaultOutputPath() const
 }
 
 
-QString PDFGenerator::load_HTML_Template()
+QString PDFGenerator::load_HTML_Template(const TypeDevis& typeDevis)
 {
+    QString HTML_TEMPLATE_LOCATION{ typeDevis == TypeDevis::PRIX_PAR_M3 ? HTML_TEMPLATE_LOCATION_M3 : HTML_TEMPLATE_LOCATION_POSTES };
 
     QFile templateFile{ HTML_TEMPLATE_LOCATION };
     QFileInfo templateFileInfos{ templateFile };
@@ -185,7 +189,7 @@ QString PDFGenerator::load_HTML_Template()
         createTemplateDir();
 
     if (!templateFile.exists())
-        createTemplateFile();
+        createTemplateFile(typeDevis);
 
     if (!templateFile.open(QIODevice::ReadOnly | QIODevice::Text)) 
     {
@@ -201,8 +205,9 @@ QString PDFGenerator::load_HTML_Template()
 }
 
 
-bool PDFGenerator::createTemplateFile()
+bool PDFGenerator::createTemplateFile(const TypeDevis& typeDevis)
 {
+    QString HTML_TEMPLATE_LOCATION{ typeDevis == TypeDevis::PRIX_PAR_M3 ? HTML_TEMPLATE_LOCATION_M3 : HTML_TEMPLATE_LOCATION_POSTES };
 
     QFile templateFile{ HTML_TEMPLATE_LOCATION };
 
@@ -216,7 +221,7 @@ bool PDFGenerator::createTemplateFile()
     QTextStream ecrivain(&templateFile);
     ecrivain.setEncoding(QStringConverter::Utf8);
 
-    ecrivain << get_Default_HTML_Template();
+    ecrivain << get_Default_HTML_Template(typeDevis);
 
 
     if (ecrivain.status() != QTextStream::Ok) 
@@ -249,7 +254,7 @@ bool PDFGenerator::createTemplateDir()
 }
 
 
-QString PDFGenerator::get_Default_HTML_Template() const
+/*QString PDFGenerator::get_Default_HTML_Template() const
 {
     QString htmlHeader = QString(R"(
 <!DOCTYPE html>
@@ -522,4 +527,317 @@ QString PDFGenerator::get_Default_HTML_Template() const
     QString templateComplet = htmlHeader + tableauCaracteristiques + tableauChargementLivraison + tableauPrix + htmlFooter;
 
     return templateComplet;
+}*/
+
+
+QString PDFGenerator::get_Default_HTML_Template(const TypeDevis& typeDevis) const
+{
+    QString htmlHeader = QString(R"(
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 0;
+            color: #000;
+            font-size: 10px;
+            line-height: 1.2;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            width: 100%;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        
+        @media print {
+            body {
+                padding: 0;
+                margin: 0;
+            }
+            .container {
+                width: 100%;
+                padding: 10mm;
+                margin: 0;
+            }
+        }
+        
+        .header {
+            margin-bottom: 15px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+        }
+        
+        .company-name {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        .company-details {
+            font-size: 9px;
+            line-height: 1.3;
+        }
+        
+        .main-table {
+            width: 100%;
+            min-width: 100%;
+            border-collapse: collapse;
+            border: 2px solid #000;
+            margin-bottom: 0px;
+        }
+        
+        .main-table td {
+            padding: 4px;
+            font-size: 9px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        
+        .header-cell {
+            background-color: #34495e;
+            color: white;
+            font-weight: bold;
+            padding: 4px;
+            font-size: 9px;
+            text-align: center;
+        }
+        
+        .yellow-cell {
+            background-color: #f1c40f;
+            color: #000;
+            font-weight: bold;
+        }
+        
+        .left-header-cell {
+            background-color: #ecf0f1;
+            font-weight: bold;
+            text-align: center;
+            width: 15%;
+        }
+        
+        .text-left {
+            text-align: left;
+        }
+        
+        .price-section {
+            margin-top: 0px;
+        }
+        
+        .legal-section {
+            margin-top: 10px;
+            font-size: 8px;
+            line-height: 1.2;
+            padding: 8px;
+            background-color: #f8f9fa;
+        }
+        
+        .signature-section {
+            margin-top: 10px;
+            text-align: center;
+            font-size: 9px;
+            padding: 8px;
+            border: 1px dashed #000;
+        }
+        
+        .footer {
+            margin-top: 10px;
+            text-align: center;
+            font-size: 7px;
+            border-top: 2px solid #000;
+            padding-top: 6px;
+            color: #7f8c8d;
+        }
+        
+        .access-details {
+            font-size: 8px;
+            line-height: 1.2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="company-name">%COMPANY_NAME%</div>
+            <div class="company-details">
+                %COMPANY_ADRESS%<br>
+                Tél: %COMPANY_NUMBER%<br>
+                E-mail: <span style="color: #3498db; text-decoration: underline;">%COMPANY_EMAIL%</span>
+            </div>
+        </div>
+    )");
+
+    QString tableauCaracteristiques = QString(R"(
+        <table class="main-table" width="100%" style="width: 100%;">
+            <tr>
+                <td class="header-cell" colspan="2" style="border-right: 1px solid #000; border-left: 0px; border-top: 1px solid #000; border-bottom: 1px solid #000;">Client: %CLIENT_NAME%</td>
+                <td class="header-cell" colspan="2" style="border-right: 1px solid #000; border-left: 0px; border-top: 1px solid #000; border-bottom: 1px solid #000;">Client n°: %CLIENT_NUMBER%</td>
+                <td class="header-cell" colspan="2" style="border-right: 1px solid #000; border-left: 0px; border-top: 1px solid #000; border-bottom: 1px solid #000;">Devis N°: %DEVIS_NUMBER%</td>
+                <td class="header-cell" colspan="2" style="border-right: 0px; border-left: 0px; border-top: 1px solid #000; border-bottom: 1px solid #000;">Validité: %VALIDITY_DATE%</td>
+            </tr>
+            <tr>
+                <td class="header-cell" colspan="2" style="border-right: 1px solid #000; border-left: 0px; border-top: 1px solid #000; border-bottom: 1px solid #000;">Volume: %VOLUME% m³</td>
+                <td class="header-cell" colspan="2" style="border-right: 1px solid #000; border-left: 0px; border-top: 1px solid #000; border-bottom: 1px solid #000;">Distance: %DISTANCE% km</td>
+                <td class="header-cell" colspan="2" style="border-right: 1px solid #000; border-left: 0px; border-top: 1px solid #000; border-bottom: 1px solid #000;">Nature: %NATURE%</td>
+                <td class="header-cell yellow-cell" colspan="2" style="border-right: 0px; border-left: 0px; border-top: 1px solid #000; border-bottom: 1px solid #000;">Prestation: %PRESTATION%</td>
+            </tr>
+            <tr>
+                <td class="header-cell" colspan="8" style="border-right: 0px; border-left: 0px; border-top: 1px solid #000; border-bottom: 1px solid #000;">Téléphone: %PHONE_NUMBER%</td>
+            </tr>
+        </table>
+    )");
+
+    QString tableauChargementLivraison = QString(R"(
+        <table class="main-table" width="100%" style="width: 100%;">
+            <tr>
+                <td style="width: 15%; background-color: #ecf0f1; border: 1px solid #000; padding: 4px;"></td>
+                <td class="header-cell" style="width: 42.5%; border-right: 1px solid #000; border-left: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000;">Chargement</td>
+                <td class="header-cell" style="width: 42.5%; border-right: 1px solid #000; border-left: 0px; border-top: 1px solid #000; border-bottom: 1px solid #000;">Livraison</td>
+            </tr>
+            <tr>
+                <td class="left-header-cell" style="border: 1px solid #000;">Période</td>
+                <td style="border-right: 1px solid #000; border-left: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; text-align: center; padding: 4px;">%PERIODE_CHARGEMENT%</td>
+                <td style="border-right: 1px solid #000; border-left: 0px; border-top: 1px solid #000; border-bottom: 1px solid #000; text-align: center; padding: 4px;">%PERIODE_LIVRAISON%</td>
+            </tr>
+            <tr>
+                <td class="left-header-cell" style="border: 1px solid #000;">Adresse</td>
+                <td class="text-left" style="border-right: 1px solid #000; border-left: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px;">
+                    %ADRESSE_DEPART%<br>
+                    FRANCE
+                </td>
+                <td class="text-left" style="border-right: 1px solid #000; border-left: 0px; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px;">
+                    %ADRESSE_ARRIVEE%<br>
+                    FRANCE
+                </td>
+            </tr>
+            <tr>
+                <td class="left-header-cell" style="border: 1px solid #000;">Accès</td>
+                <td class="text-left" style="border-right: 1px solid #000; border-left: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px;">
+                    <div class="access-details">
+                        <strong>Ascenseur:</strong> %ASCENSEUR_DEPART%<br>
+                        <strong>Monte-meubles:</strong> %MONTE_MEUBLES_DEPART%<br>
+                        <strong>Autorisation stationnement:</strong> %STATIONNEMENT_DEPART%
+                    </div>
+                </td>
+                <td class="text-left" style="border-right: 1px solid #000; border-left: 0px; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px;">
+                    <div class="access-details">
+                        <strong>Ascenseur:</strong> %ASCENSEUR_ARRIVEE%<br>
+                        <strong>Monte-meubles:</strong> %MONTE_MEUBLES_ARRIVEE%<br>
+                        <strong>Autorisation stationnement:</strong> %STATIONNEMENT_ARRIVEE%
+                    </div>
+                </td>
+            </tr>
+        </table>
+    )");
+
+    QString tableauPrix;
+
+    QString tableauPrixHeader = QString(R"(
+        <div class="price-section">
+            <table width="100%" style="width: 100%; border-collapse: collapse; border: 2px solid #000; margin-bottom: 0px;">
+                <tr>
+                    <td colspan="2" style="background-color: #2c3e50; color: white; border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; text-align: center; padding: 6px; font-weight: bold; font-size: 12px;">Détail du prix</td>
+                </tr>
+    )");
+
+    QString lignesPrix;
+    if (typeDevis == TypeDevis::PRIX_PAR_M3)
+    {
+        lignesPrix = QString(R"(
+                <tr>
+                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle;"><strong>Prix forfaitaire</strong></td>
+                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle; text-align: right; font-weight: bold; width: 120px; background-color: #f8f9fa;">%PRIX_FORFAITAIRE% €</td>
+                </tr>
+        )");
+    }
+
+    else
+    {
+        lignesPrix = QString(R"(
+                <tr>
+                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle;"><strong>Main d'œuvre</strong></td>
+                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle; text-align: right; font-weight: bold; width: 120px; background-color: #f8f9fa;">%MAIN_OEUVRE% €</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle;"><strong>Coût camion</strong></td>
+                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle; text-align: right; font-weight: bold; width: 120px; background-color: #f8f9fa;">%COUT_CAMION% €</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle;"><strong>Frais kilométriques</strong></td>
+                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle; text-align: right; font-weight: bold; width: 120px; background-color: #f8f9fa;">%COUT_KILOMETRE% €</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle;"><strong>Matériel d'emballage</strong></td>
+                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle; text-align: right; font-weight: bold; width: 120px; background-color: #f8f9fa;">%COUT_EMBALLAGE% €</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle;"><strong>Location matériel</strong></td>
+                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle; text-align: right; font-weight: bold; width: 120px; background-color: #f8f9fa;">%COUT_LOCATION_MATERIEL% €</td>
+                </tr>
+        )");
+    }
+
+    QString tableauPrixFooter = QString(R"(
+                <tr>
+                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle;"><strong>Assurance Garantie responsabilité Contractuelle</strong></td>
+                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle; text-align: right; font-weight: bold; width: 120px; background-color: #f8f9fa;">%ASSURANCE% €</td>
+                </tr>
+                %SUPPLEMENTS_ROWS%
+                <tr>
+                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle; background-color: #c0392b; color: white; font-weight: bold;"><strong>Total H.T.</strong></td>
+                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle; text-align: right; font-weight: bold; width: 120px; background-color: #c0392b; color: white;"><strong>%TOTAL_HT% €</strong></td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle;">TVA de 20.00%</td>
+                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle; text-align: right; font-weight: bold; width: 120px; background-color: #f8f9fa;">%TVA% €</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle; background-color: #1e8449; color: white; font-weight: bold; font-size: 12px;"><strong>PRIX TTC EN EUROS (valable jusqu'au %VALIDITY_DATE%)</strong></td>
+                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 12px; vertical-align: middle; text-align: right; font-weight: bold; width: 120px; background-color: #1e8449; color: white;"><strong>%TOTAL_TTC% €</strong></td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle; background-color: #2471a3; color: white; font-weight: bold;"><strong>Arrhes (30% à la commande)</strong></td>
+                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle; text-align: right; font-weight: bold; width: 120px; background-color: #2471a3; color: white;"><strong>%ARRHES% €</strong></td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle;"><strong>Solde à la livraison</strong></td>
+                    <td style="border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle; text-align: right; font-weight: bold; width: 120px; background-color: #f8f9fa;"><strong>%SOLDE% €</strong></td>
+                </tr>
+            </table>
+        </div>
+    )");
+
+    tableauPrix = tableauPrixHeader + lignesPrix + tableauPrixFooter;
+
+    QString htmlFooter = QString(R"(
+        <div class="legal-section">
+            <p><strong>Le prix est définitif (article 1er de l'arrêté du 27 avril 2010) sauf cas précisés dans l'article 6 des CGV jointes au devis.</strong></p>
+            
+            <p><strong>Émission CO2 selon art L1431-3 Code Transport: %EMISSION_CO2% kg</strong></p>
+            
+            <p>En accord avec les termes de ce présent devis et de nos conditions générales de vente ci-jointes, nous vous prions de bien vouloir nous retourner ces documents signés et accompagnés du chèque d'arrhes correspondant à la prestation choisie afin de confirmer votre déménagement. Le solde sera à régler à la livraison de votre mobilier.</p>
+        </div>
+        
+        <div class="signature-section">
+            <strong>Fait à MARCOUSSIS, le %DATE%</strong><br><br>
+            <strong>Signature du client:</strong><br><br><br>
+            ____________________________
+        </div>
+
+        <div class="footer">
+            <strong>%COMPANY_NAME% - TVA intracommunautaire: %TVA_NUMBER%</strong><br>
+            <strong>SIRET: %SIRET_NUMBER% - APE: %APE_NUMBER% - RCS: Evry A 390 329 894 000 54</strong>
+        </div>
+        
+    </div>
+</body>
+</html>
+    )");
+
+    return htmlHeader + tableauCaracteristiques + tableauChargementLivraison + tableauPrix + htmlFooter;
 }

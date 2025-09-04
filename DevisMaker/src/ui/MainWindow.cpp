@@ -497,6 +497,9 @@ void MainWindow::populateDevisTable(const ResultatsDevis& resultat, const Tarifi
         devisItems.push_back({ "Nombre camion(s)", QString::number(resultat.resultatsCinqPostes.nombreCamion) + " camion" + (resultat.resultatsCinqPostes.nombreCamion > 1 ? "s" : "") });
         devisItems.push_back({ "Main d'œuvre", QString::number(resultat.resultatsCinqPostes.coutMainOeuvre, 'f', 2) + " € H.T." });
         devisItems.push_back({ "Camion(s)", QString::number(resultat.resultatsCinqPostes.coutCamion, 'f', 2) + " € H.T." });
+        devisItems.push_back({ "Kilométrage", QString::number(resultat.resultatsCinqPostes.prixKilometrage, 'f', 2) + " € H.T." });
+        devisItems.push_back({ "Emballage", QString::number(resultat.resultatsCinqPostes.prixEmballage, 'f', 2) + " € H.T." });
+        devisItems.push_back({ "Location Matériel", QString::number(resultat.resultatsCinqPostes.prixLocMateriel, 'f', 2) + " € H.T." });
     }
 
     else
@@ -598,7 +601,8 @@ void MainWindow::on_generatePdfButton_clicked()
     if (filePath.isEmpty())
         return;
 
-    m_PDFGenerator->generateDevisPDF(m_client, devisResults, filePath);
+    PDFGenerator::TypeDevis typeDevis{ ui.priceCalculationComboBox->currentIndex() };
+    m_PDFGenerator->generateDevisPDF(m_client, devisResults, typeDevis, filePath);
 }
 
 

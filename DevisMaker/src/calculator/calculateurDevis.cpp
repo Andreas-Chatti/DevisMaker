@@ -277,6 +277,8 @@ ResultatsDevis_CinqPostes CalculateurDevis::calculateDevis_Postes(const PricePre
     double coutMOTotal{ calculerCoutMainOeuvreTotal() };
     double coutCamionTotal{ calculerCoutCamionTotal() };
     double prixKilometrage{ calculerCoutKilometrageTotal() };
+    double prixEmballage{ calculerCoutEmballageTotal() };
+    double prixLocMateriel{ calculerCoutLocMaterielTotal() };
 
-    return { volumeParPersonne, nombreCamion, nombreMO, coutMOTotal, coutCamionTotal, prixKilometrage };
+    return { volumeParPersonne, nombreCamion, nombreMO, coutMOTotal, coutCamionTotal, prixKilometrage, prixEmballage, prixLocMateriel };
 }
