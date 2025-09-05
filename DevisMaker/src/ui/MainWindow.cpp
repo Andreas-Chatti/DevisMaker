@@ -32,6 +32,7 @@ MainWindow::MainWindow(QWidget* parent)
     displaySettings();
 
     setupPlaceholderText();
+    setupDateEdit();
 }
 
 
@@ -762,7 +763,7 @@ void MainWindow::setupPlaceholderText() const
         "Notes: Il est possible de noter plusieurs fois les mêmes objets. Ils seront automatiquement comptés et additionés correctements dans le volume."
     );
 
-    ui.nomLineEdit->setPlaceholderText("Dupont");
+    ui.nomLineEdit->setPlaceholderText("DUPONT");
     
     ui.prenomLineEdit->setPlaceholderText("David");
 
@@ -774,4 +775,16 @@ void MainWindow::setupPlaceholderText() const
     ui.distanceLineEdit->setPlaceholderText("406");
     ui.volumelineEdit->setPlaceholderText("30.4");
     ui.valeurAssuranceLineEdit->setPlaceholderText("25000");
+}
+
+
+void MainWindow::setupDateEdit() const
+{
+    QVector<QDateEdit*> datesEdit{ ui.departDateEdit, ui.livraisonDateEdit };
+
+    for (auto& e : datesEdit)
+    {
+        e->setDate(QDate::currentDate());
+        e->setDateRange(QDate::currentDate(), QDate::currentDate().addYears(2));
+    }
 }

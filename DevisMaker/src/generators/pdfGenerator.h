@@ -10,6 +10,7 @@
 #include <QUrl>
 #include <QDate>
 #include <QPrinter>
+#include <QSettings>
 #include "utils/resultatDevis.h"
 #include "models/Client.h"
 #include "utils/constants.h"
@@ -63,6 +64,7 @@ private:
     QString createSupplementsRows(const ResultatsDevis& resultats) const;
     QString load_HTML_Template(const TypeDevis& typeDevis);
     QString get_Default_HTML_Template(const TypeDevis& typeDevis) const;
+    QString generateClientNumber();
     bool createTemplateFile(const TypeDevis& typeDevis);
     bool createTemplateDir();
 

@@ -103,4 +103,6 @@ private:
     void updateSeasonTypeLabel(const QDate& dateLivraison) const;
 
     void setupPlaceholderText() const;
+
+    void setupDateEdit() const;
 };
