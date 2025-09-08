@@ -38,9 +38,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
     <QtModules>core;gui;widgets;network;printsupport</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
+    <QtInstall>6.9.0_msvc2022_64</QtInstall>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
-    <QtInstall>msvc2022_64</QtInstall>
+    <QtInstall>6.9.0_msvc2022_64</QtInstall>
     <QtModules>core;gui;widgets;network;printsupport</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>

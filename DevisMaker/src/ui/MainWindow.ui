@@ -51,7 +51,7 @@
        <number>1</number>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="InformationsClient">
        <property name="enabled">
@@ -209,7 +209,7 @@
                </property>
                <property name="dateTime">
                 <datetime>
-                 <hour>13</hour>
+                 <hour>11</hour>
                  <minute>0</minute>
                  <second>0</second>
                  <year>2025</year>
@@ -219,7 +219,7 @@
                </property>
                <property name="maximumDateTime">
                 <datetime>
-                 <hour>2</hour>
+                 <hour>1</hour>
                  <minute>0</minute>
                  <second>59</second>
                  <year>2030</year>
@@ -229,7 +229,7 @@
                </property>
                <property name="minimumDateTime">
                 <datetime>
-                 <hour>19</hour>
+                 <hour>18</hour>
                  <minute>0</minute>
                  <second>0</second>
                  <year>2024</year>
