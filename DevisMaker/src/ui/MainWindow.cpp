@@ -13,6 +13,8 @@ MainWindow::MainWindow(QWidget* parent)
 
     m_calculateurDevis = new CalculateurDevis(m_client, m_tarification);
 
+    m_user = new User(this);
+
     m_PDFGenerator = new PDFGenerator(this);
     connect(m_PDFGenerator, &PDFGenerator::pdfGenerationStatusReport, this, &MainWindow::onGenerateDevisStatusReport);
 
@@ -603,7 +605,7 @@ void MainWindow::on_generatePdfButton_clicked()
         return;
 
     PDFGenerator::TypeDevis typeDevis{ ui.priceCalculationComboBox->currentIndex() };
-    m_PDFGenerator->generateDevisPDF(m_client, devisResults, typeDevis, filePath);
+    m_PDFGenerator->generateDevisPDF(m_client, devisResults, typeDevis, m_user, filePath);
 }
 
 
@@ -787,4 +789,11 @@ void MainWindow::setupDateEdit() const
         e->setDate(QDate::currentDate());
         e->setDateRange(QDate::currentDate(), QDate::currentDate().addYears(2));
     }
+}
+
+
+void MainWindow::on_companyInfoPushButton_clicked()
+{
+    CompanyInfoDialog dialog{ this, m_user };
+    dialog.exec();
 }

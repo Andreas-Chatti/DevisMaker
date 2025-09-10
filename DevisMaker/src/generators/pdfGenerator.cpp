@@ -1,7 +1,7 @@
 ﻿#include "pdfGenerator.h"
 
 
-bool PDFGenerator::generateDevisPDF(const Client& client, const ResultatsDevis& resultats, const TypeDevis& typeDevis, const QString& outputPath)
+bool PDFGenerator::generateDevisPDF(const Client& client, const ResultatsDevis& resultats, const TypeDevis& typeDevis, const User& user, const QString& outputPath)
 {
     // Déterminer le chemin de sortie
     QString finalPath{ outputPath };
@@ -16,7 +16,7 @@ bool PDFGenerator::generateDevisPDF(const Client& client, const ResultatsDevis& 
     }
 
     // Créer le contenu HTML
-    QString devis_html{ fillHTMLTemplate(client, resultats, m_htmlTemplate) };
+    QString devis_html{ fillHTMLTemplate(client, resultats, m_htmlTemplate, user) };
 
     // Créer le document PDF
     QTextDocument document;
@@ -38,7 +38,7 @@ bool PDFGenerator::generateDevisPDF(const Client& client, const ResultatsDevis& 
 }
 
 
-QString PDFGenerator::fillHTMLTemplate(const Client& client, const ResultatsDevis& resultats, QString& htmlTemplate)
+QString PDFGenerator::fillHTMLTemplate(const Client& client, const ResultatsDevis& resultats, QString& htmlTemplate, const User& user)
 {
     QString supplementsRows{ createSupplementsRows(resultats) };
 
@@ -78,13 +78,13 @@ QString PDFGenerator::fillHTMLTemplate(const Client& client, const ResultatsDevi
         .replace("%SOLDE%", QString::number((resultats.prixTotalHT * 1.20) - resultats.arrhes, 'f', 2))
         .replace("%EMISSION_CO2%", QString::number(client.getDistance() * 0.42, 'f', 1))
         .replace("%PRIX_FORFAITAIRE%", QString::number(resultats.prixMetreCube * client.getVolume(), 'f', 2))
-        .replace("%COMPANY_NAME%", SettingsConstants::CompanyInfos::COMPANY_NAME)
-        .replace("%COMPANY_ADRESS%", SettingsConstants::CompanyInfos::COMPANY_ADDRESS)
-        .replace("%TVA_NUMBER%", SettingsConstants::CompanyInfos::COMPANY_TVA)
-        .replace("%SIRET_NUMBER%", SettingsConstants::CompanyInfos::COMPANY_SIRET)
-        .replace("%APE_NUMBER%", SettingsConstants::CompanyInfos::COMPANY_APE)
-        .replace("%COMPANY_NUMBER%", SettingsConstants::CompanyInfos::COMPANY_PHONE_1)
-        .replace("%COMPANY_EMAIL%", SettingsConstants::CompanyInfos::COMPANY_EMAIL);
+        .replace("%COMPANY_NAME%", user.getCompanyName())
+        .replace("%COMPANY_ADRESS%", user.getCompanyAddress())
+        .replace("%TVA_NUMBER%", user.getTvaNumber())
+        .replace("%SIRET_NUMBER%", user.getSiretNumber())
+        .replace("%APE_NUMBER%", user.getApeNumber())
+        .replace("%COMPANY_NUMBER%", user.getCompanyPhoneNumber())
+        .replace("%COMPANY_EMAIL%", user.getCompanyMail());
 }
 
 

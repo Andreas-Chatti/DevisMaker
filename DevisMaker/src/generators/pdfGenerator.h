@@ -14,6 +14,7 @@
 #include "utils/resultatDevis.h"
 #include "models/Client.h"
 #include "utils/constants.h"
+#include "user/user.h"
 
 class PDFGenerator : public QObject
 {
@@ -46,7 +47,7 @@ public:
         CINQ_POSTES
     };
 
-    bool generateDevisPDF(const Client& client, const ResultatsDevis& resultats, const TypeDevis& typeDevis, const QString& outputPath = QString());
+    bool generateDevisPDF(const Client& client, const ResultatsDevis& resultats, const TypeDevis& typeDevis, const User& user, const QString& outputPath = QString());
 
     QString getNatureString(const Nature& nature) const;
     QString getPrestationString(const Prestation& prestation) const;
@@ -57,7 +58,7 @@ signals:
 
 private:
 
-    QString fillHTMLTemplate(const Client& client, const ResultatsDevis& resultats, QString& htmlTemplate);
+    QString fillHTMLTemplate(const Client& client, const ResultatsDevis& resultats, QString& htmlTemplate, const User& user);
     QString getDefaultOutputPath() const;
     QString formatCurrency(double value, const QString& suffix = " € H.T.") const;
     QString getCurrentDate() const;

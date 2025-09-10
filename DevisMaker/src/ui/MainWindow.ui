@@ -51,7 +51,7 @@
        <number>1</number>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="InformationsClient">
        <property name="enabled">
@@ -209,7 +209,7 @@
                </property>
                <property name="dateTime">
                 <datetime>
-                 <hour>11</hour>
+                 <hour>7</hour>
                  <minute>0</minute>
                  <second>0</second>
                  <year>2025</year>
@@ -219,17 +219,17 @@
                </property>
                <property name="maximumDateTime">
                 <datetime>
-                 <hour>1</hour>
+                 <hour>23</hour>
                  <minute>0</minute>
                  <second>59</second>
                  <year>2030</year>
                  <month>12</month>
-                 <day>31</day>
+                 <day>30</day>
                 </datetime>
                </property>
                <property name="minimumDateTime">
                 <datetime>
-                 <hour>18</hour>
+                 <hour>16</hour>
                  <minute>0</minute>
                  <second>0</second>
                  <year>2024</year>
@@ -2535,6 +2535,26 @@
           </item>
           <item>
            <spacer name="horizontalSpacer_33">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="companyInfoPushButton">
+            <property name="text">
+             <string>Informations société</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_34">
             <property name="orientation">
              <enum>Qt::Orientation::Horizontal</enum>
             </property>

@@ -107,17 +107,21 @@
     <ClCompile Include="src\calculator\calculateurDevis.cpp" />
     <ClCompile Include="src\ia\IA.cpp" />
     <ClCompile Include="src\ia\InventoryAnalyzer.cpp" />
+    <ClCompile Include="src\ui\companyInfoDialog.cpp" />
     <ClCompile Include="src\ui\MainWindow.cpp" />
     <ClCompile Include="src\generators\pdfGenerator.cpp" />
     <ClCompile Include="src\streetmap\streetMap.cpp" />
     <ClCompile Include="src\utils\tarification.cpp" />
+    <ClCompile Include="user.cpp" />
     <QtRcc Include="DevisMaker.qrc" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="user.h" />
     <QtMoc Include="src\streetmap\addressCompleter.h" />
     <ClInclude Include="src\calculator\calculateurDevis.h" />
     <ClInclude Include="src\models\client.h" />
+    <QtMoc Include="src\ui\companyInfoDialog.h" />
     <ClInclude Include="src\utils\common.h" />
     <ClInclude Include="src\utils\constants.h" />
     <ClInclude Include="src\misc\devis.h" />
@@ -131,6 +135,7 @@
     <QtMoc Include="src\utils\tarification.h" />
   </ItemGroup>
   <ItemGroup>
+    <QtUic Include="src\ui\companyInfoDialog.ui" />
     <QtUic Include="src\ui\MainWindow.ui" />
   </ItemGroup>
   <ItemGroup>

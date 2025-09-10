@@ -20,6 +20,8 @@
 #include "streetmap/streetMap.h"
 #include "calculator/calculateurDevis.h"
 #include "generators/pdfGenerator.h"
+#include "companyInfoDialog.h"
+#include "user/user.h"
 
 
 
@@ -68,6 +70,8 @@ private slots:
 
     void onCriticalError(const QString& errorMessage);
 
+    void on_companyInfoPushButton_clicked();
+
 private:
 
     Ui::MainWindowClass ui;
@@ -77,8 +81,7 @@ private:
     InventoryAnalyzer* m_inventoryAnalyzer;
     CalculateurDevis* m_calculateurDevis;
     PDFGenerator* m_PDFGenerator;
-
-
+    User* m_user;
     AddressCompleter* m_addressCompleter;
 
 

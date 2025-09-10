@@ -49,18 +49,6 @@ public:
     static constexpr double MIN_DISTANCE{ 1.0 };
     static constexpr double MAX_DISTANCE{ 2000.0 };
 
-    struct CompanyInfos
-    {
-        static inline const QString COMPANY_NAME{ "CHATTI DEMENAGEMENT" };
-        static inline const QString COMPANY_ADDRESS{ "2, Rue Jean Cocteau\n91460 MARCOUSSIS" };
-        static inline const QString COMPANY_PHONE_1{ "01 69 75 18 22" };
-        static inline const QString COMPANY_PHONE_2{ "06 72 85 35 38" };
-        static inline const QString COMPANY_EMAIL{ "chattidemenagement@gmail.com" };
-        static inline const QString COMPANY_SIRET{ "39032989400054" };
-        static inline const QString COMPANY_TVA{ "FR68390329894" };
-        static inline const QString COMPANY_APE{ "4942Z" };
-    };
-
     // Facteurs calculés (évite la duplication)
     static constexpr double TVA_MULTIPLIER{ 1.0 + TVA_RATE };
     static constexpr double EMISSION_CO2_PER_KM{ 0.42 };  // kg CO2/km
