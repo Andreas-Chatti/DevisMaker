@@ -6,7 +6,7 @@
 
 struct Adresse
 {
-	std::string m_rue;
+	QString m_rue;
 	int m_etage;
 	bool m_ascenseur;
 	bool m_monteMeubles;

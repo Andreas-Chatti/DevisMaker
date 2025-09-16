@@ -108,21 +108,15 @@ void MainWindow::displaySettings()
 void MainWindow::on_generateDevisButton_clicked()
 {
     // 0. Vérifier si tous les champs importants sont remplis avant de continuer
-
-
     if (!areAllFieldCompleted())
     {
         QMessageBox::warning(this, "Champs manquants ou invalides", QString::fromUtf8("Veuillez remplir correctement les champs avant de générer le devis"));
         return;
     }
 
-
-    // 1. Mettre à jour toutes les variables de l'onglet CLIENT depuis les champs rentrés par l'utilisateur
-
-
-    updateClientVariables();
-
-    // Déterminer le prix du mètre cube en fonctions des paramètres actuels
+    /*
+    Déterminer le prix du mètre cube en fonctions des paramètres actuels
+    */
     const PricePreset presetToUse{ determinePresetFromDates(ui.departDateEdit->date(), ui.livraisonDateEdit->date()) };
     double prixM3{ m_calculateurDevis->calculerPrixMetreCube(presetToUse) };
     m_tarification->setPrixMetreCube(prixM3);
@@ -140,8 +134,6 @@ void MainWindow::on_generateDevisButton_clicked()
 
 
     // 3. Afficher les résultats dans l'onglet "Résultats et Devis"
-
-
     displayingResults();
 
 
@@ -152,7 +144,7 @@ void MainWindow::on_generateDevisButton_clicked()
 
 void MainWindow::on_volumelineEdit_textChanged(const QString& text)
 {
-    constexpr double maxValeurAssurance{ 45000 };
+    constexpr double maxValeurAssurance{ SettingsConstants::MAX_INSURANCE_VALUE };
 
     // Vérifier si le texte est un nombre valide
     const double volume{ text.toDouble() };
@@ -209,77 +201,6 @@ bool MainWindow::areAllFieldCompleted()
             return false;
 
     return true;
-}
-
-
-/*
-Récupère les valeurs de chaque champ dans l'onglet "CLIENT"
-Puis met à jour les variables de la classe Client
-*/
-void MainWindow::updateClientVariables()
-{
-    // Nom, prénom, tél du client
-    m_client.setNom(ui.nomLineEdit->text());
-    m_client.setPrenom(ui.prenomLineEdit->text());
-    m_client.setNumTel(ui.numTelLineEdit->text());
-
-    // Adresse Chargement
-    std::string rueChargement{ ui.adresseDepartLineEdit->text().toStdString() };
-    int etageChargement{ ui.etageDepartSpinBox->value() };
-    bool ascChargement{ ui.ascDepartCheckBox->isChecked() };
-    bool mmChargement{ ui.mmDepartCheckBox->isChecked() };
-    bool autStatChargement{ ui.asDepartCheckBox->isChecked() };
-    QDate dateChargement{ ui.departDateEdit->date() };
-
-    const Adresse A_Chargement{ rueChargement, etageChargement, ascChargement, mmChargement, autStatChargement, dateChargement };
-    m_client.setAdresseDepart(A_Chargement);
-
-
-    // Adresse Livraison
-    std::string rueLivraison{ ui.adresseLivraisonLineEdit->text().toStdString() };
-    int etageLivraison{ ui.etageLivraisonSpinBox->value() };
-    bool ascLivraison{ ui.ascLivraisonCheckBox->isChecked() };
-    bool mmLivraison{ ui.mmLivraisonCheckBox->isChecked() };
-    bool autStatLivraison{ ui.asLivraisonCheckBox->isChecked() };
-    QDate dateLivraison{ ui.livraisonDateEdit->date() };
-
-    const Adresse A_Livraison{ rueLivraison, etageLivraison, ascLivraison, mmLivraison, autStatLivraison, dateLivraison };
-    m_client.setAdresseArrivee(A_Livraison);
-
-
-    // Récupérer la distance saisie
-    double distance{ ui.distanceLineEdit->text().toDouble() };
-    m_client.setDistance(distance);
-
-
-    // Récupérer le volume saisie
-    double volume{ ui.volumelineEdit->text().toDouble() };
-    m_client.setVolume(volume);
-
-
-    // Récupérer la prestation sélectionnée
-    Prestation prestation{ ui.prestationComboBox->currentIndex() };
-    m_client.setPrestation(prestation);
-
-
-    // Récupérer la nature sélectionnée
-    Nature nature{ ui.natureComboBox->currentIndex() };
-    m_client.setNature(nature);
-
-
-    // Récupérer le type d'assurance sélectionné
-    TypeAssurance typeAssurance{ ui.typeAssuranceComboBox->currentIndex() };
-    m_client.setTypeAssurance(typeAssurance);
-
-
-    // Récupérer la valeur déclarée
-    double valeurAssurance{ ui.valeurAssuranceLineEdit->text().toDouble() };
-    m_client.setValeurAssurance(valeurAssurance);
-
-
-    // Récupérer le nombre d'adresses supplémentaires (si checkbox == true)
-    int nbAdresseSupp{ ui.suppAdresseCheckBox->isChecked() ? ui.suppAdresseSpinBox->value() : 0 };
-    m_client.setNbAdresseSupp(nbAdresseSupp);
 }
 
 
@@ -369,7 +290,6 @@ void MainWindow::on_AnalyseInventoryPushButton_clicked()
 
 void MainWindow::on_generateInventoryPushButton_clicked()
 {
-    // DEMANDER à l'utilisateur où sauvegarder
     QString filePath{ QFileDialog::getSaveFileName(
         this,
         "Sauvegarder l'inventaire",
@@ -657,41 +577,6 @@ void MainWindow::onGenerateDevisStatusReport(PDFGenerator::PdfGenerationState ge
 }
 
 
-void MainWindow::on_numTelLineEdit_editingFinished()
-{
-    QString text{ ui.numTelLineEdit->text() };
-
-    text.remove(QRegularExpression("[^0-9]"));
-
-    if (text.isEmpty()) 
-        return; // Champ vide, on ne fait rien
-
-    constexpr int MAX_PHONE_NUMBER_LENGHT{ 10 };
-    if (text.length() == MAX_PHONE_NUMBER_LENGHT && text.startsWith("0")) 
-    {
-        // Numéro valide - formatage
-        QString formatted{ QString("%1 %2 %3 %4 %5")
-            .arg(text.mid(0, 2))
-            .arg(text.mid(2, 2))
-            .arg(text.mid(4, 2))
-            .arg(text.mid(6, 2))
-            .arg(text.mid(8, 2)) };
-
-        ui.numTelLineEdit->blockSignals(true);
-        ui.numTelLineEdit->setText(formatted);
-        ui.numTelLineEdit->setStyleSheet(""); // Reset style en cas d'erreur précédente
-        ui.numTelLineEdit->blockSignals(false);
-    }
-
-    else 
-    {
-        // Numéro invalide - feedback visuel
-        ui.numTelLineEdit->setStyleSheet("border: 2px solid red;");
-        ui.numTelLineEdit->setToolTip("Le numéro doit contenir 10 chiffres et commencer par 0");
-    }
-}
-
-
 void MainWindow::on_pricePresetComboBox_currentIndexChanged(int index)
 {
     PricePreset selectedPreset{ index };
@@ -721,34 +606,6 @@ void MainWindow::on_saveSettingsPushButton_clicked()
     PricePreset selectedPreset{ ui.pricePresetComboBox->currentIndex() };
     m_tarification->saveSettings(selectedPreset, Tarification::PriceCalculation::postes);
     m_tarification->saveSettings(selectedPreset, Tarification::PriceCalculation::m3);
-}
-
-
-void MainWindow::on_departDateEdit_editingFinished()
-{
-    const QDate dateChargement{ ui.departDateEdit->date() };
-    const QDate dateLivraison{ ui.livraisonDateEdit->date() };
-
-    updateSeasonTypeLabel(dateLivraison);
-
-    if (dateLivraison.month() < dateChargement.month() ||
-        dateLivraison.year() < dateChargement.year() ||
-        (dateLivraison.month() == dateChargement.month() && dateLivraison.day() < dateChargement.day()))
-        ui.livraisonDateEdit->setDate(dateChargement);
-}
-
-
-void MainWindow::on_livraisonDateEdit_editingFinished()
-{
-    const QDate dateChargement{ ui.departDateEdit->date() };
-    const QDate dateLivraison{ ui.livraisonDateEdit->date() };
-
-    updateSeasonTypeLabel(dateLivraison);
-
-    if (dateLivraison.month() < dateChargement.month() ||
-        dateLivraison.year() < dateChargement.year() ||
-        (dateLivraison.month() == dateChargement.month() && dateLivraison.day() < dateChargement.day()))
-        ui.departDateEdit->setDate(dateLivraison);
 }
 
 
@@ -818,4 +675,229 @@ void MainWindow::on_companyInfoPushButton_clicked()
 {
     CompanyInfoDialog dialog{ this, m_user };
     dialog.exec();
+}
+
+
+void MainWindow::on_nomLineEdit_editingFinished()
+{
+    m_client.setNom(ui.nomLineEdit->text());
+}
+
+
+void MainWindow::on_prenomLineEdit_editingFinished()
+{
+    m_client.setPrenom(ui.prenomLineEdit->text());
+}
+
+
+void MainWindow::on_numTelLineEdit_editingFinished()
+{
+    QString text{ ui.numTelLineEdit->text() };
+
+    text.remove(QRegularExpression("[^0-9]"));
+
+    if (text.isEmpty())
+        return; // Champ vide, on ne fait rien
+
+    constexpr int MAX_PHONE_NUMBER_LENGHT{ 10 };
+    if (text.length() == MAX_PHONE_NUMBER_LENGHT && text.startsWith("0"))
+    {
+        // Numéro valide - formatage
+        QString formatted{ QString("%1 %2 %3 %4 %5")
+            .arg(text.mid(0, 2))
+            .arg(text.mid(2, 2))
+            .arg(text.mid(4, 2))
+            .arg(text.mid(6, 2))
+            .arg(text.mid(8, 2)) };
+
+        ui.numTelLineEdit->blockSignals(true);
+        ui.numTelLineEdit->setText(formatted);
+        ui.numTelLineEdit->setStyleSheet(""); // Reset style en cas d'erreur précédente
+        ui.numTelLineEdit->blockSignals(false);
+    }
+
+    else
+    {
+        // Numéro invalide - feedback visuel
+        ui.numTelLineEdit->setStyleSheet("border: 2px solid red;");
+        ui.numTelLineEdit->setToolTip("Le numéro doit contenir 10 chiffres et commencer par 0");
+    }
+
+    m_client.setNumTel(ui.numTelLineEdit->text());
+}
+
+
+void MainWindow::on_departDateEdit_editingFinished()
+{
+    const QDate dateChargement{ ui.departDateEdit->date() };
+    const QDate dateLivraison{ ui.livraisonDateEdit->date() };
+
+    updateSeasonTypeLabel(dateLivraison);
+
+    Adresse adresseArrivee{ m_client.getAdresseArrivee() };
+    if (dateLivraison.month() < dateChargement.month() ||
+        dateLivraison.year() < dateChargement.year() ||
+        (dateLivraison.month() == dateChargement.month() && dateLivraison.day() < dateChargement.day()))
+    {
+        ui.livraisonDateEdit->setDate(dateChargement);
+
+        adresseArrivee.m_date = ui.livraisonDateEdit->date();
+        m_client.setAdresseArrivee(adresseArrivee);
+    }
+
+    Adresse adresseDepart{ m_client.getAdresseDepart() };
+    adresseDepart.m_date = ui.departDateEdit->date();
+    m_client.setAdresseDepart(adresseDepart);
+}
+
+
+void MainWindow::on_adresseDepartLineEdit_editingFinished()
+{
+    Adresse adresseDepart{ m_client.getAdresseDepart() };
+
+    adresseDepart.m_rue = ui.adresseDepartLineEdit->text();
+
+    m_client.setAdresseDepart(adresseDepart);
+}
+
+
+void MainWindow::on_etageDepartSpinBox_editingFinished()
+{
+    Adresse adresseDepart{ m_client.getAdresseDepart() };
+
+    adresseDepart.m_etage = ui.etageDepartSpinBox->value();
+
+    m_client.setAdresseDepart(adresseDepart);
+}
+
+
+void MainWindow::on_ascDepartCheckBox_checked()
+{
+    Adresse adresseDepart{ m_client.getAdresseDepart() };
+
+    adresseDepart.m_ascenseur = ui.ascDepartCheckBox->isChecked();
+
+    m_client.setAdresseDepart(adresseDepart);
+}
+
+
+void MainWindow::on_mmDepartCheckBox_toggled(bool checked)
+{
+    Adresse adresseDepart{ m_client.getAdresseDepart() };
+    adresseDepart.m_monteMeubles = checked;
+    m_client.setAdresseDepart(adresseDepart);
+}
+
+void MainWindow::on_asDepartCheckBox_toggled(bool checked)
+{
+    Adresse adresseDepart{ m_client.getAdresseDepart() };
+    adresseDepart.m_autStationnement = checked;
+    m_client.setAdresseDepart(adresseDepart);
+}
+
+// Arrival address infos
+void MainWindow::on_livraisonDateEdit_editingFinished()
+{
+    const QDate dateChargement{ ui.departDateEdit->date() };
+    const QDate dateLivraison{ ui.livraisonDateEdit->date() };
+
+    updateSeasonTypeLabel(dateLivraison);
+
+    if (dateLivraison.month() < dateChargement.month() ||
+        dateLivraison.year() < dateChargement.year() ||
+        (dateLivraison.month() == dateChargement.month() && dateLivraison.day() < dateChargement.day()))
+        ui.departDateEdit->setDate(dateLivraison);
+
+    Adresse adresseArrivee{ m_client.getAdresseArrivee() };
+    adresseArrivee.m_date = ui.livraisonDateEdit->date();
+    m_client.setAdresseArrivee(adresseArrivee);
+}
+
+void MainWindow::on_adresseLivraisonLineEdit_editingFinished()
+{
+    Adresse adresseArrivee{ m_client.getAdresseArrivee() };
+    adresseArrivee.m_rue = ui.adresseLivraisonLineEdit->text();
+    m_client.setAdresseArrivee(adresseArrivee);
+}
+
+void MainWindow::on_etageLivraisonSpinBox_editingFinished()
+{
+    Adresse adresseArrivee{ m_client.getAdresseArrivee() };
+    adresseArrivee.m_etage = ui.etageLivraisonSpinBox->value();
+    m_client.setAdresseArrivee(adresseArrivee);
+}
+
+void MainWindow::on_ascLivraisonCheckBox_toggled(bool checked)
+{
+    Adresse adresseArrivee{ m_client.getAdresseArrivee() };
+    adresseArrivee.m_ascenseur = checked;
+    m_client.setAdresseArrivee(adresseArrivee);
+}
+
+void MainWindow::on_mmLivraisonCheckBox_toggled(bool checked)
+{
+    Adresse adresseArrivee{ m_client.getAdresseArrivee() };
+    adresseArrivee.m_monteMeubles = checked;
+    m_client.setAdresseArrivee(adresseArrivee);
+}
+
+void MainWindow::on_asLivraisonCheckBox_toggled(bool checked)
+{
+    Adresse adresseArrivee{ m_client.getAdresseArrivee() };
+    adresseArrivee.m_autStationnement = checked;
+    m_client.setAdresseArrivee(adresseArrivee);
+}
+
+// General infos
+void MainWindow::on_distanceLineEdit_editingFinished()
+{
+    m_client.setDistance(ui.distanceLineEdit->text().toDouble());
+}
+
+void MainWindow::on_volumelineEdit_textChanged()
+{
+    m_client.setVolume(ui.volumelineEdit->text().toDouble());
+}
+
+void MainWindow::on_prestationComboBox_currentIndexChanged(int index)
+{
+    switch (index) 
+    {
+    case 0: m_client.setPrestation(Prestation::eco); break;
+    case 1: m_client.setPrestation(Prestation::ecoPlus); break;
+    case 2: m_client.setPrestation(Prestation::standard); break;
+    case 3: m_client.setPrestation(Prestation::luxe); break;
+    default: break;
+    }
+}
+
+void MainWindow::on_natureComboBox_currentIndexChanged(int index)
+{
+    switch (index) 
+    {
+    case 0: m_client.setNature(Nature::urbain); break;
+    case 1: m_client.setNature(Nature::special); break;
+    case 2: m_client.setNature(Nature::groupage); break;
+    default: break;
+    }
+}
+
+void MainWindow::on_typeAssuranceComboBox_currentIndexChanged(int index)
+{
+    switch (index) 
+    {
+    case 0: m_client.setTypeAssurance(TypeAssurance::contractuelle); break;
+    case 1: m_client.setTypeAssurance(TypeAssurance::dommage); break;
+    default: break;
+    }
+}
+
+void MainWindow::on_valeurAssuranceLineEdit_textChanged()
+{   
+    m_client.setValeurAssurance(ui.valeurAssuranceLineEdit->text().toInt());
+}
+
+void MainWindow::on_suppAdresseSpinBox_editingFinished()
+{
+    m_client.setNbAdresseSupp(ui.suppAdresseSpinBox->value());
 }

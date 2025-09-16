@@ -58,21 +58,48 @@ private slots:
 
     void on_suppAdresseCheckBox_toggled(bool isChecked);
 
-    void on_numTelLineEdit_editingFinished();
-
     void on_pricePresetComboBox_currentIndexChanged(int index);
 
     void on_saveSettingsPushButton_clicked();
-
-    void on_livraisonDateEdit_editingFinished();
-
-    void on_departDateEdit_editingFinished();
 
     void onGenerateDevisStatusReport(PDFGenerator::PdfGenerationState generationState);
 
     void onCriticalError(const QString& errorMessage);
 
     void on_companyInfoPushButton_clicked();
+
+
+    // Updating Client variables in real time
+
+    // Client personnal infos
+    void on_nomLineEdit_editingFinished();
+    void on_prenomLineEdit_editingFinished();
+    void on_numTelLineEdit_editingFinished();
+
+    // Departure adress infos
+    void on_departDateEdit_editingFinished();
+    void on_adresseDepartLineEdit_editingFinished();
+    void on_etageDepartSpinBox_editingFinished();
+    void on_ascDepartCheckBox_checked();
+    void on_mmDepartCheckBox_toggled(bool checked);
+    void on_asDepartCheckBox_toggled(bool checked);
+
+    // Arrival address infos
+    void on_livraisonDateEdit_editingFinished();
+    void on_adresseLivraisonLineEdit_editingFinished();
+    void on_etageLivraisonSpinBox_editingFinished();
+    void on_ascLivraisonCheckBox_toggled(bool checked);
+    void on_mmLivraisonCheckBox_toggled(bool checked);
+    void on_asLivraisonCheckBox_toggled(bool checked);
+
+    // General infos
+    void on_distanceLineEdit_editingFinished();
+    void on_volumelineEdit_textChanged();
+    void on_prestationComboBox_currentIndexChanged(int index);
+    void on_natureComboBox_currentIndexChanged(int index);
+    void on_typeAssuranceComboBox_currentIndexChanged(int index);
+    void on_valeurAssuranceLineEdit_textChanged();
+    void on_suppAdresseSpinBox_editingFinished();
 
 private:
 
@@ -92,8 +119,6 @@ private:
     void displaySettings();
 
     bool areAllFieldCompleted();
-
-    void updateClientVariables();
 
     void updateSettingsVariables();
 
