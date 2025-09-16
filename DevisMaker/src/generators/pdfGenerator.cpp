@@ -88,6 +88,31 @@ QString PDFGenerator::fillHTMLTemplate(const Client& client, const ResultatsDevi
 }
 
 
+QString PDFGenerator::fillInventoryTemplate(const Client& client, const User& user, QString& htmlTemplate)
+{
+    //QString supplementsRows{ generateInventoryRow() };
+
+    return htmlTemplate
+        .replace("%CLIENT_NUMBER%", generateClientNumber())
+        .replace("%DATE%", getCurrentDate())
+        .replace("%CLIENT_NAME%", client.getNom())
+        .replace("%ADRESSE_CHARGEMENT%", QString::fromStdString(client.getAdresseDepart().m_rue))
+        .replace("%ADRESSE_LIVRAISON%", QString::fromStdString(client.getAdresseArrivee().m_rue))
+        .replace("%PHONE_NUMBER%", client.getNumTel())
+        .replace("%PERIODE_CHARGEMENT%", QLocale{ QLocale::French, QLocale::France }.toString(client.getAdresseDepart().m_date, "dddd dd MMMM yyyy"))
+        .replace("%PERIODE_LIVRAISON%", QLocale{ QLocale::French, QLocale::France }.toString(client.getAdresseArrivee().m_date, "dddd dd MMMM yyyy"))
+        .replace("%VOLUME_TOTAL%", QString::number(client.getVolume(), 'f', 0))
+        .replace("%COMPANY_NAME%", user.getCompanyName())
+        .replace("%COMPANY_ADRESS%", user.getCompanyAddress())
+        .replace("%COMPANY_NUMBER%", user.getCompanyPhoneNumber())
+        .replace("%TVA_NUMBER%", user.getTvaNumber())
+        .replace("%SIRET_NUMBER%", user.getSiretNumber())
+        .replace("%APE_NUMBER%", user.getApeNumber())
+        .replace("%COMPANY_EMAIL%", user.getCompanyMail());
+        //.replace("%SUPPLEMENTS_ROWS%", supplementsRows);
+}
+
+
 QString PDFGenerator::getNatureString(const Nature& nature) const
 {
     switch (nature) 
@@ -202,6 +227,61 @@ QString PDFGenerator::load_HTML_Template(const TypeDevis& typeDevis)
     lecteurTexte.setEncoding(QStringConverter::Utf8);
 
     return lecteurTexte.readAll();
+}
+
+
+QString PDFGenerator::loadInventoryTemplate()
+{
+    QFile templateFile{ HTML_TEMPLATE_LOCATION_INVENTORY };
+    QFileInfo templateFileInfos{ templateFile };
+    QDir templateDir{ templateFileInfos.absoluteDir() };
+
+    if (!templateDir.exists())
+        createTemplateDir();
+
+    if (!templateFile.exists())
+        createInventoryTemplateFile();
+
+    if (!templateFile.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        emit pdfGenerationStatusReport(PdfGenerationState::errorLoadingFile);
+        qDebug() << "Erreur: Impossible d'ouvrir le fichier template:" << HTML_TEMPLATE_LOCATION_INVENTORY;
+        return QString{};
+    }
+
+    QTextStream lecteurTexte{ &templateFile };
+    lecteurTexte.setEncoding(QStringConverter::Utf8);
+
+    return lecteurTexte.readAll();
+}
+
+
+bool PDFGenerator::createInventoryTemplateFile()
+{
+    QFile templateFile{ HTML_TEMPLATE_LOCATION_INVENTORY };
+
+    if (!templateFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        emit pdfGenerationStatusReport(PdfGenerationState::errorCreatingTemplateFile);
+        qDebug() << "Erreur: Impossible de creer le fichier templates";
+        return false;
+    }
+
+    QTextStream ecrivain(&templateFile);
+    ecrivain.setEncoding(QStringConverter::Utf8);
+
+    ecrivain << getDefaultInventoryTemplate();
+
+
+    if (ecrivain.status() != QTextStream::Ok)
+    {
+        emit pdfGenerationStatusReport(PdfGenerationState::errorCreatingTemplateFile);
+        qDebug() << "Erreur lors de l'écriture du template";
+        return false;
+    }
+
+    qDebug() << "Creation du fichier devis_template.html avec succes !";
+    return true;
 }
 
 
@@ -575,4 +655,211 @@ QString PDFGenerator::get_Default_HTML_Template(const TypeDevis& typeDevis) cons
     )");
 
     return htmlHeader + tableauCaracteristiques + tableauChargementLivraison + tableauPrix + htmlFooter;
+}
+
+
+QString PDFGenerator::getDefaultInventoryTemplate() const
+{
+    QString htmlHeader = QString(R"(
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 0;
+            color: #000;
+            font-size: 10px;
+            line-height: 1.2;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            width: 100%;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        
+        @media print {
+            body {
+                padding: 0;
+                margin: 0;
+            }
+            .container {
+                width: 100%;
+                padding: 10mm;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div style="margin-bottom: 15px; border-bottom: 2px solid #000; padding-bottom: 10px;">
+            <div style="font-size: 16px; font-weight: bold; margin-bottom: 5px; color: #2c3e50;">%COMPANY_NAME%</div>
+            <div style="font-size: 9px; line-height: 1.3;">
+                %COMPANY_ADRESS%<br>
+                Tél: %COMPANY_NUMBER%<br>
+                E-mail: <span style="color: #3498db; text-decoration: underline;">%COMPANY_EMAIL%</span>
+            </div>
+        </div>
+        
+        <div style="font-size: 18px; font-weight: bold; text-align: center; margin: 15px 0; color: #2c3e50; text-transform: uppercase;">Inventaire de Déménagement</div>
+    )");
+
+    QString tableauInfosClient = QString(R"(
+        <table width="100%" style="width: 100%; min-width: 100%; border-collapse: collapse; border: 2px solid #000; margin-bottom: 15px;">
+            <tr>
+                <td colspan="4" style="background-color: #34495e; color: white; font-weight: bold; padding: 4px; font-size: 9px; text-align: center; border-right: 1px solid #000; border-left: 0px; border-top: 1px solid #000; border-bottom: 1px solid #000;">Informations Client</td>
+            </tr>
+            <tr>
+                <td style="background-color: #ecf0f1; font-weight: bold; text-align: left; width: 20%; padding: 4px; font-size: 9px; border: 1px solid #000;">Client N°:</td>
+                <td style="padding: 4px; font-size: 9px; text-align: center; border: 1px solid #000;">%CLIENT_NUMBER%</td>
+                <td style="background-color: #ecf0f1; font-weight: bold; text-align: left; width: 20%; padding: 4px; font-size: 9px; border: 1px solid #000;">Nom et Prénom:</td>
+                <td style="padding: 4px; font-size: 9px; text-align: left; border: 1px solid #000;">%CLIENT_NAME%</td>
+            </tr>
+            <tr>
+                <td style="background-color: #ecf0f1; font-weight: bold; text-align: left; padding: 4px; font-size: 9px; border: 1px solid #000;">Adresse Chargement:</td>
+                <td style="padding: 4px; font-size: 9px; text-align: left; border: 1px solid #000;">%ADRESSE_CHARGEMENT%</td>
+                <td style="background-color: #ecf0f1; font-weight: bold; text-align: left; padding: 4px; font-size: 9px; border: 1px solid #000;">Adresse Livraison:</td>
+                <td style="padding: 4px; font-size: 9px; text-align: left; border: 1px solid #000;">%ADRESSE_LIVRAISON%</td>
+            </tr>
+            <tr>
+                <td style="background-color: #ecf0f1; font-weight: bold; text-align: left; padding: 4px; font-size: 9px; border: 1px solid #000;">Période Chargement:</td>
+                <td style="padding: 4px; font-size: 9px; text-align: left; border: 1px solid #000;">%PERIODE_CHARGEMENT%</td>
+                <td style="background-color: #ecf0f1; font-weight: bold; text-align: left; padding: 4px; font-size: 9px; border: 1px solid #000;">Période Livraison:</td>
+                <td style="padding: 4px; font-size: 9px; text-align: left; border: 1px solid #000;">%PERIODE_LIVRAISON%</td>
+            </tr>
+            <tr>
+                <td style="background-color: #ecf0f1; font-weight: bold; text-align: left; padding: 4px; font-size: 9px; border: 1px solid #000;">Téléphone:</td>
+                <td style="padding: 4px; font-size: 9px; text-align: center; border: 1px solid #000;">%PHONE_NUMBER%</td>
+                <td style="background-color: #ecf0f1; font-weight: bold; text-align: left; padding: 4px; font-size: 9px; border: 1px solid #000;">Volume Total:</td>
+                <td style="padding: 4px; font-size: 12px; font-weight: bold; text-align: center; background-color: #f8f9fa; border: 1px solid #000;">%VOLUME_TOTAL% m³</td>
+            </tr>
+        </table>
+    )");
+
+    QString tableauInventaireHeader = QString(R"(
+        <table width="100%" style="width: 100%; min-width: 100%; border-collapse: collapse; border: 2px solid #000; margin-bottom: 15px;">
+            <tr>
+                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 9px; text-align: center; border: 1px solid #000; width: 25%;">Type d'Objet</td>
+                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 9px; text-align: center; border: 1px solid #000; width: 8%;">Quantité</td>
+                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 9px; text-align: center; border: 1px solid #000; width: 12%;">Volume Individuel (m³)</td>
+                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 9px; text-align: center; border: 1px solid #000; width: 12%;">Volume Total (m³)</td>
+                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 14%;">Démontage</td>
+                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 14%;">Remontage</td>
+                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 15%;">Déchetterie</td>
+            </tr>
+            %INVENTAIRE_ROWS%
+    )");
+
+    QString tableauInventaireFooter = QString(R"(
+            <tr>
+                <td colspan="3" style="background-color: #2c3e50; color: white; font-weight: bold; font-size: 11px; text-align: right; padding: 4px; border: 1px solid #000;"><strong>VOLUME TOTAL:</strong></td>
+                <td style="background-color: #2c3e50; color: white; font-weight: bold; font-size: 11px; text-align: center; padding: 4px; border: 1px solid #000;"><strong>%VOLUME_TOTAL% m³</strong></td>
+                <td colspan="3" style="background-color: #2c3e50; border: 1px solid #000;"></td>
+            </tr>
+        </table>
+    )");
+
+    QString htmlFooter = QString(R"(
+        <div style="margin-top: 20px; font-size: 9px; line-height: 1.4;">
+            <p><strong>Observations particulières:</strong></p>
+            <div style="border: 1px solid #000; min-height: 40px; padding: 5px; margin-bottom: 15px;">
+            </div>
+            
+            <table width="100%" style="width: 100%; margin-top: 20px;">
+                <tr>
+                    <td style="text-align: center; width: 50%; vertical-align: top;">
+                        <p><strong>Signature du Client:</strong></p>
+                        <div style="border-bottom: 1px solid #000; width: 200px; height: 50px; margin: 10px auto;"></div>
+                        <p style="font-size: 8px;">Date: %DATE%</p>
+                    </td>
+                    <td style="text-align: center; width: 50%; vertical-align: top;">
+                        <p><strong>Signature du Déménageur:</strong></p>
+                        <div style="border-bottom: 1px solid #000; width: 200px; height: 50px; margin: 10px auto;"></div>
+                        <p style="font-size: 8px;">Date: %DATE%</p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div style="margin-top: 10px; text-align: center; font-size: 7px; border-top: 2px solid #000; padding-top: 6px; color: #7f8c8d;">
+            <strong>%COMPANY_NAME% - TVA intracommunautaire: %TVA_NUMBER%</strong><br>
+            <strong>SIRET: %SIRET_NUMBER% - APE: %APE_NUMBER%</strong><br>
+            <strong>Inventaire généré automatiquement - Version du %DATE%</strong>
+        </div>
+        
+    </div>
+</body>
+</html>
+    )");
+
+    return htmlHeader + tableauInfosClient + tableauInventaireHeader + tableauInventaireFooter + htmlFooter;
+}
+
+// Méthode pour générer une ligne d'inventaire
+QString PDFGenerator::generateInventoryRow(const QString& typeObjet, int quantite,
+    double volumeIndividuel, double volumeTotal,
+    bool demontage, bool remontage, bool dechetterie) const
+{
+    QString demontageChecked = demontage ? "checked" : "";
+    QString remontageChecked = remontage ? "checked" : "";
+    QString dechettterieChecked = dechetterie ? "checked" : "";
+
+    return QString(R"(
+        <tr>
+            <td class="text-left">%1</td>
+            <td>%2</td>
+            <td>%3</td>
+            <td class="volume-cell">%4</td>
+            <td class="checkbox-cell"><input type="checkbox" %5 disabled></td>
+            <td class="checkbox-cell"><input type="checkbox" %6 disabled></td>
+            <td class="checkbox-cell"><input type="checkbox" %7 disabled></td>
+        </tr>
+    )").arg(typeObjet)
+        .arg(quantite)
+        .arg(QString::number(volumeIndividuel, 'f', 2))
+        .arg(QString::number(volumeTotal, 'f', 2))
+        .arg(demontageChecked)
+        .arg(remontageChecked)
+        .arg(dechettterieChecked);
+}
+
+
+bool PDFGenerator::generateInventoryPDF(const Client& client, const User& user, const QString& outputPath)
+{
+    // Déterminer le chemin de sortie
+    QString finalPath{ outputPath };
+    if (finalPath.isEmpty())
+        finalPath = getDefaultOutputPath();
+
+    if (m_htmlTemplate_Inventory.isEmpty())
+    {
+        emit pdfGenerationStatusReport(PdfGenerationState::blankFile);
+        return false;
+    }
+
+    // Créer le contenu HTML
+    QString devis_html{ fillInventoryTemplate(client, user, m_htmlTemplate_Inventory)};
+
+    // Créer le document PDF
+    QTextDocument document;
+    document.setHtml(devis_html);
+
+    // Configuration de l'impression
+    QPrinter printer(QPrinter::PrinterResolution);
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setOutputFileName(finalPath);
+    printer.setPageSize(QPageSize::A4);
+    printer.setPageMargins(QMarginsF(1, 1, 1, 1), QPageLayout::Millimeter);
+
+    // Générer le PDF
+    document.print(&printer);
+
+    emit pdfGenerationStatusReport(PdfGenerationState::success);
+
+    return QFile::exists(finalPath);
 }

@@ -47,6 +47,8 @@ private slots:
 
     void on_AnalyseInventoryPushButton_clicked();
 
+    void on_generateInventoryPushButton_clicked();
+
     void handleInventoryAnalysis(double totalVolume, const QStringList& structuredItems);
 
     void handleInventoryAnalysisError(const QString& errorMessage);

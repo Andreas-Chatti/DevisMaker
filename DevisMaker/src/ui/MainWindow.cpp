@@ -112,7 +112,7 @@ void MainWindow::on_generateDevisButton_clicked()
 
     if (!areAllFieldCompleted())
     {
-        QMessageBox::warning(this, "Champs manquants ou invalides", "Veuillez remplir correctement les champs avant de g\u00E9n\u00E9rer le devis");
+        QMessageBox::warning(this, "Champs manquants ou invalides", QString::fromUtf8("Veuillez remplir correctement les champs avant de générer le devis"));
         return;
     }
 
@@ -367,6 +367,25 @@ void MainWindow::on_AnalyseInventoryPushButton_clicked()
 }
 
 
+void MainWindow::on_generateInventoryPushButton_clicked()
+{
+    // DEMANDER à l'utilisateur où sauvegarder
+    QString filePath{ QFileDialog::getSaveFileName(
+        this,
+        "Sauvegarder l'inventaire",
+        QString("Inventaire_%1_%2.pdf")
+            .arg(m_client.getNom())
+            .arg(QDate::currentDate().toString("yyyyMMdd")),
+        "Fichiers PDF (*.pdf)"
+    ) };
+
+    if (filePath.isEmpty())
+        return;
+
+    m_PDFGenerator->generateInventoryPDF(m_client, m_user, filePath);
+}
+
+
 // Traitement du résultat d'analyse
 void MainWindow::handleInventoryAnalysis(double totalVolume, const QStringList& structuredItems)
 {
@@ -424,20 +443,23 @@ void MainWindow::handleInventoryAnalysis(double totalVolume, const QStringList& 
     header->setSectionResizeMode(2, QHeaderView::Stretch);           // Volume : étirement
 
     // Message de succès
-    QString titre = "Analyse terminee";
-    QString message = QString("Volume total calcule par l'IA: %1 m3, %2 objets detectes").arg(QString::number(totalVolume, 'f', 2)).arg(structuredItems.size());
+    QString titre{ QString::fromUtf8("Analyse terminée") };
+    QString message = QString::fromUtf8("Volume total: %1 m3, %2 objet(s) détecté(s)").arg(QString::number(totalVolume, 'f', 2)).arg(structuredItems.size());
     QMessageBox::information(this, titre, message);
 
     ui.AnalyseInventoryPushButton->setText("Analyser inventaire");
     ui.AnalyseInventoryPushButton->setEnabled(true);
 
     qDebug() << "Analyse IA terminée avec succès. Volume:" << totalVolume;
+
+    if (!ui.generateInventoryPushButton->isEnabled())
+        ui.generateInventoryPushButton->setEnabled(true);
 }
 
 
 void MainWindow::handleInventoryAnalysisError(const QString& errorMessage)
 {
-    QString titre{ "Erreur d'analyse IA" };
+    QString titre{ "Erreur d'analyse" };
     QString message{ errorMessage };
     QMessageBox::critical(this, titre, message);
 
@@ -615,7 +637,7 @@ void MainWindow::onGenerateDevisStatusReport(PDFGenerator::PdfGenerationState ge
 
     switch (generationState)
     {
-    case PDFGenerator::PdfGenerationState::success: notificationMessage = "Devis creer avec succes.";
+    case PDFGenerator::PdfGenerationState::success: notificationMessage = QString::fromUtf8("Le document à été créer avec succès.");
         break;
     case PDFGenerator::PdfGenerationState::blankFile: notificationMessage = "Error: blank file.";
         break;
