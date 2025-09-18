@@ -6,12 +6,6 @@ class SettingsConstants
 {
 public:
 
-    enum class CalculationType
-    {
-        PricePerM3,
-        FivePostes,
-    };
-
     // Constantes métier principales
     static constexpr double INSURANCE_RATE_PER_M3{ 500.0 };
     static constexpr double MAX_INSURANCE_VALUE{ 45000.0 };

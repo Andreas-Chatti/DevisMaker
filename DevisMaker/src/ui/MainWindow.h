@@ -38,7 +38,6 @@ public:
 private slots:
 
     void on_generateDevisButton_clicked();
-
     void on_generatePdfButton_clicked();
 
     void on_volumelineEdit_textChanged(const QString& text);
@@ -46,11 +45,9 @@ private slots:
     void on_distanceLineEdit_textChanged(const QString& text);
 
     void on_AnalyseInventoryPushButton_clicked();
-
     void on_generateInventoryPushButton_clicked();
 
     void handleInventoryAnalysis(double totalVolume, const QStringList& structuredItems);
-
     void handleInventoryAnalysisError(const QString& errorMessage);
 
     void onDistanceCalculated(double distance);

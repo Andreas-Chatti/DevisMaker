@@ -103,6 +103,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\inventory\inventaire.cpp" />
     <ClCompile Include="src\streetmap\addressCompleter.cpp" />
     <ClCompile Include="src\calculator\calculateurDevis.cpp" />
     <ClCompile Include="src\ia\IA.cpp" />
@@ -126,7 +127,7 @@
     <ClInclude Include="src\utils\constants.h" />
     <ClInclude Include="src\misc\devis.h" />
     <QtMoc Include="src\ia\IA.h" />
-    <ClInclude Include="src\misc\inventaire.h" />
+    <QtMoc Include="src\inventory\inventaire.h" />
     <QtMoc Include="src\ui\MainWindow.h" />
     <QtMoc Include="src\ia\InventoryAnalyzer.h" />
     <QtMoc Include="src\streetmap\streetMap.h" />

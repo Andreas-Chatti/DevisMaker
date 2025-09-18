@@ -61,7 +61,7 @@ void MainWindow::setupValidators()
     }
 
 
-    const auto intValidator{ new QIntValidator(0, 45000, this) };
+    const auto intValidator{ new QIntValidator(0, SettingsConstants::MAX_INSURANCE_VALUE, this) };
 
     QList<QLineEdit*> intFields{
         ui.distanceLineEdit,
@@ -169,7 +169,7 @@ void MainWindow::on_volumelineEdit_textChanged(const QString& text)
 
 void MainWindow::on_distanceLineEdit_textChanged(const QString& text)
 {
-    constexpr double urbainMaxDistance{ 150.0 };
+    constexpr double urbainMaxDistance{ SettingsConstants::Distances::URBAN_DISTANCE_LIMIT };
 
     const double distance{ text.toDouble() };
 
@@ -364,13 +364,11 @@ void MainWindow::handleInventoryAnalysis(double totalVolume, const QStringList& 
 
     // Message de succès
     QString titre{ QString::fromUtf8("Analyse terminée") };
-    QString message = QString::fromUtf8("Volume total: %1 m3, %2 objet(s) détecté(s)").arg(QString::number(totalVolume, 'f', 2)).arg(structuredItems.size());
+    QString message{ QString::fromUtf8("Volume total: %1 m3, %2 objet(s) détecté(s)").arg(QString::number(totalVolume, 'f', 2)).arg(structuredItems.size()) };
     QMessageBox::information(this, titre, message);
 
     ui.AnalyseInventoryPushButton->setText("Analyser inventaire");
     ui.AnalyseInventoryPushButton->setEnabled(true);
-
-    qDebug() << "Analyse IA terminée avec succès. Volume:" << totalVolume;
 
     if (!ui.generateInventoryPushButton->isEnabled())
         ui.generateInventoryPushButton->setEnabled(true);
@@ -535,7 +533,7 @@ void MainWindow::on_generatePdfButton_clicked()
     // DEMANDER à l'utilisateur où sauvegarder
     QString filePath{ QFileDialog::getSaveFileName(
         this,
-        "Sauvegarder le devis PDF",
+        "Sauvegarder le devis",
         QString("DevisChatti_%1_%2_%3.pdf")
             .arg(m_client.getNom())
             .arg(m_PDFGenerator->getPrestationString(m_client.getPrestation()))
@@ -651,7 +649,7 @@ void MainWindow::setupPlaceholderText() const
     ui.numTelLineEdit->setPlaceholderText("0199887766");
 
     ui.adresseDepartLineEdit->setPlaceholderText("Avenue de la Division Leclerc, 92160 ANTONY");
-    ui.adresseLivraisonLineEdit->setPlaceholderText("Avenue de la Division Leclerc, 92160 ANTONY");
+    ui.adresseLivraisonLineEdit->setPlaceholderText("Avenue de la Gare, 91300 MASSY");
 
     ui.distanceLineEdit->setPlaceholderText("406");
     ui.volumelineEdit->setPlaceholderText("30.4");
@@ -754,9 +752,7 @@ void MainWindow::on_departDateEdit_editingFinished()
 void MainWindow::on_adresseDepartLineEdit_editingFinished()
 {
     Adresse adresseDepart{ m_client.getAdresseDepart() };
-
     adresseDepart.m_rue = ui.adresseDepartLineEdit->text();
-
     m_client.setAdresseDepart(adresseDepart);
 }
 
@@ -764,9 +760,7 @@ void MainWindow::on_adresseDepartLineEdit_editingFinished()
 void MainWindow::on_etageDepartSpinBox_editingFinished()
 {
     Adresse adresseDepart{ m_client.getAdresseDepart() };
-
     adresseDepart.m_etage = ui.etageDepartSpinBox->value();
-
     m_client.setAdresseDepart(adresseDepart);
 }
 
@@ -774,9 +768,7 @@ void MainWindow::on_etageDepartSpinBox_editingFinished()
 void MainWindow::on_ascDepartCheckBox_checked()
 {
     Adresse adresseDepart{ m_client.getAdresseDepart() };
-
     adresseDepart.m_ascenseur = ui.ascDepartCheckBox->isChecked();
-
     m_client.setAdresseDepart(adresseDepart);
 }
 
