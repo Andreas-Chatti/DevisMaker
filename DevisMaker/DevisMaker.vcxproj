@@ -121,7 +121,7 @@
     <QtMoc Include="user.h" />
     <QtMoc Include="src\streetmap\addressCompleter.h" />
     <ClInclude Include="src\calculator\calculateurDevis.h" />
-    <ClInclude Include="src\models\client.h" />
+    <QtMoc Include="src\models\client.h" />
     <QtMoc Include="src\ui\companyInfoDialog.h" />
     <ClInclude Include="src\utils\common.h" />
     <ClInclude Include="src\utils\constants.h" />

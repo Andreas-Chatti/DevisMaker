@@ -21,10 +21,10 @@ MainWindow::MainWindow(QWidget* parent)
     connect(m_addressCompleter->getStreetMap(), &OpenStreetMap::distanceCalculated, this, &MainWindow::onDistanceCalculated);
     connect(m_addressCompleter->getStreetMap(), &OpenStreetMap::calculationError, this, &MainWindow::onDistanceError);
 
-
     // Initialiser l'analyseur IA
     m_inventoryAnalyzer = new InventoryAnalyzer(this);
     connect(m_inventoryAnalyzer, &InventoryAnalyzer::analysisComplete, this, &MainWindow::handleInventoryAnalysis);
+    connect(m_inventoryAnalyzer, &InventoryAnalyzer::analysisComplete, m_client.getInventory(), &Inventory::handleInventoryAnalysis);
     connect(m_inventoryAnalyzer, &InventoryAnalyzer::analysisError, this, &MainWindow::handleInventoryAnalysisError);
     connect(m_inventoryAnalyzer, &InventoryAnalyzer::error, this, &MainWindow::onCriticalError);
 

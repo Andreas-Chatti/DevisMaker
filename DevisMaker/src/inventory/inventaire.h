@@ -52,7 +52,7 @@ private:
 
     //void loadDictionnary();  // Charge le dictionnaire d'objets standard
 
-private slots:
+public slots:
 
     void handleInventoryAnalysis(double totalVolume, const QStringList& structuredItems);
 };

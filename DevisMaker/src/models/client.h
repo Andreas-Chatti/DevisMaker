@@ -2,9 +2,11 @@
 #include <QString>
 #include <string>
 #include "utils/common.h"
+#include "inventory/inventaire.h"
 
-class Client 
+class Client : public QObject
 {
+    Q_OBJECT
 
 public:
 
@@ -21,7 +23,9 @@ public:
         , m_volume{}
         , m_nbAdresseSupp{}
         , m_tel{}
+        , m_inventory{}
     {
+        m_inventory = new Inventory{ this };
     }
 
    
@@ -36,6 +40,7 @@ public:
     double getValeurAssurance() const { return m_valeurAssurance; }
     const QString& getNumTel() const { return m_tel; }
     int getNbAdresseSupp() const { return m_nbAdresseSupp; }
+    const Inventory const* getInventory() const { return m_inventory; }
 
  
     void setNom(const QString& nom) { m_nom = nom; }
@@ -66,4 +71,5 @@ private:
     double m_volume;
     int m_nbAdresseSupp;
     QString m_tel;
+    Inventory* m_inventory;
 };

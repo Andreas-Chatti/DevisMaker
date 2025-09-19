@@ -1,4 +1,5 @@
 #include "inventaire.h"
+#include <qdebug.h>
 
 void Inventory::handleInventoryAnalysis(double totalVolume, const QStringList& structuredItems)
 {
@@ -14,31 +15,42 @@ void Inventory::handleInventoryAnalysis(double totalVolume, const QStringList& s
             QString fullName{ parts[0] };     // Ex: "2 matelas 1 place"
             QString volumeText{ parts[1] };   // Ex: "1.0 m³"
 
-
             QStringList words{ fullName.split(" ") };
-            QString quantity{ "1" };  // Par défaut
+            int quantity{ 1 };  // Par défaut
             QString cleanName{ fullName };
 
+            // Extraire la quantité du nom
             if (!words.isEmpty())
             {
                 bool ok{};
                 int qty{ words.first().toInt(&ok) };
                 if (ok && qty > 0)
                 {
-                    quantity = QString::number(qty);
+                    quantity = qty;
                     words.removeFirst();
                     cleanName = words.join(" ");
                 }
+            }
+
+            volumeText = volumeText.trimmed();
+            if (volumeText.endsWith(" m\u00b3") || volumeText.endsWith(" m3"))
+            {
+                volumeText.chop(3);
+                bool ok{};
+                double unitVolume{ volumeText.toDouble(&ok) };
+
+                if (ok && unitVolume > 0.0)
+                    addObject(cleanName, unitVolume, quantity);
             }
         }
     }
 }
 
 
-void Inventory::addObject(const QString& name, double volume, int quantity)
+void Inventory::addObject(const QString& name, double unitaryVolume, int quantity)
 {
     for (int i{}; i < quantity; i++)
-        m_objects.emplaceBack(ObjetDemenagement{ name, volume });
+        m_objects.emplaceBack(ObjetDemenagement{ name, unitaryVolume });
 }
 
 void Inventory::addObject(const ObjetDemenagement& movingObject, int quantity)
