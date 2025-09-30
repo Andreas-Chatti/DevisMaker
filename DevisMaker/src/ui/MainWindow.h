@@ -47,7 +47,7 @@ private slots:
     void on_AnalyseInventoryPushButton_clicked();
     void on_generateInventoryPushButton_clicked();
 
-    void handleInventoryAnalysis(double totalVolume, const QStringList& structuredItems);
+    void handleInventoryAnalysis(const Inventory& inventory);
     void handleInventoryAnalysisError(const QString& errorMessage);
 
     void onDistanceCalculated(double distance);
@@ -132,4 +132,6 @@ private:
     void setupPlaceholderText() const;
 
     void setupDateEdit() const;
+
+    void displayInventory(const Inventory& inventory) const;
 };

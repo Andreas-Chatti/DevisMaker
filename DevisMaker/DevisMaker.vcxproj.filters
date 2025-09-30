@@ -81,6 +81,9 @@
     <ClInclude Include="src\utils\resultatDevis.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\inventory\movingObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="src\streetmap\addressCompleter.h">

@@ -90,7 +90,7 @@ QString PDFGenerator::fillHTMLTemplate(const Client& client, const ResultatsDevi
 
 QString PDFGenerator::fillInventoryTemplate(const Client& client, const User& user, QString& htmlTemplate)
 {
-    //QString supplementsRows{ generateInventoryRow() };
+    QString supplementsRows{ generateInventoryRow(client.getInventory()) };
 
     return htmlTemplate
         .replace("%CLIENT_NUMBER%", generateClientNumber())
@@ -101,15 +101,15 @@ QString PDFGenerator::fillInventoryTemplate(const Client& client, const User& us
         .replace("%PHONE_NUMBER%", client.getNumTel())
         .replace("%PERIODE_CHARGEMENT%", QLocale{ QLocale::French, QLocale::France }.toString(client.getAdresseDepart().m_date, "dddd dd MMMM yyyy"))
         .replace("%PERIODE_LIVRAISON%", QLocale{ QLocale::French, QLocale::France }.toString(client.getAdresseArrivee().m_date, "dddd dd MMMM yyyy"))
-        .replace("%VOLUME_TOTAL%", QString::number(client.getVolume(), 'f', 0))
+        .replace("%VOLUME_TOTAL%", QString::number(client.getVolume(), 'f', 2))
         .replace("%COMPANY_NAME%", user.getCompanyName())
         .replace("%COMPANY_ADRESS%", user.getCompanyAddress())
         .replace("%COMPANY_NUMBER%", user.getCompanyPhoneNumber())
         .replace("%TVA_NUMBER%", user.getTvaNumber())
         .replace("%SIRET_NUMBER%", user.getSiretNumber())
         .replace("%APE_NUMBER%", user.getApeNumber())
-        .replace("%COMPANY_EMAIL%", user.getCompanyMail());
-        //.replace("%SUPPLEMENTS_ROWS%", supplementsRows);
+        .replace("%COMPANY_EMAIL%", user.getCompanyMail())
+        .replace("%INVENTAIRE_ROWS%", supplementsRows);
 }
 
 
@@ -772,15 +772,14 @@ QString PDFGenerator::getDefaultInventoryTemplate() const
 }
 
 
-QString PDFGenerator::generateInventoryRow(const QString& typeObjet, int quantite,
-    double volumeIndividuel, double volumeTotal,
-    bool demontage, bool remontage, bool dechetterie) const
+QString PDFGenerator::generateInventoryRow(const Inventory* const inventory) const
 {
-    QString demontageChecked = demontage ? "☑" : "☐";
-    QString remontageChecked = remontage ? "☑" : "☐";
-    QString dechettterieChecked = dechetterie ? "☑" : "☐";
+    QString supplementRows{};
+    const auto& objectList{ inventory->getInventory() };
 
-    return QString(R"(
+    for (const auto& object : objectList)
+    {
+        supplementRows += QString(R"(
         <tr>
             <td style="padding: 4px; font-size: 9px; text-align: left; border: 1px solid #000;">%1</td>
             <td style="padding: 4px; font-size: 9px; text-align: center; border: 1px solid #000;">%2</td>
@@ -790,13 +789,16 @@ QString PDFGenerator::generateInventoryRow(const QString& typeObjet, int quantit
             <td style="padding: 4px; font-size: 12px; text-align: center; border: 1px solid #000;">%6</td>
             <td style="padding: 4px; font-size: 12px; text-align: center; border: 1px solid #000;">%7</td>
         </tr>
-    )").arg(typeObjet)
-        .arg(quantite)
-        .arg(QString::number(volumeIndividuel, 'f', 2))
-        .arg(QString::number(volumeTotal, 'f', 2))
-        .arg(demontageChecked)
-        .arg(remontageChecked)
-        .arg(dechettterieChecked);
+        )").arg(object.getName())
+            .arg(QString::number(object.getQuantity())) // object quantity
+            .arg(QString::number(object.getUnitaryVolume(), 'f', 2)) // object unitary volume
+            .arg(QString::number(object.getTotalVolume(), 'f', 2)) // total object's volume based on quantity
+            .arg(QString{ "☐" })
+            .arg(QString{ "☐" })
+            .arg(QString{ "☐" });
+    }
+
+    return supplementRows;
 }
 
 

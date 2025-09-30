@@ -1,8 +1,9 @@
 #include "inventaire.h"
-#include <qdebug.h>
 
 void Inventory::handleInventoryAnalysis(double totalVolume, const QStringList& structuredItems)
 {
+    clearInventory();
+
     m_totalVolume = totalVolume;
 
     for (qsizetype i{}; i < structuredItems.size(); ++i)
@@ -44,54 +45,90 @@ void Inventory::handleInventoryAnalysis(double totalVolume, const QStringList& s
             }
         }
     }
+
+    emit sendNewInventory(*this);
 }
 
 
 void Inventory::addObject(const QString& name, double unitaryVolume, int quantity)
 {
-    for (int i{}; i < quantity; i++)
-        m_objects.emplaceBack(ObjetDemenagement{ name, unitaryVolume });
-}
-
-void Inventory::addObject(const ObjetDemenagement& movingObject, int quantity)
-{
-    for (int i{}; i < quantity; i++)
-        m_objects.emplaceBack(movingObject);
-}
-
-
-void Inventory::deleteObject(const QString& name, int quantity)
-{
-    int deletedCount{};
-
-    const auto isSameObject{ [&](const ObjetDemenagement& object) {
-        if (object.name == name && deletedCount < quantity)
+    for (MovingObject& object : m_objects)
+    {
+        if (object.getName() == name && object.getUnitaryVolume() == unitaryVolume)
         {
-            ++deletedCount;
-            return true;
+            object.add(quantity);
+            return;
         }
-        
-        return false;
-    } };
+    }
 
-    m_objects.erase(std::remove_if(m_objects.begin(), m_objects.end(), isSameObject), m_objects.end());
+    m_objects.emplaceBack(MovingObject{ name, unitaryVolume, quantity });
 }
 
-void Inventory::deleteObject(const ObjetDemenagement& movingObject, int quantity)
+void Inventory::addObject(const MovingObject& movingObject, int quantity)
 {
-    int deletedCount{};
-
-    const auto isSameObject{ [&](const ObjetDemenagement& object) {
-        if (object == movingObject && deletedCount < quantity)
+    for (MovingObject& object : m_objects)
+    {
+        if (object == movingObject)
         {
-            ++deletedCount;
-            return true;
+            object.add(quantity);
+            return;
+        }
+    }
+
+    m_objects.emplaceBack(movingObject);
+}
+
+
+void Inventory::removeObject(const QString& name, int quantity)
+{
+    const auto isSameObject{ [&](const MovingObject& object) {
+        if (object.getName() == name)
+        {
+        return true;
         }
 
         return false;
     } };
 
-    m_objects.erase(std::remove_if(m_objects.begin(), m_objects.end(), isSameObject), m_objects.end());
+    if (quantity <= 0)
+        m_objects.erase(std::remove_if(m_objects.begin(), m_objects.end(), isSameObject), m_objects.end());
+
+    else
+    {
+        auto it{ std::find_if(m_objects.begin(), m_objects.end(), isSameObject) };
+
+        if (it != m_objects.end())
+        {
+            int newQuantity{ it->remove(quantity) };
+            if (newQuantity <= 0)
+                m_objects.erase(it);
+        }
+    }
+}
+
+void Inventory::removeObject(const MovingObject& movingObject, int quantity)
+{
+    const auto isSameObject{ [&](const MovingObject& object) {
+        if (object == movingObject)
+            return true;
+
+        return false;
+    } };
+
+    if (quantity <= 0)
+        m_objects.erase(std::remove_if(m_objects.begin(), m_objects.end(), isSameObject), m_objects.end());
+
+    else
+    {
+        auto it{ std::find_if(m_objects.begin(), m_objects.end(), isSameObject) };
+
+        if (it != m_objects.end())
+        {
+            int newQuantity{ it->remove(quantity) };
+            if (newQuantity <= 0)
+                m_objects.erase(it);
+        }
+    }
 }
 
 

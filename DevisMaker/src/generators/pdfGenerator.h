@@ -72,7 +72,7 @@ private:
     QString get_Default_HTML_Template(const TypeDevis& typeDevis) const;
     QString getDefaultInventoryTemplate() const;
     QString generateClientNumber();
-    QString generateInventoryRow(const QString& typeObjet, int quantite, double volumeIndividuel, double volumeTotal, bool demontage, bool remontage, bool dechetterie) const;
+    QString generateInventoryRow(const Inventory* const inventory /*bool demontage, bool remontage, bool dechetterie*/) const;
     bool createTemplateFile(const TypeDevis& typeDevis);
     bool createInventoryTemplateFile();
     bool createTemplateDir();

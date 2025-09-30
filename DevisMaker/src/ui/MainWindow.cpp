@@ -23,10 +23,11 @@ MainWindow::MainWindow(QWidget* parent)
 
     // Initialiser l'analyseur IA
     m_inventoryAnalyzer = new InventoryAnalyzer(this);
-    connect(m_inventoryAnalyzer, &InventoryAnalyzer::analysisComplete, this, &MainWindow::handleInventoryAnalysis);
+    //connect(m_inventoryAnalyzer, &InventoryAnalyzer::analysisComplete, this, &MainWindow::handleInventoryAnalysis);
     connect(m_inventoryAnalyzer, &InventoryAnalyzer::analysisComplete, m_client.getInventory(), &Inventory::handleInventoryAnalysis);
     connect(m_inventoryAnalyzer, &InventoryAnalyzer::analysisError, this, &MainWindow::handleInventoryAnalysisError);
     connect(m_inventoryAnalyzer, &InventoryAnalyzer::error, this, &MainWindow::onCriticalError);
+    connect(m_client.getInventory(), &Inventory::sendNewInventory, this, &MainWindow::handleInventoryAnalysis);
 
 
     setupValidators();
@@ -306,65 +307,16 @@ void MainWindow::on_generateInventoryPushButton_clicked()
 }
 
 
-// Traitement du résultat d'analyse
-void MainWindow::handleInventoryAnalysis(double totalVolume, const QStringList& structuredItems)
+void MainWindow::handleInventoryAnalysis(const Inventory& inventory)
 {
     // Mettre à jour le champ de volume
-    ui.volumelineEdit->setText(QString::number(totalVolume, 'f', 2));
+    ui.volumelineEdit->setText(QString::number(inventory.getTotalVolume(), 'f', 2));
 
-    // Mettre à jour le tableau des éléments détectés
-    ui.tableWidget->setRowCount(structuredItems.size());
-    ui.tableWidget->setColumnCount(3);
-
-
-    ui.tableWidget->setHorizontalHeaderLabels({
-        "Quantite",
-        "Objet",
-        "Volume - Total: " + QString::number(totalVolume, 'f', 2) + " m\u00B3"
-        });
-
-    for (int i{}; i < structuredItems.size(); ++i)
-    {
-        QString item{ structuredItems[i] };
-        QStringList parts{ item.split(" - ") };
-
-        if (parts.size() == 2)
-        {
-            QString fullName{ parts[0] };     // Ex: "2 matelas 1 place"
-            QString volumeText{ parts[1] };   // Ex: "1.0 m³"
-
-
-            QStringList words{ fullName.split(" ") };
-            QString quantity{ "1" };  // Par défaut
-            QString cleanName{ fullName };
-
-            if (!words.isEmpty())
-            {
-                bool ok{};
-                int qty{ words.first().toInt(&ok) };
-                if (ok && qty > 0)
-                {
-                    quantity = QString::number(qty);
-                    words.removeFirst();
-                    cleanName = words.join(" ");
-                }
-            }
-
-            // Remplir les 3 colonnes (même logique que parts[0] et parts[1])
-            ui.tableWidget->setItem(i, 0, new QTableWidgetItem(quantity));
-            ui.tableWidget->setItem(i, 1, new QTableWidgetItem(cleanName));
-            ui.tableWidget->setItem(i, 2, new QTableWidgetItem(volumeText));
-        }
-    }
-
-    QHeaderView* header = ui.tableWidget->horizontalHeader();
-    header->setSectionResizeMode(0, QHeaderView::ResizeToContents); // Quantitée : contenu
-    header->setSectionResizeMode(1, QHeaderView::ResizeToContents);  // Objet : contenu
-    header->setSectionResizeMode(2, QHeaderView::Stretch);           // Volume : étirement
+    displayInventory(inventory);
 
     // Message de succès
     QString titre{ QString::fromUtf8("Analyse terminée") };
-    QString message{ QString::fromUtf8("Volume total: %1 m3, %2 objet(s) détecté(s)").arg(QString::number(totalVolume, 'f', 2)).arg(structuredItems.size()) };
+    QString message{ QString::fromUtf8("Volume total: %1 m3, %2 objet(s) détecté(s)").arg(QString::number(inventory.getTotalVolume(), 'f', 2)).arg(inventory.getInventory().size())};
     QMessageBox::information(this, titre, message);
 
     ui.AnalyseInventoryPushButton->setText("Analyser inventaire");
@@ -372,6 +324,52 @@ void MainWindow::handleInventoryAnalysis(double totalVolume, const QStringList& 
 
     if (!ui.generateInventoryPushButton->isEnabled())
         ui.generateInventoryPushButton->setEnabled(true);
+}
+
+
+void MainWindow::displayInventory(const Inventory& inventory) const
+{
+    ui.tableWidget->setRowCount(inventory.getInventory().size());
+    constexpr int columnCount{ 4 };
+    ui.tableWidget->setColumnCount(columnCount);
+    ui.tableWidget->verticalHeader()->setVisible(false);
+
+
+    ui.tableWidget->setHorizontalHeaderLabels({
+        QString::fromUtf8("Quantité"),
+        "Objet",
+        "Volume unitaire",
+        "Volume - Total: " + QString::number(inventory.getTotalVolume(), 'f', 2) + " m\u00B3"
+        });
+
+    int i{};
+    for (const auto& e : inventory.getInventory())
+    {
+        QString itemName{ e.getName() };
+        QString itemQuantity{ QString::number(e.getQuantity(), 'f', 0) };
+        QString itemUnitaryVolume{ QString::number(e.getUnitaryVolume(), 'f', 1) + " m\u00B3" };
+        QString itemTotalVolume{ QString::number(e.getTotalVolume(), 'f', 1) + " m\u00B3" };
+
+
+        auto createCenteredItem{ [](const QString& name) {
+            auto item{ new QTableWidgetItem(name) };
+            item->setTextAlignment(Qt::AlignCenter);
+            return item;
+        } };
+
+        ui.tableWidget->setItem(i, 0, createCenteredItem(itemQuantity));
+        ui.tableWidget->setItem(i, 1, createCenteredItem(itemName));
+        ui.tableWidget->setItem(i, 2, createCenteredItem(itemUnitaryVolume));
+        ui.tableWidget->setItem(i, 3, createCenteredItem(itemTotalVolume));
+
+        i++;
+    }
+
+    QHeaderView* header{ ui.tableWidget->horizontalHeader() };
+    header->setSectionResizeMode(0, QHeaderView::ResizeToContents); // Quantitée : contenu
+    header->setSectionResizeMode(1, QHeaderView::ResizeToContents);  // Objet : contenu
+    header->setSectionResizeMode(2, QHeaderView::ResizeToContents); // Volume unitaire
+    header->setSectionResizeMode(3, QHeaderView::Stretch);           // Volume : étirement
 }
 
 

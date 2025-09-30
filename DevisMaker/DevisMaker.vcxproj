@@ -123,6 +123,7 @@
     <ClInclude Include="src\calculator\calculateurDevis.h" />
     <QtMoc Include="src\models\client.h" />
     <QtMoc Include="src\ui\companyInfoDialog.h" />
+    <ClInclude Include="src\inventory\movingObject.h" />
     <ClInclude Include="src\utils\common.h" />
     <ClInclude Include="src\utils\constants.h" />
     <ClInclude Include="src\misc\devis.h" />
