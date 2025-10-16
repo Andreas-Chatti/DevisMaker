@@ -1,2581 +1,1961 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindowClass</class>
- <widget class="QMainWindow" name="MainWindowClass">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>922</width>
-    <height>774</height>
-   </rect>
-  </property>
-  <property name="minimumSize">
-   <size>
-    <width>800</width>
-    <height>600</height>
-   </size>
-  </property>
-  <property name="maximumSize">
-   <size>
-    <width>1920</width>
-    <height>1080</height>
-   </size>
-  </property>
-  <property name="cursor">
-   <cursorShape>ArrowCursor</cursorShape>
-  </property>
-  <property name="windowTitle">
-   <string>MainWindow</string>
-  </property>
-  <widget class="QWidget" name="centralWidget">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="1">
-     <widget class="QTabWidget" name="tabWidget">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <property name="toolTipDuration">
-       <number>1</number>
-      </property>
-      <property name="currentIndex">
-       <number>3</number>
-      </property>
-      <widget class="QWidget" name="InformationsClient">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <attribute name="title">
-        <string>Informations Client</string>
-       </attribute>
-       <layout class="QFormLayout" name="formLayout">
-        <item row="2" column="0" colspan="2">
-         <widget class="QGroupBox" name="chargementGroupBox">
-          <property name="font">
-           <font>
-            <bold>false</bold>
-           </font>
-          </property>
-          <property name="title">
-           <string>Chargement</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignmentFlag::AlignCenter</set>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_2">
-           <item row="2" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout_30">
-             <item>
-              <widget class="QLabel" name="etageDepartLabel">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>étage</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QSpinBox" name="etageDepartSpinBox">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="maximum">
-                <number>20</number>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="ascDepartCheckBox">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Ascenceur</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="mmDepartCheckBox">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Monte-meubles</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="asDepartCheckBox">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Autorisation de stationnement</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_11">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item row="1" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout_9">
-             <item>
-              <widget class="QLabel" name="adresseDepartLabel">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Adresse de Chargement</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="adresseDepartLineEdit">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item row="0" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout">
-             <item>
-              <widget class="QLabel" name="departDateLabel">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Date souhaitée :</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QDateEdit" name="departDateEdit">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="dateTime">
-                <datetime>
-                 <hour>7</hour>
-                 <minute>0</minute>
-                 <second>0</second>
-                 <year>2025</year>
-                 <month>6</month>
-                 <day>1</day>
-                </datetime>
-               </property>
-               <property name="maximumDateTime">
-                <datetime>
-                 <hour>23</hour>
-                 <minute>0</minute>
-                 <second>59</second>
-                 <year>2030</year>
-                 <month>12</month>
-                 <day>30</day>
-                </datetime>
-               </property>
-               <property name="minimumDateTime">
-                <datetime>
-                 <hour>16</hour>
-                 <minute>0</minute>
-                 <second>0</second>
-                 <year>2024</year>
-                 <month>12</month>
-                 <day>31</day>
-                </datetime>
-               </property>
-               <property name="timeSpec">
-                <enum>Qt::TimeSpec::UTC</enum>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_4">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="3" column="0" colspan="2">
-         <widget class="QGroupBox" name="groupBox_2">
-          <property name="title">
-           <string>Livraison</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignmentFlag::AlignCenter</set>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_3">
-           <item row="7" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout_24">
-             <item>
-              <widget class="QLabel" name="etageLivraisonLabel">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>étage</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QSpinBox" name="etageLivraisonSpinBox">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="maximum">
-                <number>20</number>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="ascLivraisonCheckBox">
-               <property name="text">
-                <string>Ascenceur</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="mmLivraisonCheckBox">
-               <property name="text">
-                <string>Monte-meubles</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="asLivraisonCheckBox">
-               <property name="text">
-                <string>Autorisation de stationnement</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_10">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item row="3" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout_4">
-             <item>
-              <widget class="QLabel" name="adresseLivraisonLabel">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Adresse de Livraison</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="adresseLivraisonLineEdit">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item row="0" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout_15">
-             <item>
-              <widget class="QLabel" name="livraisonDateLabel">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Date souhaitée :</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QDateEdit" name="livraisonDateEdit">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="dateTime">
-                <datetime>
-                 <hour>17</hour>
-                 <minute>0</minute>
-                 <second>0</second>
-                 <year>2025</year>
-                 <month>6</month>
-                 <day>1</day>
-                </datetime>
-               </property>
-               <property name="maximumDateTime">
-                <datetime>
-                 <hour>19</hour>
-                 <minute>59</minute>
-                 <second>59</second>
-                 <year>2030</year>
-                 <month>12</month>
-                 <day>31</day>
-                </datetime>
-               </property>
-               <property name="minimumDateTime">
-                <datetime>
-                 <hour>21</hour>
-                 <minute>0</minute>
-                 <second>0</second>
-                 <year>2024</year>
-                 <month>12</month>
-                 <day>31</day>
-                </datetime>
-               </property>
-               <property name="timeSpec">
-                <enum>Qt::TimeSpec::LocalTime</enum>
-               </property>
-               <property name="date">
-                <date>
-                 <year>2025</year>
-                 <month>6</month>
-                 <day>1</day>
-                </date>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_5">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="4" column="0" colspan="2">
-         <widget class="QGroupBox" name="gridGroupBox">
-          <property name="title">
-           <string>Général</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignmentFlag::AlignCenter</set>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_5">
-           <item row="1" column="0">
-            <spacer name="verticalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Orientation::Vertical</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Policy::Fixed</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>10</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="2" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout_20">
-             <item>
-              <widget class="QLabel" name="prestationLabel">
-               <property name="text">
-                <string>Prestation</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QComboBox" name="prestationComboBox">
-               <item>
-                <property name="text">
-                 <string>Économique</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Économique +</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Standard</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Luxe</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item>
-              <widget class="Line" name="line">
-               <property name="frameShadow">
-                <enum>QFrame::Shadow::Plain</enum>
-               </property>
-               <property name="orientation">
-                <enum>Qt::Orientation::Vertical</enum>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_21">
-               <item>
-                <widget class="QLabel" name="natureLabel">
-                 <property name="text">
-                  <string>Nature</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QComboBox" name="natureComboBox">
-                 <property name="editable">
-                  <bool>false</bool>
-                 </property>
-                 <property name="currentText">
-                  <string>Urbain</string>
-                 </property>
-                 <property name="currentIndex">
-                  <number>0</number>
-                 </property>
-                 <item>
-                  <property name="text">
-                   <string>Urbain</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Spécial</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Groupage</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item>
-                <widget class="Line" name="line_3">
-                 <property name="frameShadow">
-                  <enum>QFrame::Shadow::Plain</enum>
-                 </property>
-                 <property name="orientation">
-                  <enum>Qt::Orientation::Vertical</enum>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="suppAdresseCheckBox">
-                 <property name="text">
-                  <string>Supplément adresse</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QSpinBox" name="suppAdresseSpinBox">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer name="horizontalSpacer_12">
-                 <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
-            </layout>
-           </item>
-           <item row="3" column="0">
-            <spacer name="verticalSpacer_3">
-             <property name="orientation">
-              <enum>Qt::Orientation::Vertical</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Policy::Fixed</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>10</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="0" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout_14">
-             <item>
-              <widget class="QLabel" name="distanceLabel">
-               <property name="text">
-                <string>Distance (km)</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="distanceLineEdit">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="Line" name="line_9">
-               <property name="frameShadow">
-                <enum>QFrame::Shadow::Plain</enum>
-               </property>
-               <property name="orientation">
-                <enum>Qt::Orientation::Vertical</enum>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="volumeLabel">
-               <property name="text">
-                <string>Volume (m3)</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="volumelineEdit">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_14">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item row="4" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout_5">
-             <item>
-              <widget class="QLabel" name="typeAssuranceLabel">
-               <property name="text">
-                <string>Type d'assurance</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QComboBox" name="typeAssuranceComboBox">
-               <item>
-                <property name="text">
-                 <string>Contractuelle</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Dommage</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item>
-              <widget class="Line" name="line_10">
-               <property name="frameShadow">
-                <enum>QFrame::Shadow::Plain</enum>
-               </property>
-               <property name="orientation">
-                <enum>Qt::Orientation::Vertical</enum>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="valeurAssuranceLabel">
-               <property name="text">
-                <string>Valeur totale maximale mobilier (€)</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="valeurAssuranceLineEdit">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_13">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QLabel" name="typeSaisonLabel">
-               <property name="font">
-                <font>
-                 <pointsize>12</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>SeasonType</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QGroupBox" name="groupBox_3">
-          <property name="title">
-           <string>Client</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignmentFlag::AlignCenter</set>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_6">
-           <item row="0" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
-             <property name="spacing">
-              <number>6</number>
-             </property>
-             <item>
-              <widget class="QLabel" name="nomLabel">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Nom</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignmentFlag::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="nomLineEdit">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="Line" name="line_4">
-               <property name="frameShadow">
-                <enum>QFrame::Shadow::Plain</enum>
-               </property>
-               <property name="orientation">
-                <enum>Qt::Orientation::Vertical</enum>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="numTelLabel">
-               <property name="text">
-                <string>Tél.</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="numTelLineEdit">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_15">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item row="1" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout_3">
-             <item>
-              <widget class="QLabel" name="prenomLabel">
-               <property name="text">
-                <string>Prénom</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignmentFlag::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="prenomLineEdit">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_16">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="Inventaire">
-       <attribute name="title">
-        <string>Inventaire</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout_4">
-        <item row="1" column="0">
-         <widget class="QTextEdit" name="inventaireTextEdit">
-          <property name="acceptDrops">
-           <bool>true</bool>
-          </property>
-          <property name="toolTip">
-           <string/>
-          </property>
-          <property name="toolTipDuration">
-           <number>-1</number>
-          </property>
-          <property name="statusTip">
-           <string/>
-          </property>
-          <property name="whatsThis">
-           <string/>
-          </property>
-          <property name="accessibleName">
-           <string/>
-          </property>
-          <property name="accessibleDescription">
-           <string/>
-          </property>
-          <property name="accessibleIdentifier">
-           <string/>
-          </property>
-          <property name="styleSheet">
-           <string notr="true"/>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="SaisirInventaire">
-          <property name="font">
-           <font>
-            <pointsize>12</pointsize>
-            <bold>true</bold>
-            <kerning>true</kerning>
-           </font>
-          </property>
-          <property name="text">
-           <string>Saisie d'inventaire</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignmentFlag::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="0">
-         <widget class="QLabel" name="label">
-          <property name="font">
-           <font>
-            <pointsize>12</pointsize>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Éléments détectés</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignmentFlag::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="0">
-         <widget class="QTableWidget" name="tableWidget"/>
-        </item>
-        <item row="3" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_6">
-          <item>
-           <widget class="QPushButton" name="AnalyseInventoryPushButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="sizeIncrement">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="baseSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Analyser inventaire</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="DevisResults">
-       <attribute name="title">
-        <string>Résultats et Devis</string>
-       </attribute>
-       <layout class="QFormLayout" name="formLayout_3">
-        <item row="0" column="0" colspan="2">
-         <widget class="QGroupBox" name="groupBox">
-          <property name="font">
-           <font>
-            <family>Segoe UI Historic</family>
-            <pointsize>12</pointsize>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="title">
-           <string>Détails</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignmentFlag::AlignCenter</set>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
-           <item>
-            <widget class="QTableWidget" name="devisTableWidget"/>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_23">
-             <item>
-              <spacer name="horizontalSpacer">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Policy::Expanding</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>59</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QPushButton" name="generateDevisButton">
-               <property name="font">
-                <font>
-                 <family>Segoe UI Historic</family>
-                 <pointsize>9</pointsize>
-                 <bold>false</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>Générer devis</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_3">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Policy::Expanding</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QComboBox" name="priceCalculationComboBox">
-               <property name="font">
-                <font>
-                 <family>Segoe UI Historic</family>
-                 <pointsize>9</pointsize>
-                 <bold>false</bold>
-                </font>
-               </property>
-               <item>
-                <property name="text">
-                 <string>Prix par m3</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Prix 5 Postes</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_8">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QPushButton" name="generatePdfButton">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="font">
-                <font>
-                 <family>Segoe UI Historic</family>
-                 <pointsize>9</pointsize>
-                 <bold>false</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>Générer PDF</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_2">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="parametersTab">
-       <attribute name="title">
-        <string>Paramètres</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout_7">
-        <item row="2" column="0">
-         <widget class="QGroupBox" name="groupBox_4">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>9</pointsize>
-            <bold>false</bold>
-            <kerning>true</kerning>
-           </font>
-          </property>
-          <property name="title">
-           <string>Prix du mètre cube</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignmentFlag::AlignCenter</set>
-          </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_28">
-           <item>
-            <widget class="QGroupBox" name="groupBox_5">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>9</pointsize>
-               <bold>false</bold>
-               <kerning>true</kerning>
-              </font>
-             </property>
-             <property name="title">
-              <string>Prix Route</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignmentFlag::AlignCenter</set>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout">
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_17">
-                <property name="sizeConstraint">
-                 <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
-                </property>
-                <item>
-                 <widget class="QLabel" name="prix150_400Label">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>150 à 400 kms</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLineEdit" name="prix150_400LineEdit">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="baseSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="htLabel0_2">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>€ H.T.</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_35">
-                  <property name="orientation">
-                   <enum>Qt::Orientation::Horizontal</enum>
-                  </property>
-                  <property name="sizeType">
-                   <enum>QSizePolicy::Policy::Expanding</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>100</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_18">
-                <property name="sizeConstraint">
-                 <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
-                </property>
-                <item>
-                 <widget class="QLabel" name="prix401_600Label">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>401 à 600 kms</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLineEdit" name="prix401_600LineEdit">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="baseSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="htLabel0_3">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>€ H.T.</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_37">
-                  <property name="orientation">
-                   <enum>Qt::Orientation::Horizontal</enum>
-                  </property>
-                  <property name="sizeType">
-                   <enum>QSizePolicy::Policy::Expanding</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>100</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_19">
-                <property name="sizeConstraint">
-                 <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
-                </property>
-                <item>
-                 <widget class="QLabel" name="prix601_760Label">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>601 à 760 kms</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLineEdit" name="prix601_760LineEdit">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="baseSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="htLabel0_4">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>€ H.T.</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_39">
-                  <property name="orientation">
-                   <enum>Qt::Orientation::Horizontal</enum>
-                  </property>
-                  <property name="sizeType">
-                   <enum>QSizePolicy::Policy::Expanding</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>100</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_26">
-                <property name="sizeConstraint">
-                 <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
-                </property>
-                <item>
-                 <widget class="QLabel" name="prix761_900Label">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>761 à 900 kms</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLineEdit" name="prix761_900LineEdit">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="baseSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="htLabel0_5">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>€ H.T.</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_41">
-                  <property name="orientation">
-                   <enum>Qt::Orientation::Horizontal</enum>
-                  </property>
-                  <property name="sizeType">
-                   <enum>QSizePolicy::Policy::Expanding</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>100</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_27">
-                <property name="sizeConstraint">
-                 <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
-                </property>
-                <item>
-                 <widget class="QLabel" name="prix901PlusLabel">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>+900 kms</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_42">
-                  <property name="orientation">
-                   <enum>Qt::Orientation::Horizontal</enum>
-                  </property>
-                  <property name="sizeType">
-                   <enum>QSizePolicy::Policy::Fixed</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>15</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QLineEdit" name="prix901PlusLineEdit">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="baseSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="htLabel0_6">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>€ H.T.</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_43">
-                  <property name="orientation">
-                   <enum>Qt::Orientation::Horizontal</enum>
-                  </property>
-                  <property name="sizeType">
-                   <enum>QSizePolicy::Policy::Expanding</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>100</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QGroupBox" name="groupBox_6">
-             <property name="title">
-              <string>Prix Urbain</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignmentFlag::AlignCenter</set>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_3">
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_29">
-                <property name="sizeConstraint">
-                 <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
-                </property>
-                <item>
-                 <widget class="QLabel" name="prixm3EcoLabel">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>Économique</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_44">
-                  <property name="orientation">
-                   <enum>Qt::Orientation::Horizontal</enum>
-                  </property>
-                  <property name="sizeType">
-                   <enum>QSizePolicy::Policy::Fixed</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>18</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QLineEdit" name="prixm3EcoLineEdit">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="baseSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="htLabel0_7">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>€ H.T.</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_45">
-                  <property name="orientation">
-                   <enum>Qt::Orientation::Horizontal</enum>
-                  </property>
-                  <property name="sizeType">
-                   <enum>QSizePolicy::Policy::Expanding</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>100</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_31">
-                <property name="sizeConstraint">
-                 <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
-                </property>
-                <item>
-                 <widget class="QLabel" name="prixm3EcoPlusLabel">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>Économique plus</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLineEdit" name="prixm3EcoPlusLineEdit">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="baseSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="htLabel0_8">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>€ H.T.</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_47">
-                  <property name="orientation">
-                   <enum>Qt::Orientation::Horizontal</enum>
-                  </property>
-                  <property name="sizeType">
-                   <enum>QSizePolicy::Policy::Expanding</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>100</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_32">
-                <property name="sizeConstraint">
-                 <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
-                </property>
-                <item>
-                 <widget class="QLabel" name="prixm3StandardLabel">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>Standard</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_48">
-                  <property name="orientation">
-                   <enum>Qt::Orientation::Horizontal</enum>
-                  </property>
-                  <property name="sizeType">
-                   <enum>QSizePolicy::Policy::Fixed</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>38</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QLineEdit" name="prixm3StandardLineEdit">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="baseSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="htLabel0_9">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>€ H.T.</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_49">
-                  <property name="orientation">
-                   <enum>Qt::Orientation::Horizontal</enum>
-                  </property>
-                  <property name="sizeType">
-                   <enum>QSizePolicy::Policy::Expanding</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>100</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_34">
-                <property name="sizeConstraint">
-                 <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
-                </property>
-                <item>
-                 <widget class="QLabel" name="prixm3LuxeLabel">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>Luxe</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_50">
-                  <property name="orientation">
-                   <enum>Qt::Orientation::Horizontal</enum>
-                  </property>
-                  <property name="sizeType">
-                   <enum>QSizePolicy::Policy::Fixed</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>60</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QLineEdit" name="prixm3LuxeLineEdit">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="baseSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="htLabel0_10">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>€ H.T.</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_51">
-                  <property name="orientation">
-                   <enum>Qt::Orientation::Horizontal</enum>
-                  </property>
-                  <property name="sizeType">
-                   <enum>QSizePolicy::Policy::Expanding</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>100</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QGroupBox" name="gridGroupBox">
-          <property name="font">
-           <font>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="title">
-           <string>Prix 5 postes</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignmentFlag::AlignCenter</set>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_7">
-             <property name="sizeConstraint">
-              <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
-             </property>
-             <item>
-              <widget class="QLabel" name="prixCamionLabel">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Camion</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_32">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Policy::Fixed</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>115</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="prixCamionLineEdit">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="baseSize">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="htLabel0">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>€ H.T.</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_17">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Policy::Expanding</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>100</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_8">
-             <item>
-              <widget class="QLabel" name="coutKmLabel">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Kilométrage</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_31">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Policy::Fixed</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>95</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="coutKmLineEdit">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="htLabel1">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>€ H.T.</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_18">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_12">
-             <item>
-              <widget class="QLabel" name="prixEmballageLabel">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Emballage</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_30">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Policy::Fixed</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>105</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="prixEmballageLineEdit">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="htLabel2">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>€ H.T.</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_19">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_10">
-             <property name="spacing">
-              <number>6</number>
-             </property>
-             <item>
-              <widget class="QLabel" name="prixLocMatLabel">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Location matériel</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_29">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Policy::Fixed</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>68</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="prixLocMatLineEdit">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="htLabel4">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>€ H.T.</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_20">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Policy::Expanding</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_13">
-             <item>
-              <widget class="QLabel" name="coutFraisRouteLabel_2">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Frais de route</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_27">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Policy::Fixed</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>90</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="coutFraisRouteLineEdit">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="htLabel5">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>€ H.T.</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_21">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_11">
-             <item>
-              <widget class="QLabel" name="moLabel">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Main d'oeuvre</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_26">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Policy::Fixed</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>85</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="moLineEdit">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="htLabel6">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>€ H.T.</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_22">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_25">
-             <item>
-              <widget class="QLabel" name="fraisStatLabel">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Frais stationnement</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_25">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Policy::Fixed</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>55</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="fraisStatLineEdit">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="htLabel7">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>€ H.T.</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_23">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_22">
-             <item>
-              <widget class="QLabel" name="MMeublesLabel">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Monte-Meubles (demi-journée)</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="MMeublesLineEdit">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="htLabel8">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>€ H.T.</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_24">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_33">
-             <item>
-              <widget class="QLabel" name="suppAdresseLabel">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Supplément PAR adresse</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_9">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Policy::Fixed</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>30</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="suppAdresseLineEdit">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="htLabel10">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>€ H.T.</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_28">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_16">
-          <item>
-           <spacer name="horizontalSpacer_6">
-            <property name="orientation">
-             <enum>Qt::Orientation::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QComboBox" name="pricePresetComboBox">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <item>
-             <property name="text">
-              <string>Basse saison</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Haute saison</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_7">
-            <property name="orientation">
-             <enum>Qt::Orientation::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QPushButton" name="saveSettingsPushButton">
-            <property name="text">
-             <string>Sauvegarder paramètres</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_33">
-            <property name="orientation">
-             <enum>Qt::Orientation::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QPushButton" name="companyInfoPushButton">
-            <property name="text">
-             <string>Informations société</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_34">
-            <property name="orientation">
-             <enum>Qt::Orientation::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
-     </widget>
-    </item>
-   </layout>
-  </widget>
- </widget>
- <layoutdefault spacing="6" margin="11"/>
- <resources/>
- <connections/>
+	<class>MainWindowClass</class>
+	<widget class="QMainWindow" name="MainWindowClass">
+		<property name="geometry">
+			<rect>
+				<x>0</x>
+				<y>0</y>
+				<width>922</width>
+				<height>774</height>
+			</rect>
+		</property>
+		<property name="minimumSize">
+			<size>
+				<width>700</width>
+				<height>675</height>
+			</size>
+		</property>
+		<property name="maximumSize">
+			<size>
+				<width>1920</width>
+				<height>1080</height>
+			</size>
+		</property>
+		<property name="cursor">
+			<cursorShape>ArrowCursor</cursorShape>
+		</property>
+		<property name="windowTitle">
+			<string>MainWindow</string>
+		</property>
+		<widget class="QWidget" name="centralWidget">
+			<property name="enabled">
+				<bool>true</bool>
+			</property>
+			<property name="sizePolicy">
+				<sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+					<horstretch>0</horstretch>
+					<verstretch>0</verstretch>
+				</sizepolicy>
+			</property>
+			<layout class="QGridLayout" name="gridLayout">
+				<item row="0" column="1">
+					<widget class="QTabWidget" name="tabWidget">
+						<property name="enabled">
+							<bool>true</bool>
+						</property>
+						<property name="toolTip">
+							<string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+						</property>
+						<property name="toolTipDuration">
+							<number>1</number>
+						</property>
+						<property name="currentIndex">
+							<number>0</number>
+						</property>
+
+						<!-- TAB 1: INFORMATIONS CLIENT -->
+						<widget class="QWidget" name="InformationsClient">
+							<property name="enabled">
+								<bool>true</bool>
+							</property>
+							<attribute name="title">
+								<string>Informations Client</string>
+							</attribute>
+
+							<!-- Layout principal VBox -->
+							<layout class="QVBoxLayout" name="mainLayout">
+								<property name="spacing">
+									<number>15</number>
+								</property>
+								<property name="leftMargin">
+									<number>15</number>
+								</property>
+								<property name="topMargin">
+									<number>15</number>
+								</property>
+								<property name="rightMargin">
+									<number>15</number>
+								</property>
+								<property name="bottomMargin">
+									<number>15</number>
+								</property>
+
+								<!-- GROUPE CLIENT -->
+								<item>
+									<widget class="QGroupBox" name="groupBox_3">
+										<property name="title">
+											<string>Client</string>
+										</property>
+										<property name="alignment">
+											<set>Qt::AlignmentFlag::AlignCenter</set>
+										</property>
+										<layout class="QGridLayout" name="gridLayout_6">
+											<property name="leftMargin">
+												<number>15</number>
+											</property>
+											<property name="topMargin">
+												<number>15</number>
+											</property>
+											<property name="rightMargin">
+												<number>15</number>
+											</property>
+											<property name="bottomMargin">
+												<number>15</number>
+											</property>
+											<property name="spacing">
+												<number>10</number>
+											</property>
+
+											<!-- Ligne 1: Nom et Téléphone -->
+											<item row="0" column="0">
+												<widget class="QLabel" name="nomLabel">
+													<property name="text">
+														<string>Nom</string>
+													</property>
+													<property name="alignment">
+														<set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignVCenter</set>
+													</property>
+												</widget>
+											</item>
+											<item row="0" column="1">
+												<widget class="QLineEdit" name="nomLineEdit">
+													<property name="enabled">
+														<bool>true</bool>
+													</property>
+												</widget>
+											</item>
+											<item row="0" column="3">
+												<widget class="QLabel" name="numTelLabel">
+													<property name="text">
+														<string>Tél.</string>
+													</property>
+													<property name="alignment">
+														<set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignVCenter</set>
+													</property>
+												</widget>
+											</item>
+											<item row="0" column="4">
+												<widget class="QLineEdit" name="numTelLineEdit"/>
+											</item>
+
+											<!-- Ligne 2: Prénom -->
+											<item row="1" column="0">
+												<widget class="QLabel" name="prenomLabel">
+													<property name="text">
+														<string>Prénom</string>
+													</property>
+													<property name="alignment">
+														<set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignVCenter</set>
+													</property>
+												</widget>
+											</item>
+											<item row="1" column="1">
+												<widget class="QLineEdit" name="prenomLineEdit">
+													<property name="enabled">
+														<bool>true</bool>
+													</property>
+												</widget>
+											</item>
+										</layout>
+									</widget>
+								</item>
+
+								<!-- GROUPE CHARGEMENT -->
+								<item>
+									<widget class="QGroupBox" name="chargementGroupBox">
+										<property name="font">
+											<font>
+												<bold>false</bold>
+											</font>
+										</property>
+										<property name="title">
+											<string>Chargement</string>
+										</property>
+										<property name="alignment">
+											<set>Qt::AlignmentFlag::AlignCenter</set>
+										</property>
+										<layout class="QGridLayout" name="gridLayout_2">
+											<property name="leftMargin">
+												<number>15</number>
+											</property>
+											<property name="topMargin">
+												<number>15</number>
+											</property>
+											<property name="rightMargin">
+												<number>15</number>
+											</property>
+											<property name="bottomMargin">
+												<number>15</number>
+											</property>
+											<property name="spacing">
+												<number>10</number>
+											</property>
+
+											<!-- Date de chargement -->
+											<item row="0" column="0">
+												<widget class="QLabel" name="departDateLabel">
+													<property name="text">
+														<string>Date souhaitée :</string>
+													</property>
+												</widget>
+											</item>
+											<item row="0" column="1">
+												<widget class="QDateEdit" name="departDateEdit">
+													<property name="dateTime">
+														<datetime>
+															<hour>7</hour>
+															<minute>0</minute>
+															<second>0</second>
+															<year>2025</year>
+															<month>6</month>
+															<day>1</day>
+														</datetime>
+													</property>
+													<property name="maximumDateTime">
+														<datetime>
+															<hour>23</hour>
+															<minute>0</minute>
+															<second>59</second>
+															<year>2030</year>
+															<month>12</month>
+															<day>30</day>
+														</datetime>
+													</property>
+													<property name="minimumDateTime">
+														<datetime>
+															<hour>16</hour>
+															<minute>0</minute>
+															<second>0</second>
+															<year>2024</year>
+															<month>12</month>
+															<day>31</day>
+														</datetime>
+													</property>
+													<property name="calendarPopup">
+														<bool>true</bool>
+													</property>
+													<property name="displayFormat">
+														<string>dd/MM/yyyy</string>
+													</property>
+												</widget>
+											</item>
+
+											<!-- Adresse de chargement -->
+											<item row="1" column="0">
+												<widget class="QLabel" name="adresseDepartLabel">
+													<property name="text">
+														<string>Adresse de Chargement</string>
+													</property>
+												</widget>
+											</item>
+											<item row="1" column="1" colspan="2">
+												<widget class="QLineEdit" name="adresseDepartLineEdit"/>
+											</item>
+
+											<!-- Étage et options -->
+											<item row="2" column="0">
+												<widget class="QLabel" name="etageDepartLabel">
+													<property name="text">
+														<string>Étage</string>
+													</property>
+												</widget>
+											</item>
+											<item row="2" column="1" colspan="2">
+												<layout class="QHBoxLayout" name="horizontalLayout_30">
+													<property name="spacing">
+														<number>15</number>
+													</property>
+													<item>
+														<widget class="QSpinBox" name="etageDepartSpinBox">
+															<property name="maximum">
+																<number>20</number>
+															</property>
+															<property name="minimumSize">
+																<size>
+																	<width>60</width>
+																	<height>0</height>
+																</size>
+															</property>
+															<property name="maximumSize">
+																<size>
+																	<width>60</width>
+																	<height>16777215</height>
+																</size>
+															</property>
+														</widget>
+													</item>
+													<item>
+														<widget class="QCheckBox" name="ascDepartCheckBox">
+															<property name="text">
+																<string>Ascenseur</string>
+															</property>
+														</widget>
+													</item>
+													<item>
+														<widget class="QCheckBox" name="mmDepartCheckBox">
+															<property name="text">
+																<string>Monte-meubles</string>
+															</property>
+														</widget>
+													</item>
+													<item>
+														<widget class="QCheckBox" name="asDepartCheckBox">
+															<property name="text">
+																<string>Autorisation de stationnement</string>
+															</property>
+														</widget>
+													</item>
+													<item>
+														<spacer name="horizontalSpacer_11">
+															<property name="orientation">
+																<enum>Qt::Orientation::Horizontal</enum>
+															</property>
+															<property name="sizeHint" stdset="0">
+																<size>
+																	<width>40</width>
+																	<height>20</height>
+																</size>
+															</property>
+														</spacer>
+													</item>
+												</layout>
+											</item>
+										</layout>
+									</widget>
+								</item>
+
+								<!-- GROUPE LIVRAISON -->
+								<item>
+									<widget class="QGroupBox" name="groupBox_2">
+										<property name="title">
+											<string>Livraison</string>
+										</property>
+										<property name="alignment">
+											<set>Qt::AlignmentFlag::AlignCenter</set>
+										</property>
+										<layout class="QGridLayout" name="gridLayout_3">
+											<property name="leftMargin">
+												<number>15</number>
+											</property>
+											<property name="topMargin">
+												<number>15</number>
+											</property>
+											<property name="rightMargin">
+												<number>15</number>
+											</property>
+											<property name="bottomMargin">
+												<number>15</number>
+											</property>
+											<property name="spacing">
+												<number>10</number>
+											</property>
+
+											<!-- Date de livraison -->
+											<item row="0" column="0">
+												<widget class="QLabel" name="livraisonDateLabel">
+													<property name="text">
+														<string>Date souhaitée :</string>
+													</property>
+												</widget>
+											</item>
+											<item row="0" column="1">
+												<widget class="QDateEdit" name="livraisonDateEdit">
+													<property name="dateTime">
+														<datetime>
+															<hour>17</hour>
+															<minute>0</minute>
+															<second>0</second>
+															<year>2025</year>
+															<month>6</month>
+															<day>1</day>
+														</datetime>
+													</property>
+													<property name="maximumDateTime">
+														<datetime>
+															<hour>19</hour>
+															<minute>59</minute>
+															<second>59</second>
+															<year>2030</year>
+															<month>12</month>
+															<day>31</day>
+														</datetime>
+													</property>
+													<property name="minimumDateTime">
+														<datetime>
+															<hour>21</hour>
+															<minute>0</minute>
+															<second>0</second>
+															<year>2024</year>
+															<month>12</month>
+															<day>31</day>
+														</datetime>
+													</property>
+													<property name="calendarPopup">
+														<bool>true</bool>
+													</property>
+													<property name="displayFormat">
+														<string>dd/MM/yyyy</string>
+													</property>
+												</widget>
+											</item>
+
+											<!-- Adresse de livraison -->
+											<item row="1" column="0">
+												<widget class="QLabel" name="adresseLivraisonLabel">
+													<property name="text">
+														<string>Adresse de Livraison</string>
+													</property>
+												</widget>
+											</item>
+											<item row="1" column="1" colspan="2">
+												<widget class="QLineEdit" name="adresseLivraisonLineEdit"/>
+											</item>
+
+											<!-- Étage et options -->
+											<item row="2" column="0">
+												<widget class="QLabel" name="etageLivraisonLabel">
+													<property name="text">
+														<string>Étage</string>
+													</property>
+												</widget>
+											</item>
+											<item row="2" column="1" colspan="2">
+												<layout class="QHBoxLayout" name="horizontalLayout_24">
+													<property name="spacing">
+														<number>15</number>
+													</property>
+													<item>
+														<widget class="QSpinBox" name="etageLivraisonSpinBox">
+															<property name="maximum">
+																<number>20</number>
+															</property>
+															<property name="minimumSize">
+																<size>
+																	<width>60</width>
+																	<height>0</height>
+																</size>
+															</property>
+															<property name="maximumSize">
+																<size>
+																	<width>60</width>
+																	<height>16777215</height>
+																</size>
+															</property>
+														</widget>
+													</item>
+													<item>
+														<widget class="QCheckBox" name="ascLivraisonCheckBox">
+															<property name="text">
+																<string>Ascenseur</string>
+															</property>
+														</widget>
+													</item>
+													<item>
+														<widget class="QCheckBox" name="mmLivraisonCheckBox">
+															<property name="text">
+																<string>Monte-meubles</string>
+															</property>
+														</widget>
+													</item>
+													<item>
+														<widget class="QCheckBox" name="asLivraisonCheckBox">
+															<property name="text">
+																<string>Autorisation de stationnement</string>
+															</property>
+														</widget>
+													</item>
+													<item>
+														<spacer name="horizontalSpacer_10">
+															<property name="orientation">
+																<enum>Qt::Orientation::Horizontal</enum>
+															</property>
+															<property name="sizeHint" stdset="0">
+																<size>
+																	<width>40</width>
+																	<height>20</height>
+																</size>
+															</property>
+														</spacer>
+													</item>
+												</layout>
+											</item>
+										</layout>
+									</widget>
+								</item>
+
+								<!-- GROUPE GÉNÉRAL -->
+								<item>
+									<widget class="QGroupBox" name="gridGroupBox">
+										<property name="title">
+											<string>Général</string>
+										</property>
+										<property name="alignment">
+											<set>Qt::AlignmentFlag::AlignCenter</set>
+										</property>
+										<layout class="QGridLayout" name="gridLayout_5">
+											<property name="leftMargin">
+												<number>15</number>
+											</property>
+											<property name="topMargin">
+												<number>15</number>
+											</property>
+											<property name="rightMargin">
+												<number>15</number>
+											</property>
+											<property name="bottomMargin">
+												<number>15</number>
+											</property>
+											<property name="spacing">
+												<number>10</number>
+											</property>
+
+											<!-- Ligne 1: Distance et Volume -->
+											<item row="0" column="0">
+												<widget class="QLabel" name="distanceLabel">
+													<property name="text">
+														<string>Distance (km)</string>
+													</property>
+													<property name="alignment">
+														<set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignVCenter</set>
+													</property>
+												</widget>
+											</item>
+											<item row="0" column="1">
+												<widget class="QLineEdit" name="distanceLineEdit">
+													<property name="minimumSize">
+														<size>
+															<width>100</width>
+															<height>0</height>
+														</size>
+													</property>
+													<property name="maximumSize">
+														<size>
+															<width>100</width>
+															<height>16777215</height>
+														</size>
+													</property>
+												</widget>
+											</item>
+											<item row="0" column="2">
+												<widget class="Line" name="line_9">
+													<property name="frameShadow">
+														<enum>QFrame::Shadow::Plain</enum>
+													</property>
+													<property name="orientation">
+														<enum>Qt::Orientation::Vertical</enum>
+													</property>
+												</widget>
+											</item>
+											<item row="0" column="3">
+												<widget class="QLabel" name="volumeLabel">
+													<property name="text">
+														<string>Volume (m³)</string>
+													</property>
+													<property name="alignment">
+														<set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignVCenter</set>
+													</property>
+												</widget>
+											</item>
+											<item row="0" column="4">
+												<widget class="QLineEdit" name="volumelineEdit">
+													<property name="minimumSize">
+														<size>
+															<width>100</width>
+															<height>0</height>
+														</size>
+													</property>
+													<property name="maximumSize">
+														<size>
+															<width>100</width>
+															<height>16777215</height>
+														</size>
+													</property>
+												</widget>
+											</item>
+											<item row="0" column="5" rowspan="3">
+												<spacer name="horizontalSpacer_14">
+													<property name="orientation">
+														<enum>Qt::Orientation::Horizontal</enum>
+													</property>
+													<property name="sizeHint" stdset="0">
+														<size>
+															<width>40</width>
+															<height>20</height>
+														</size>
+													</property>
+												</spacer>
+											</item>
+
+											<!-- Spacer vertical 1 -->
+											<item row="1" column="0" colspan="6">
+												<spacer name="verticalSpacer_2">
+													<property name="orientation">
+														<enum>Qt::Orientation::Vertical</enum>
+													</property>
+													<property name="sizeType">
+														<enum>QSizePolicy::Policy::Fixed</enum>
+													</property>
+													<property name="sizeHint" stdset="0">
+														<size>
+															<width>20</width>
+															<height>10</height>
+														</size>
+													</property>
+												</spacer>
+											</item>
+
+											<!-- Ligne 2: Prestation et Nature -->
+											<item row="2" column="0">
+												<widget class="QLabel" name="prestationLabel">
+													<property name="text">
+														<string>Prestation</string>
+													</property>
+													<property name="alignment">
+														<set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignVCenter</set>
+													</property>
+												</widget>
+											</item>
+											<item row="2" column="1">
+												<widget class="QComboBox" name="prestationComboBox">
+													<property name="minimumSize">
+														<size>
+															<width>120</width>
+															<height>0</height>
+														</size>
+													</property>
+													<property name="maximumSize">
+														<size>
+															<width>120</width>
+															<height>16777215</height>
+														</size>
+													</property>
+													<item>
+														<property name="text">
+															<string>Économique</string>
+														</property>
+													</item>
+													<item>
+														<property name="text">
+															<string>Économique +</string>
+														</property>
+													</item>
+													<item>
+														<property name="text">
+															<string>Standard</string>
+														</property>
+													</item>
+													<item>
+														<property name="text">
+															<string>Luxe</string>
+														</property>
+													</item>
+												</widget>
+											</item>
+											<item row="2" column="2">
+												<widget class="Line" name="line">
+													<property name="frameShadow">
+														<enum>QFrame::Shadow::Plain</enum>
+													</property>
+													<property name="orientation">
+														<enum>Qt::Orientation::Vertical</enum>
+													</property>
+												</widget>
+											</item>
+											<item row="2" column="3">
+												<widget class="QLabel" name="natureLabel">
+													<property name="text">
+														<string>Nature</string>
+													</property>
+													<property name="alignment">
+														<set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignVCenter</set>
+													</property>
+												</widget>
+											</item>
+											<item row="2" column="4">
+												<widget class="QComboBox" name="natureComboBox">
+													<property name="editable">
+														<bool>false</bool>
+													</property>
+													<property name="currentIndex">
+														<number>0</number>
+													</property>
+													<property name="minimumSize">
+														<size>
+															<width>120</width>
+															<height>0</height>
+														</size>
+													</property>
+													<property name="maximumSize">
+														<size>
+															<width>120</width>
+															<height>16777215</height>
+														</size>
+													</property>
+													<item>
+														<property name="text">
+															<string>Urbain</string>
+														</property>
+													</item>
+													<item>
+														<property name="text">
+															<string>Spécial</string>
+														</property>
+													</item>
+													<item>
+														<property name="text">
+															<string>Groupage</string>
+														</property>
+													</item>
+												</widget>
+											</item>
+
+											<!-- Spacer vertical 2 -->
+											<item row="3" column="0" colspan="6">
+												<spacer name="verticalSpacer_3">
+													<property name="orientation">
+														<enum>Qt::Orientation::Vertical</enum>
+													</property>
+													<property name="sizeType">
+														<enum>QSizePolicy::Policy::Fixed</enum>
+													</property>
+													<property name="sizeHint" stdset="0">
+														<size>
+															<width>20</width>
+															<height>10</height>
+														</size>
+													</property>
+												</spacer>
+											</item>
+
+											<!-- Ligne 3: Type d'assurance et Valeur -->
+											<item row="4" column="0">
+												<widget class="QLabel" name="typeAssuranceLabel">
+													<property name="text">
+														<string>Type d'assurance</string>
+													</property>
+													<property name="alignment">
+														<set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignVCenter</set>
+													</property>
+												</widget>
+											</item>
+											<item row="4" column="1">
+												<widget class="QComboBox" name="typeAssuranceComboBox">
+													<property name="minimumSize">
+														<size>
+															<width>120</width>
+															<height>0</height>
+														</size>
+													</property>
+													<property name="maximumSize">
+														<size>
+															<width>120</width>
+															<height>16777215</height>
+														</size>
+													</property>
+													<item>
+														<property name="text">
+															<string>Contractuelle</string>
+														</property>
+													</item>
+													<item>
+														<property name="text">
+															<string>Dommage</string>
+														</property>
+													</item>
+												</widget>
+											</item>
+											<item row="4" column="2">
+												<widget class="Line" name="line_10">
+													<property name="frameShadow">
+														<enum>QFrame::Shadow::Plain</enum>
+													</property>
+													<property name="orientation">
+														<enum>Qt::Orientation::Vertical</enum>
+													</property>
+												</widget>
+											</item>
+											<item row="4" column="3">
+												<widget class="QLabel" name="valeurAssuranceLabel">
+													<property name="text">
+														<string>Valeur totale maximale mobilier (€)</string>
+													</property>
+													<property name="alignment">
+														<set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignVCenter</set>
+													</property>
+												</widget>
+											</item>
+											<item row="4" column="4">
+												<widget class="QLineEdit" name="valeurAssuranceLineEdit">
+													<property name="minimumSize">
+														<size>
+															<width>100</width>
+															<height>0</height>
+														</size>
+													</property>
+													<property name="maximumSize">
+														<size>
+															<width>100</width>
+															<height>16777215</height>
+														</size>
+													</property>
+												</widget>
+											</item>
+											<item row="4" column="6">
+												<widget class="QLabel" name="typeSaisonLabel">
+													<property name="font">
+														<font>
+															<pointsize>12</pointsize>
+															<bold>true</bold>
+														</font>
+													</property>
+													<property name="styleSheet">
+														<string notr="true">color: blue;</string>
+													</property>
+													<property name="text">
+														<string>BASSE SAISON</string>
+													</property>
+													<property name="alignment">
+														<set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignVCenter</set>
+													</property>
+												</widget>
+											</item>
+
+											<!-- Ligne 4: Supplément adresse -->
+											<item row="5" column="0" colspan="7">
+												<layout class="QHBoxLayout" name="horizontalLayout_21">
+													<property name="spacing">
+														<number>10</number>
+													</property>
+													<item>
+														<widget class="QCheckBox" name="suppAdresseCheckBox">
+															<property name="text">
+																<string>Supplément adresse</string>
+															</property>
+														</widget>
+													</item>
+													<item>
+														<widget class="QSpinBox" name="suppAdresseSpinBox">
+															<property name="enabled">
+																<bool>false</bool>
+															</property>
+															<property name="minimumSize">
+																<size>
+																	<width>50</width>
+																	<height>0</height>
+																</size>
+															</property>
+															<property name="maximumSize">
+																<size>
+																	<width>50</width>
+																	<height>16777215</height>
+																</size>
+															</property>
+															<property name="maximum">
+																<number>10</number>
+															</property>
+														</widget>
+													</item>
+													<item>
+														<spacer name="horizontalSpacer_12">
+															<property name="orientation">
+																<enum>Qt::Orientation::Horizontal</enum>
+															</property>
+															<property name="sizeHint" stdset="0">
+																<size>
+																	<width>40</width>
+																	<height>20</height>
+																</size>
+															</property>
+														</spacer>
+													</item>
+												</layout>
+											</item>
+										</layout>
+									</widget>
+								</item>
+
+								<!-- Spacer vertical pour pousser tout vers le haut -->
+								<item>
+									<spacer name="verticalSpacer">
+										<property name="orientation">
+											<enum>Qt::Orientation::Vertical</enum>
+										</property>
+										<property name="sizeHint" stdset="0">
+											<size>
+												<width>20</width>
+												<height>40</height>
+											</size>
+										</property>
+									</spacer>
+								</item>
+							</layout>
+						</widget>
+
+						<!-- TAB 2: INVENTAIRE -->
+						<widget class="QWidget" name="Inventaire">
+							<attribute name="title">
+								<string>Inventaire</string>
+							</attribute>
+							<layout class="QGridLayout" name="gridLayout_4">
+								<item row="0" column="0">
+									<widget class="QLabel" name="SaisirInventaire">
+										<property name="font">
+											<font>
+												<pointsize>12</pointsize>
+												<bold>true</bold>
+												<kerning>true</kerning>
+											</font>
+										</property>
+										<property name="text">
+											<string>Saisie d'inventaire</string>
+										</property>
+										<property name="alignment">
+											<set>Qt::AlignmentFlag::AlignCenter</set>
+										</property>
+									</widget>
+								</item>
+								<item row="1" column="0">
+									<widget class="QTextEdit" name="inventaireTextEdit">
+										<property name="acceptDrops">
+											<bool>true</bool>
+										</property>
+										<property name="toolTipDuration">
+											<number>-1</number>
+										</property>
+										<property name="styleSheet">
+											<string notr="true"/>
+										</property>
+									</widget>
+								</item>
+								<item row="3" column="0">
+									<layout class="QHBoxLayout" name="horizontalLayout_6">
+										<item>
+											<widget class="QPushButton" name="AnalyseInventoryPushButton">
+												<property name="sizeIncrement">
+													<size>
+														<width>0</width>
+														<height>0</height>
+													</size>
+												</property>
+												<property name="baseSize">
+													<size>
+														<width>0</width>
+														<height>0</height>
+													</size>
+												</property>
+												<property name="text">
+													<string>Analyser inventaire</string>
+												</property>
+											</widget>
+										</item>
+										<item>
+											<widget class="QPushButton" name="generateInventoryPushButton">
+												<property name="enabled">
+													<bool>false</bool>
+												</property>
+												<property name="sizeIncrement">
+													<size>
+														<width>0</width>
+														<height>0</height>
+													</size>
+												</property>
+												<property name="baseSize">
+													<size>
+														<width>0</width>
+														<height>0</height>
+													</size>
+												</property>
+												<property name="text">
+													<string>Générer PDF</string>
+												</property>
+											</widget>
+										</item>
+									</layout>
+								</item>
+								<item row="5" column="0">
+									<widget class="QLabel" name="label">
+										<property name="font">
+											<font>
+												<pointsize>12</pointsize>
+												<bold>true</bold>
+											</font>
+										</property>
+										<property name="text">
+											<string>Éléments détectés</string>
+										</property>
+										<property name="alignment">
+											<set>Qt::AlignmentFlag::AlignCenter</set>
+										</property>
+									</widget>
+								</item>
+								<item row="6" column="0">
+									<widget class="QTableWidget" name="tableWidget"/>
+								</item>
+							</layout>
+						</widget>
+
+						<!-- TAB 3: DEVIS RESULTS -->
+						<widget class="QWidget" name="DevisResults">
+							<attribute name="title">
+								<string>Résultats et Devis</string>
+							</attribute>
+							<layout class="QFormLayout" name="formLayout_3">
+								<item row="0" column="0" colspan="2">
+									<widget class="QGroupBox" name="groupBox">
+										<property name="font">
+											<font>
+												<family>Segoe UI Historic</family>
+												<pointsize>12</pointsize>
+												<bold>true</bold>
+											</font>
+										</property>
+										<property name="title">
+											<string>Détails</string>
+										</property>
+										<property name="alignment">
+											<set>Qt::AlignmentFlag::AlignCenter</set>
+										</property>
+										<layout class="QVBoxLayout" name="verticalLayout_2">
+											<item>
+												<widget class="QTableWidget" name="devisTableWidget"/>
+											</item>
+											<item>
+												<layout class="QHBoxLayout" name="horizontalLayout_23">
+													<item>
+														<spacer name="horizontalSpacer">
+															<property name="orientation">
+																<enum>Qt::Orientation::Horizontal</enum>
+															</property>
+															<property name="sizeType">
+																<enum>QSizePolicy::Policy::Expanding</enum>
+															</property>
+															<property name="sizeHint" stdset="0">
+																<size>
+																	<width>59</width>
+																	<height>20</height>
+																</size>
+															</property>
+														</spacer>
+													</item>
+													<item>
+														<widget class="QPushButton" name="generateDevisButton">
+															<property name="font">
+																<font>
+																	<family>Segoe UI Historic</family>
+																	<pointsize>9</pointsize>
+																	<bold>false</bold>
+																</font>
+															</property>
+															<property name="text">
+																<string>Générer devis</string>
+															</property>
+														</widget>
+													</item>
+													<item>
+														<spacer name="horizontalSpacer_3">
+															<property name="orientation">
+																<enum>Qt::Orientation::Horizontal</enum>
+															</property>
+															<property name="sizeType">
+																<enum>QSizePolicy::Policy::Expanding</enum>
+															</property>
+															<property name="sizeHint" stdset="0">
+																<size>
+																	<width>40</width>
+																	<height>20</height>
+																</size>
+															</property>
+														</spacer>
+													</item>
+													<item>
+														<widget class="QComboBox" name="priceCalculationComboBox">
+															<property name="font">
+																<font>
+																	<family>Segoe UI Historic</family>
+																	<pointsize>9</pointsize>
+																	<bold>false</bold>
+																</font>
+															</property>
+															<item>
+																<property name="text">
+																	<string>Prix par m3</string>
+																</property>
+															</item>
+															<item>
+																<property name="text">
+																	<string>Prix 5 Postes</string>
+																</property>
+															</item>
+														</widget>
+													</item>
+													<item>
+														<spacer name="horizontalSpacer_8">
+															<property name="orientation">
+																<enum>Qt::Orientation::Horizontal</enum>
+															</property>
+															<property name="sizeHint" stdset="0">
+																<size>
+																	<width>40</width>
+																	<height>20</height>
+																</size>
+															</property>
+														</spacer>
+													</item>
+													<item>
+														<widget class="QPushButton" name="generatePdfButton">
+															<property name="enabled">
+																<bool>false</bool>
+															</property>
+															<property name="font">
+																<font>
+																	<family>Segoe UI Historic</family>
+																	<pointsize>9</pointsize>
+																	<bold>false</bold>
+																</font>
+															</property>
+															<property name="text">
+																<string>Générer PDF</string>
+															</property>
+														</widget>
+													</item>
+													<item>
+														<spacer name="horizontalSpacer_2">
+															<property name="orientation">
+																<enum>Qt::Orientation::Horizontal</enum>
+															</property>
+															<property name="sizeHint" stdset="0">
+																<size>
+																	<width>40</width>
+																	<height>20</height>
+																</size>
+															</property>
+														</spacer>
+													</item>
+												</layout>
+											</item>
+										</layout>
+									</widget>
+								</item>
+							</layout>
+						</widget>
+
+						<!-- TAB 4: PARAMÈTRES -->
+						<widget class="QWidget" name="parametersTab">
+							<attribute name="title">
+								<string>Paramètres</string>
+							</attribute>
+							<layout class="QGridLayout" name="gridLayout_7">
+
+								<!-- Ligne 0: Boutons en haut -->
+								<item row="0" column="0">
+									<layout class="QHBoxLayout" name="horizontalLayout_16">
+										<item>
+											<spacer name="horizontalSpacer_6">
+												<property name="orientation">
+													<enum>Qt::Orientation::Horizontal</enum>
+												</property>
+												<property name="sizeHint" stdset="0">
+													<size>
+														<width>40</width>
+														<height>20</height>
+													</size>
+												</property>
+											</spacer>
+										</item>
+										<item>
+											<widget class="QComboBox" name="pricePresetComboBox">
+												<property name="sizePolicy">
+													<sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+														<horstretch>0</horstretch>
+														<verstretch>0</verstretch>
+													</sizepolicy>
+												</property>
+												<item>
+													<property name="text">
+														<string>Basse saison</string>
+													</property>
+												</item>
+												<item>
+													<property name="text">
+														<string>Haute saison</string>
+													</property>
+												</item>
+											</widget>
+										</item>
+										<item>
+											<spacer name="horizontalSpacer_7">
+												<property name="orientation">
+													<enum>Qt::Orientation::Horizontal</enum>
+												</property>
+												<property name="sizeHint" stdset="0">
+													<size>
+														<width>40</width>
+														<height>20</height>
+													</size>
+												</property>
+											</spacer>
+										</item>
+										<item>
+											<widget class="QPushButton" name="saveSettingsPushButton">
+												<property name="text">
+													<string>Sauvegarder paramètres</string>
+												</property>
+											</widget>
+										</item>
+										<item>
+											<spacer name="horizontalSpacer_33">
+												<property name="orientation">
+													<enum>Qt::Orientation::Horizontal</enum>
+												</property>
+												<property name="sizeHint" stdset="0">
+													<size>
+														<width>40</width>
+														<height>20</height>
+													</size>
+												</property>
+											</spacer>
+										</item>
+										<item>
+											<widget class="QPushButton" name="companyInfoPushButton">
+												<property name="text">
+													<string>Informations société</string>
+												</property>
+											</widget>
+										</item>
+										<item>
+											<spacer name="horizontalSpacer_34">
+												<property name="orientation">
+													<enum>Qt::Orientation::Horizontal</enum>
+												</property>
+												<property name="sizeHint" stdset="0">
+													<size>
+														<width>40</width>
+														<height>20</height>
+													</size>
+												</property>
+											</spacer>
+										</item>
+									</layout>
+								</item>
+
+								<!-- Ligne 1: GROUPE PRIX 5 POSTES -->
+								<item row="1" column="0">
+									<widget class="QGroupBox" name="gridGroupBox1">
+										<property name="font">
+											<font>
+												<pointsize>9</pointsize>
+											</font>
+										</property>
+										<property name="title">
+											<string>Prix 5 postes</string>
+										</property>
+										<property name="alignment">
+											<set>Qt::AlignmentFlag::AlignCenter</set>
+										</property>
+										<layout class="QGridLayout" name="gridLayout_params">
+											<property name="leftMargin">
+												<number>15</number>
+											</property>
+											<property name="topMargin">
+												<number>15</number>
+											</property>
+											<property name="rightMargin">
+												<number>15</number>
+											</property>
+											<property name="bottomMargin">
+												<number>15</number>
+											</property>
+											<property name="spacing">
+												<number>10</number>
+											</property>
+
+											<!-- COLONNE GAUCHE -->
+
+											<!-- Prix camion -->
+											<item row="0" column="0">
+												<widget class="QLabel" name="prixCamionLabel">
+													<property name="text">
+														<string>Prix camion</string>
+													</property>
+												</widget>
+											</item>
+											<item row="0" column="1">
+												<widget class="QLineEdit" name="prixCamionLineEdit">
+													<property name="minimumSize">
+														<size>
+															<width>80</width>
+															<height>0</height>
+														</size>
+													</property>
+													<property name="maximumSize">
+														<size>
+															<width>80</width>
+															<height>16777215</height>
+														</size>
+													</property>
+												</widget>
+											</item>
+											<item row="0" column="2">
+												<widget class="QLabel" name="htLabel0">
+													<property name="text">
+														<string>€ H.T.</string>
+													</property>
+												</widget>
+											</item>
+
+											<!-- Coût kilométrique -->
+											<item row="1" column="0">
+												<widget class="QLabel" name="coutKmLabel">
+													<property name="text">
+														<string>Coût kilométrique</string>
+													</property>
+												</widget>
+											</item>
+											<item row="1" column="1">
+												<widget class="QLineEdit" name="coutKmLineEdit">
+													<property name="minimumSize">
+														<size>
+															<width>80</width>
+															<height>0</height>
+														</size>
+													</property>
+													<property name="maximumSize">
+														<size>
+															<width>80</width>
+															<height>16777215</height>
+														</size>
+													</property>
+												</widget>
+											</item>
+											<item row="1" column="2">
+												<widget class="QLabel" name="htLabel1">
+													<property name="text">
+														<string>€ H.T.</string>
+													</property>
+												</widget>
+											</item>
+
+											<!-- Prix emballage -->
+											<item row="2" column="0">
+												<widget class="QLabel" name="prixEmballageLabel">
+													<property name="text">
+														<string>Prix emballage</string>
+													</property>
+												</widget>
+											</item>
+											<item row="2" column="1">
+												<widget class="QLineEdit" name="prixEmballageLineEdit">
+													<property name="minimumSize">
+														<size>
+															<width>80</width>
+															<height>0</height>
+														</size>
+													</property>
+													<property name="maximumSize">
+														<size>
+															<width>80</width>
+															<height>16777215</height>
+														</size>
+													</property>
+												</widget>
+											</item>
+											<item row="2" column="2">
+												<widget class="QLabel" name="htLabel2">
+													<property name="text">
+														<string>€ H.T.</string>
+													</property>
+												</widget>
+											</item>
+
+											<!-- Prix location matériel -->
+											<item row="3" column="0">
+												<widget class="QLabel" name="prixLocMatLabel">
+													<property name="text">
+														<string>Prix location matériel</string>
+													</property>
+												</widget>
+											</item>
+											<item row="3" column="1">
+												<widget class="QLineEdit" name="prixLocMatLineEdit">
+													<property name="minimumSize">
+														<size>
+															<width>80</width>
+															<height>0</height>
+														</size>
+													</property>
+													<property name="maximumSize">
+														<size>
+															<width>80</width>
+															<height>16777215</height>
+														</size>
+													</property>
+												</widget>
+											</item>
+											<item row="3" column="2">
+												<widget class="QLabel" name="htLabel4">
+													<property name="text">
+														<string>€ H.T.</string>
+													</property>
+												</widget>
+											</item>
+
+											<!-- Coût frais de route -->
+											<item row="4" column="0">
+												<widget class="QLabel" name="coutFraisRouteLabel_2">
+													<property name="text">
+														<string>Coût frais de route</string>
+													</property>
+												</widget>
+											</item>
+											<item row="4" column="1">
+												<widget class="QLineEdit" name="coutFraisRouteLineEdit">
+													<property name="minimumSize">
+														<size>
+															<width>80</width>
+															<height>0</height>
+														</size>
+													</property>
+													<property name="maximumSize">
+														<size>
+															<width>80</width>
+															<height>16777215</height>
+														</size>
+													</property>
+												</widget>
+											</item>
+											<item row="4" column="2">
+												<widget class="QLabel" name="htLabel5">
+													<property name="text">
+														<string>€ H.T.</string>
+													</property>
+												</widget>
+											</item>
+
+											<!-- COLONNE DROITE -->
+
+											<!-- Main d'œuvre -->
+											<item row="0" column="4">
+												<widget class="QLabel" name="moLabel">
+													<property name="text">
+														<string>Main d'œuvre</string>
+													</property>
+												</widget>
+											</item>
+											<item row="0" column="5">
+												<widget class="QLineEdit" name="moLineEdit">
+													<property name="minimumSize">
+														<size>
+															<width>80</width>
+															<height>0</height>
+														</size>
+													</property>
+													<property name="maximumSize">
+														<size>
+															<width>80</width>
+															<height>16777215</height>
+														</size>
+													</property>
+												</widget>
+											</item>
+											<item row="0" column="6">
+												<widget class="QLabel" name="htLabel6">
+													<property name="text">
+														<string>€ H.T.</string>
+													</property>
+												</widget>
+											</item>
+
+											<!-- Frais stationnement -->
+											<item row="1" column="4">
+												<widget class="QLabel" name="fraisStatLabel">
+													<property name="text">
+														<string>Frais stationnement</string>
+													</property>
+												</widget>
+											</item>
+											<item row="1" column="5">
+												<widget class="QLineEdit" name="fraisStatLineEdit">
+													<property name="minimumSize">
+														<size>
+															<width>80</width>
+															<height>0</height>
+														</size>
+													</property>
+													<property name="maximumSize">
+														<size>
+															<width>80</width>
+															<height>16777215</height>
+														</size>
+													</property>
+												</widget>
+											</item>
+											<item row="1" column="6">
+												<widget class="QLabel" name="htLabel7">
+													<property name="text">
+														<string>€ H.T.</string>
+													</property>
+												</widget>
+											</item>
+
+											<!-- Monte-Meubles -->
+											<item row="2" column="4">
+												<widget class="QLabel" name="MMeublesLabel">
+													<property name="text">
+														<string>Monte-Meubles (demi-journée)</string>
+													</property>
+												</widget>
+											</item>
+											<item row="2" column="5">
+												<widget class="QLineEdit" name="MMeublesLineEdit">
+													<property name="minimumSize">
+														<size>
+															<width>80</width>
+															<height>0</height>
+														</size>
+													</property>
+													<property name="maximumSize">
+														<size>
+															<width>80</width>
+															<height>16777215</height>
+														</size>
+													</property>
+												</widget>
+											</item>
+											<item row="2" column="6">
+												<widget class="QLabel" name="htLabel8">
+													<property name="text">
+														<string>€ H.T.</string>
+													</property>
+												</widget>
+											</item>
+
+											<!-- Supplément PAR adresse -->
+											<item row="3" column="4">
+												<widget class="QLabel" name="suppAdresseLabel">
+													<property name="text">
+														<string>Supplément PAR adresse</string>
+													</property>
+												</widget>
+											</item>
+											<item row="3" column="5">
+												<widget class="QLineEdit" name="suppAdresseLineEdit">
+													<property name="minimumSize">
+														<size>
+															<width>80</width>
+															<height>0</height>
+														</size>
+													</property>
+													<property name="maximumSize">
+														<size>
+															<width>80</width>
+															<height>16777215</height>
+														</size>
+													</property>
+												</widget>
+											</item>
+											<item row="3" column="6">
+												<widget class="QLabel" name="htLabel10">
+													<property name="text">
+														<string>€ H.T.</string>
+													</property>
+												</widget>
+											</item>
+										</layout>
+									</widget>
+								</item>
+
+								<!-- Ligne 2: GROUPE PRIX DU MÈTRE CUBE -->
+								<item row="2" column="0">
+									<widget class="QGroupBox" name="groupBox_4">
+										<property name="sizePolicy">
+											<sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+												<horstretch>0</horstretch>
+												<verstretch>0</verstretch>
+											</sizepolicy>
+										</property>
+										<property name="font">
+											<font>
+												<pointsize>9</pointsize>
+												<bold>false</bold>
+												<kerning>true</kerning>
+											</font>
+										</property>
+										<property name="title">
+											<string>Prix du mètre cube</string>
+										</property>
+										<property name="alignment">
+											<set>Qt::AlignmentFlag::AlignCenter</set>
+										</property>
+										<layout class="QHBoxLayout" name="horizontalLayout_28">
+											<property name="spacing">
+												<number>20</number>
+											</property>
+
+											<!-- SOUS-GROUPE PRIX ROUTE -->
+											<item>
+												<widget class="QGroupBox" name="groupBox_5">
+													<property name="font">
+														<font>
+															<pointsize>9</pointsize>
+															<bold>false</bold>
+															<kerning>true</kerning>
+														</font>
+													</property>
+													<property name="title">
+														<string>Prix Route</string>
+													</property>
+													<property name="alignment">
+														<set>Qt::AlignmentFlag::AlignCenter</set>
+													</property>
+													<layout class="QGridLayout" name="gridLayout_prix_route">
+														<property name="leftMargin">
+															<number>15</number>
+														</property>
+														<property name="topMargin">
+															<number>15</number>
+														</property>
+														<property name="rightMargin">
+															<number>15</number>
+														</property>
+														<property name="bottomMargin">
+															<number>15</number>
+														</property>
+														<property name="spacing">
+															<number>10</number>
+														</property>
+
+														<!-- 150 à 400 kms -->
+														<item row="0" column="0">
+															<widget class="QLabel" name="prix150_400Label">
+																<property name="text">
+																	<string>150 à 400 kms</string>
+																</property>
+															</widget>
+														</item>
+														<item row="0" column="1">
+															<widget class="QLineEdit" name="prix150_400LineEdit">
+																<property name="minimumSize">
+																	<size>
+																		<width>80</width>
+																		<height>0</height>
+																	</size>
+																</property>
+																<property name="maximumSize">
+																	<size>
+																		<width>80</width>
+																		<height>16777215</height>
+																	</size>
+																</property>
+															</widget>
+														</item>
+														<item row="0" column="2">
+															<widget class="QLabel" name="htLabel0_2">
+																<property name="text">
+																	<string>€ H.T.</string>
+																</property>
+															</widget>
+														</item>
+
+														<!-- 401 à 600 kms -->
+														<item row="1" column="0">
+															<widget class="QLabel" name="prix401_600Label">
+																<property name="text">
+																	<string>401 à 600 kms</string>
+																</property>
+															</widget>
+														</item>
+														<item row="1" column="1">
+															<widget class="QLineEdit" name="prix401_600LineEdit">
+																<property name="minimumSize">
+																	<size>
+																		<width>80</width>
+																		<height>0</height>
+																	</size>
+																</property>
+																<property name="maximumSize">
+																	<size>
+																		<width>80</width>
+																		<height>16777215</height>
+																	</size>
+																</property>
+															</widget>
+														</item>
+														<item row="1" column="2">
+															<widget class="QLabel" name="htLabel0_3">
+																<property name="text">
+																	<string>€ H.T.</string>
+																</property>
+															</widget>
+														</item>
+
+														<!-- 601 à 760 kms -->
+														<item row="2" column="0">
+															<widget class="QLabel" name="prix601_760Label">
+																<property name="text">
+																	<string>601 à 760 kms</string>
+																</property>
+															</widget>
+														</item>
+														<item row="2" column="1">
+															<widget class="QLineEdit" name="prix601_760LineEdit">
+																<property name="minimumSize">
+																	<size>
+																		<width>80</width>
+																		<height>0</height>
+																	</size>
+																</property>
+																<property name="maximumSize">
+																	<size>
+																		<width>80</width>
+																		<height>16777215</height>
+																	</size>
+																</property>
+															</widget>
+														</item>
+														<item row="2" column="2">
+															<widget class="QLabel" name="htLabel0_4">
+																<property name="text">
+																	<string>€ H.T.</string>
+																</property>
+															</widget>
+														</item>
+
+														<!-- 761 à 900 kms -->
+														<item row="3" column="0">
+															<widget class="QLabel" name="prix761_900Label">
+																<property name="text">
+																	<string>761 à 900 kms</string>
+																</property>
+															</widget>
+														</item>
+														<item row="3" column="1">
+															<widget class="QLineEdit" name="prix761_900LineEdit">
+																<property name="minimumSize">
+																	<size>
+																		<width>80</width>
+																		<height>0</height>
+																	</size>
+																</property>
+																<property name="maximumSize">
+																	<size>
+																		<width>80</width>
+																		<height>16777215</height>
+																	</size>
+																</property>
+															</widget>
+														</item>
+														<item row="3" column="2">
+															<widget class="QLabel" name="htLabel0_5">
+																<property name="text">
+																	<string>€ H.T.</string>
+																</property>
+															</widget>
+														</item>
+
+														<!-- +900 kms -->
+														<item row="4" column="0">
+															<widget class="QLabel" name="prix901PlusLabel">
+																<property name="text">
+																	<string>+900 kms</string>
+																</property>
+															</widget>
+														</item>
+														<item row="4" column="1">
+															<widget class="QLineEdit" name="prix901PlusLineEdit">
+																<property name="minimumSize">
+																	<size>
+																		<width>80</width>
+																		<height>0</height>
+																	</size>
+																</property>
+																<property name="maximumSize">
+																	<size>
+																		<width>80</width>
+																		<height>16777215</height>
+																	</size>
+																</property>
+															</widget>
+														</item>
+														<item row="4" column="2">
+															<widget class="QLabel" name="htLabel0_6">
+																<property name="text">
+																	<string>€ H.T.</string>
+																</property>
+															</widget>
+														</item>
+													</layout>
+												</widget>
+											</item>
+
+											<!-- SOUS-GROUPE PRIX URBAIN -->
+											<item>
+												<widget class="QGroupBox" name="groupBox_6">
+													<property name="title">
+														<string>Prix Urbain</string>
+													</property>
+													<property name="alignment">
+														<set>Qt::AlignmentFlag::AlignCenter</set>
+													</property>
+													<layout class="QGridLayout" name="gridLayout_prix_urbain">
+														<property name="leftMargin">
+															<number>15</number>
+														</property>
+														<property name="topMargin">
+															<number>15</number>
+														</property>
+														<property name="rightMargin">
+															<number>15</number>
+														</property>
+														<property name="bottomMargin">
+															<number>15</number>
+														</property>
+														<property name="spacing">
+															<number>10</number>
+														</property>
+
+														<!-- Économique -->
+														<item row="0" column="0">
+															<widget class="QLabel" name="prixm3EcoLabel">
+																<property name="text">
+																	<string>Économique</string>
+																</property>
+															</widget>
+														</item>
+														<item row="0" column="1">
+															<widget class="QLineEdit" name="prixm3EcoLineEdit">
+																<property name="minimumSize">
+																	<size>
+																		<width>80</width>
+																		<height>0</height>
+																	</size>
+																</property>
+																<property name="maximumSize">
+																	<size>
+																		<width>80</width>
+																		<height>16777215</height>
+																	</size>
+																</property>
+															</widget>
+														</item>
+														<item row="0" column="2">
+															<widget class="QLabel" name="htLabel0_7">
+																<property name="text">
+																	<string>€ H.T.</string>
+																</property>
+															</widget>
+														</item>
+
+														<!-- Économique plus -->
+														<item row="1" column="0">
+															<widget class="QLabel" name="prixm3EcoPlusLabel">
+																<property name="text">
+																	<string>Économique plus</string>
+																</property>
+															</widget>
+														</item>
+														<item row="1" column="1">
+															<widget class="QLineEdit" name="prixm3EcoPlusLineEdit">
+																<property name="minimumSize">
+																	<size>
+																		<width>80</width>
+																		<height>0</height>
+																	</size>
+																</property>
+																<property name="maximumSize">
+																	<size>
+																		<width>80</width>
+																		<height>16777215</height>
+																	</size>
+																</property>
+															</widget>
+														</item>
+														<item row="1" column="2">
+															<widget class="QLabel" name="htLabel0_8">
+																<property name="text">
+																	<string>€ H.T.</string>
+																</property>
+															</widget>
+														</item>
+
+														<!-- Standard -->
+														<item row="2" column="0">
+															<widget class="QLabel" name="prixm3StandardLabel">
+																<property name="text">
+																	<string>Standard</string>
+																</property>
+															</widget>
+														</item>
+														<item row="2" column="1">
+															<widget class="QLineEdit" name="prixm3StandardLineEdit">
+																<property name="minimumSize">
+																	<size>
+																		<width>80</width>
+																		<height>0</height>
+																	</size>
+																</property>
+																<property name="maximumSize">
+																	<size>
+																		<width>80</width>
+																		<height>16777215</height>
+																	</size>
+																</property>
+															</widget>
+														</item>
+														<item row="2" column="2">
+															<widget class="QLabel" name="htLabel0_9">
+																<property name="text">
+																	<string>€ H.T.</string>
+																</property>
+															</widget>
+														</item>
+
+														<!-- Luxe -->
+														<item row="3" column="0">
+															<widget class="QLabel" name="prixm3LuxeLabel">
+																<property name="text">
+																	<string>Luxe</string>
+																</property>
+															</widget>
+														</item>
+														<item row="3" column="1">
+															<widget class="QLineEdit" name="prixm3LuxeLineEdit">
+																<property name="minimumSize">
+																	<size>
+																		<width>80</width>
+																		<height>0</height>
+																	</size>
+																</property>
+																<property name="maximumSize">
+																	<size>
+																		<width>80</width>
+																		<height>16777215</height>
+																	</size>
+																</property>
+															</widget>
+														</item>
+														<item row="3" column="2">
+															<widget class="QLabel" name="htLabel0_10">
+																<property name="text">
+																	<string>€ H.T.</string>
+																</property>
+															</widget>
+														</item>
+													</layout>
+												</widget>
+											</item>
+										</layout>
+									</widget>
+								</item>
+							</layout>
+						</widget>
+					</widget>
+				</item>
+			</layout>
+		</widget>
+	</widget>
+	<layoutdefault spacing="6" margin="11"/>
+	<resources/>
+	<connections/>
 </ui>
+

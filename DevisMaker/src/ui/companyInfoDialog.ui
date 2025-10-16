@@ -1,70 +1,297 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>480</width>
-    <height>640</height>
-   </rect>
-  </property>
-  <property name="windowTitle">
-   <string>Dialog</string>
-  </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="0">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Orientation::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Save</set>
-     </property>
-     <property name="centerButtons">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLineEdit" name="lineEdit"/>
-   </item>
-  </layout>
- </widget>
- <resources/>
- <connections>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>Dialog</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>Dialog</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>286</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+	<class>CompanyInfoDialog</class>
+	<widget class="QDialog" name="CompanyInfoDialog">
+		<property name="geometry">
+			<rect>
+				<x>0</x>
+				<y>0</y>
+				<width>500</width>
+				<height>600</height>
+			</rect>
+		</property>
+		<property name="minimumSize">
+			<size>
+				<width>450</width>
+				<height>550</height>
+			</size>
+		</property>
+		<property name="windowTitle">
+			<string>Informations de l'entreprise</string>
+		</property>
+		<layout class="QVBoxLayout" name="mainLayout">
+			<property name="spacing">
+				<number>15</number>
+			</property>
+			<property name="leftMargin">
+				<number>20</number>
+			</property>
+			<property name="topMargin">
+				<number>20</number>
+			</property>
+			<property name="rightMargin">
+				<number>20</number>
+			</property>
+			<property name="bottomMargin">
+				<number>20</number>
+			</property>
+			<item>
+				<widget class="QLabel" name="titleLabel">
+					<property name="font">
+						<font>
+							<pointsize>14</pointsize>
+							<bold>true</bold>
+						</font>
+					</property>
+					<property name="text">
+						<string>Configuration de l'entreprise</string>
+					</property>
+					<property name="alignment">
+						<set>Qt::AlignmentFlag::AlignCenter</set>
+					</property>
+				</widget>
+			</item>
+			<item>
+				<widget class="QGroupBox" name="companyGroupBox">
+					<property name="title">
+						<string>Informations de l'entreprise</string>
+					</property>
+					<layout class="QFormLayout" name="companyFormLayout">
+						<property name="labelAlignment">
+							<set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+						</property>
+						<property name="verticalSpacing">
+							<number>10</number>
+						</property>
+						<item row="0" column="0">
+							<widget class="QLabel" name="companyNameLabel">
+								<property name="text">
+									<string>Nom de l'entreprise :</string>
+								</property>
+							</widget>
+						</item>
+						<item row="0" column="1">
+							<widget class="QLineEdit" name="companyNameLineEdit">
+								<property name="placeholderText">
+									<string>Ex: Déménagements Express SARL</string>
+								</property>
+							</widget>
+						</item>
+						<item row="1" column="0">
+							<widget class="QLabel" name="companyAddressLabel">
+								<property name="text">
+									<string>Adresse complète :</string>
+								</property>
+							</widget>
+						</item>
+						<item row="1" column="1">
+							<widget class="QTextEdit" name="companyAddressTextEdit">
+								<property name="maximumSize">
+									<size>
+										<width>16777215</width>
+										<height>80</height>
+									</size>
+								</property>
+								<property name="placeholderText">
+									<string>
+										123 Rue de la République
+										75001 Paris
+										France
+									</string>
+								</property>
+							</widget>
+						</item>
+						<item row="2" column="0">
+							<widget class="QLabel" name="companyPhoneLabel">
+								<property name="text">
+									<string>Téléphone :</string>
+								</property>
+							</widget>
+						</item>
+						<item row="2" column="1">
+							<widget class="QLineEdit" name="companyPhoneLineEdit">
+								<property name="placeholderText">
+									<string>01 23 45 67 89</string>
+								</property>
+							</widget>
+						</item>
+						<item row="3" column="0">
+							<widget class="QLabel" name="companyEmailLabel">
+								<property name="text">
+									<string>Email :</string>
+								</property>
+							</widget>
+						</item>
+						<item row="3" column="1">
+							<widget class="QLineEdit" name="companyEmailLineEdit">
+								<property name="placeholderText">
+									<string>contact@demenagements-express.fr</string>
+								</property>
+							</widget>
+						</item>
+						<item row="4" column="0">
+							<widget class="QLabel" name="companySiretLabel">
+								<property name="text">
+									<string>SIRET :</string>
+								</property>
+							</widget>
+						</item>
+						<item row="4" column="1">
+							<widget class="QLineEdit" name="companySiretLineEdit">
+								<property name="placeholderText">
+									<string>123 456 789 00012</string>
+								</property>
+							</widget>
+						</item>
+						<item row="5" column="0">
+							<widget class="QLabel" name="companyApeLabel">
+								<property name="text">
+									<string>Code APE :</string>
+								</property>
+							</widget>
+						</item>
+						<item row="5" column="1">
+							<widget class="QLineEdit" name="companyApeLineEdit">
+								<property name="placeholderText">
+									<string>4941A</string>
+								</property>
+							</widget>
+						</item>
+						<item row="6" column="0">
+							<widget class="QLabel" name="companyTvaLabel">
+								<property name="text">
+									<string>Numéro TVA :</string>
+								</property>
+							</widget>
+						</item>
+						<item row="6" column="1">
+							<widget class="QLineEdit" name="companyTvaLineEdit">
+								<property name="placeholderText">
+									<string>FR12345678901</string>
+								</property>
+							</widget>
+						</item>
+					</layout>
+				</widget>
+			</item>
+			<item>
+				<widget class="QGroupBox" name="contactGroupBox">
+					<property name="title">
+						<string>Contact principal</string>
+					</property>
+					<layout class="QFormLayout" name="contactFormLayout">
+						<property name="labelAlignment">
+							<set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+						</property>
+						<property name="verticalSpacing">
+							<number>10</number>
+						</property>
+						<item row="0" column="0">
+							<widget class="QLabel" name="managerNameLabel">
+								<property name="text">
+									<string>Nom du responsable :</string>
+								</property>
+							</widget>
+						</item>
+						<item row="0" column="1">
+							<widget class="QLineEdit" name="managerNameLineEdit">
+								<property name="placeholderText">
+									<string>Jean Dupont</string>
+								</property>
+							</widget>
+						</item>
+						<item row="1" column="0">
+							<widget class="QLabel" name="managerPhoneLabel">
+								<property name="text">
+									<string>Téléphone direct :</string>
+								</property>
+							</widget>
+						</item>
+						<item row="1" column="1">
+							<widget class="QLineEdit" name="managerPhoneLineEdit">
+								<property name="placeholderText">
+									<string>06 12 34 56 78</string>
+								</property>
+							</widget>
+						</item>
+						<item row="2" column="0">
+							<widget class="QLabel" name="managerEmailLabel">
+								<property name="text">
+									<string>Email direct :</string>
+								</property>
+							</widget>
+						</item>
+						<item row="2" column="1">
+							<widget class="QLineEdit" name="managerEmailLineEdit">
+								<property name="placeholderText">
+									<string>jean.dupont@demenagements-express.fr</string>
+								</property>
+							</widget>
+						</item>
+					</layout>
+				</widget>
+			</item>
+			<item>
+				<spacer name="verticalSpacer">
+					<property name="orientation">
+						<enum>Qt::Orientation::Vertical</enum>
+					</property>
+					<property name="sizeHint" stdset="0">
+						<size>
+							<width>20</width>
+							<height>40</height>
+						</size>
+					</property>
+				</spacer>
+			</item>
+			<item>
+				<widget class="QDialogButtonBox" name="buttonBox">
+					<property name="orientation">
+						<enum>Qt::Orientation::Horizontal</enum>
+					</property>
+					<property name="standardButtons">
+						<set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Save</set>
+					</property>
+					<property name="centerButtons">
+						<bool>false</bool>
+					</property>
+				</widget>
+			</item>
+		</layout>
+	</widget>
+	<resources/>
+	<connections>
+		<connection>
+			<sender>buttonBox</sender>
+			<signal>accepted()</signal>
+			<receiver>CompanyInfoDialog</receiver>
+			<slot>accept()</slot>
+			<hints>
+				<hint type="sourcelabel">
+					<x>248</x>
+					<y>254</y>
+				</hint>
+				<hint type="destinationlabel">
+					<x>157</x>
+					<y>274</y>
+				</hint>
+			</hints>
+		</connection>
+		<connection>
+			<sender>buttonBox</sender>
+			<signal>rejected()</signal>
+			<receiver>CompanyInfoDialog</receiver>
+			<slot>reject()</slot>
+			<hints>
+				<hint type="sourcelabel">
+					<x>316</x>
+					<y>260</y>
+				</hint>
+				<hint type="destinationlabel">
+					<x>286</x>
+					<y>274</y>
+				</hint>
+			</hints>
+		</connection>
+	</connections>
 </ui>
