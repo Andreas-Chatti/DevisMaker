@@ -38,7 +38,7 @@ void Inventory::handleInventoryAnalysis(double totalVolume, const QStringList& s
             {
                 volumeText.chop(3);
                 bool ok{};
-                double unitVolume{ volumeText.toDouble(&ok) };
+                double unitVolume{ volumeText.toDouble(&ok) / quantity };
 
                 if (ok && unitVolume > 0.0)
                     addObject(cleanName, unitVolume, quantity);
@@ -83,9 +83,7 @@ void Inventory::removeObject(const QString& name, int quantity)
 {
     const auto isSameObject{ [&](const MovingObject& object) {
         if (object.getName() == name)
-        {
         return true;
-        }
 
         return false;
     } };

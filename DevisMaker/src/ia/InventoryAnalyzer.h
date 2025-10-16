@@ -34,6 +34,7 @@ public:
 
     InventoryAnalyzer(QObject* parent = nullptr);
 
+
     void analyzeInventory(const QString& inventoryText);
 
 signals:
@@ -65,11 +66,11 @@ private:
 
     QVector<double> m_fallbackResults;
     int m_fallbackAttempts;
-    const int NETWORK_REQUEST_DELAY{ 1500 };
+    static constexpr int NETWORK_REQUEST_DELAY{ 1500 };
 
-    QNetworkAccessManager* m_networkManager;
-    QJsonObject m_volumeReference;
-    IA* m_ia;
-    Request m_request;
-    QString m_userInventoryInput;
+    QNetworkAccessManager* m_networkManager{ new QNetworkAccessManager{this} };
+    QJsonObject m_volumeReference{};
+    IA* m_ia{ new IA{this} };
+    Request m_request{};
+    QString m_userInventoryInput{""};
 };

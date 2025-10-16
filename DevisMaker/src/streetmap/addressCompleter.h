@@ -25,7 +25,12 @@ public:
         livraison,
     };
 
-    explicit AddressCompleter(QLineEdit* lineEdit, QLineEdit* lineEditLivraison, QObject* parent = nullptr);
+    explicit AddressCompleter(QLineEdit* lineEditChargement, QLineEdit* lineEditLivraison, QObject* parent = nullptr);
+    ~AddressCompleter() = default;
+    AddressCompleter(const AddressCompleter& completer) = delete;
+    AddressCompleter& operator=(const AddressCompleter& completer) = delete;
+    AddressCompleter(AddressCompleter&& completer) = delete;
+    AddressCompleter& operator=(AddressCompleter&& completer) = delete;
 
     const OpenStreetMap* const getStreetMap() { return m_streetMap; }
 
@@ -39,19 +44,19 @@ private slots:
 
 private:
 
-    QLineEdit* m_lineEditChargement;
-    QLineEdit* m_lineEditLivraison;
-    QCompleter* m_completer;
-    QStringListModel* m_model;
-    QNetworkAccessManager* m_networkManager;
-    QTimer* m_debounceTimer;
-    QStringList m_pendingSuggestions;
-    OpenStreetMap* m_streetMap;
-    LineEditType m_currentModifiedLineEdit;
+    QLineEdit* m_lineEditChargement{ nullptr };
+    QLineEdit* m_lineEditLivraison{ nullptr };
+    QStringListModel* m_model{ new QStringListModel{this} };
+    QCompleter* m_completer{ new QCompleter{m_model, this} };
+    QNetworkAccessManager* m_networkManager{ new QNetworkAccessManager{this} };
+    QTimer* m_debounceTimer{ new QTimer{this} };
+    QStringList m_pendingSuggestions{};
+    OpenStreetMap* m_streetMap{ new OpenStreetMap{ this } };
+    LineEditType m_currentModifiedLineEdit{};
 
-    const int MAX_VISIBLE_ITEMS{ 10 };
-    const int TIMER_DELAY{ 400 };
-    const int MIN_TEXT_LENGTH_TRIGGER{ 5 };
+    static constexpr int MAX_VISIBLE_ITEMS{ 10 };
+    static constexpr int TIMER_DELAY{ 400 };
+    static constexpr int MIN_TEXT_LENGTH_TRIGGER{ 5 };
 
 
     void setupCompleter();

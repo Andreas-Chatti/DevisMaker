@@ -7,33 +7,18 @@ MainWindow::MainWindow(QWidget* parent)
 {
     ui.setupUi(this);
 
-    m_addressCompleter = new AddressCompleter(ui.adresseDepartLineEdit, ui.adresseLivraisonLineEdit, this);
+    m_addressCompleter = new AddressCompleter{ ui.adresseDepartLineEdit, ui.adresseLivraisonLineEdit, this };
 
-    m_tarification = new Tarification(this);
-
-    m_calculateurDevis = new CalculateurDevis(m_client, m_tarification);
-
-    m_user = new User(this);
-
-    m_PDFGenerator = new PDFGenerator(this);
     connect(m_PDFGenerator, &PDFGenerator::pdfGenerationStatusReport, this, &MainWindow::onGenerateDevisStatusReport);
-
     connect(m_addressCompleter->getStreetMap(), &OpenStreetMap::distanceCalculated, this, &MainWindow::onDistanceCalculated);
     connect(m_addressCompleter->getStreetMap(), &OpenStreetMap::calculationError, this, &MainWindow::onDistanceError);
-
-    // Initialiser l'analyseur IA
-    m_inventoryAnalyzer = new InventoryAnalyzer(this);
-    //connect(m_inventoryAnalyzer, &InventoryAnalyzer::analysisComplete, this, &MainWindow::handleInventoryAnalysis);
-    connect(m_inventoryAnalyzer, &InventoryAnalyzer::analysisComplete, m_client.getInventory(), &Inventory::handleInventoryAnalysis);
+    connect(m_inventoryAnalyzer, &InventoryAnalyzer::analysisComplete, m_client->getInventory(), &Inventory::handleInventoryAnalysis);
     connect(m_inventoryAnalyzer, &InventoryAnalyzer::analysisError, this, &MainWindow::handleInventoryAnalysisError);
     connect(m_inventoryAnalyzer, &InventoryAnalyzer::error, this, &MainWindow::onCriticalError);
-    connect(m_client.getInventory(), &Inventory::sendNewInventory, this, &MainWindow::handleInventoryAnalysis);
-
+    connect(m_client->getInventory(), &Inventory::sendNewInventory, this, &MainWindow::handleInventoryAnalysis);
 
     setupValidators();
-
     displaySettings();
-
     setupPlaceholderText();
     setupDateEdit();
 }
@@ -57,9 +42,7 @@ void MainWindow::setupValidators()
     };
 
     for (auto* field : doubleFields)
-    {
         field->setValidator(doubleRegexValidator);
-    }
 
 
     const auto intValidator{ new QIntValidator(0, SettingsConstants::MAX_INSURANCE_VALUE, this) };
@@ -70,12 +53,10 @@ void MainWindow::setupValidators()
     };
 
     for (auto* field : intFields)
-    {
         field->setValidator(intValidator);
-    }
 
 
-    QRegularExpressionValidator* phoneValidator = new QRegularExpressionValidator(QRegularExpression("^[0-9]{0,10}$"), this);
+    QRegularExpressionValidator* phoneValidator{ new QRegularExpressionValidator(QRegularExpression("^[0-9]{0,10}$"), this) };
     ui.numTelLineEdit->setValidator(phoneValidator);
     ui.numTelLineEdit->setMaxLength(14);
 }
@@ -295,7 +276,7 @@ void MainWindow::on_generateInventoryPushButton_clicked()
         this,
         "Sauvegarder l'inventaire",
         QString("Inventaire_%1_%2.pdf")
-            .arg(m_client.getNom())
+            .arg(m_client->getNom())
             .arg(QDate::currentDate().toString("yyyyMMdd")),
         "Fichiers PDF (*.pdf)"
     ) };
@@ -303,7 +284,7 @@ void MainWindow::on_generateInventoryPushButton_clicked()
     if (filePath.isEmpty())
         return;
 
-    m_PDFGenerator->generateInventoryPDF(m_client, m_user, filePath);
+    m_PDFGenerator->generateInventoryPDF(*m_client, *m_user, filePath);
 }
 
 
@@ -387,7 +368,7 @@ void MainWindow::handleInventoryAnalysisError(const QString& errorMessage)
 void MainWindow::onDistanceCalculated(double distance) 
 {
     ui.distanceLineEdit->setText(QString::number(distance, 'f', 1));
-    m_client.setDistance(distance);
+    m_client->setDistance(distance);
 }
 
 
@@ -429,7 +410,7 @@ void MainWindow::populateDevisTable(const ResultatsDevis& resultat, const Tarifi
     QVector<QPair<QString, QString>> devisItems
     {
         {"Méthode de calcul",  calculationMethod == Tarification::PriceCalculation::m3 ? "Prix par mètre cube" : "Cinq postes"},
-        {"Volume total", QString::number(m_client.getVolume(), 'f', 2) + " m³"}
+        {"Volume total", QString::number(m_client->getVolume(), 'f', 2) + " m³"}
     };
 
     if (calculationMethod == Tarification::PriceCalculation::postes)
@@ -446,7 +427,7 @@ void MainWindow::populateDevisTable(const ResultatsDevis& resultat, const Tarifi
     else
     {
         devisItems.push_back({ "Prix du m³", QString::number(resultat.prixMetreCube, 'f', 2) + " m³" });
-        devisItems.push_back({ "Prix forfaitaire", QString::number(resultat.prixMetreCube * m_client.getVolume(), 'f', 2) + "€ H.T."});
+        devisItems.push_back({ "Prix forfaitaire", QString::number(resultat.prixMetreCube * m_client->getVolume(), 'f', 2) + "€ H.T."});
     }
 
     devisItems.push_back({ "Assurance mobilier", QString::number(resultat.coutAssurance, 'f', 2) + " € H.T." });
@@ -533,8 +514,8 @@ void MainWindow::on_generatePdfButton_clicked()
         this,
         "Sauvegarder le devis",
         QString("DevisChatti_%1_%2_%3.pdf")
-            .arg(m_client.getNom())
-            .arg(m_PDFGenerator->getPrestationString(m_client.getPrestation()))
+            .arg(m_client->getNom())
+            .arg(m_PDFGenerator->getPrestationString(m_client->getPrestation()))
             .arg(QDate::currentDate().toString("yyyyMMdd")),
         "Fichiers PDF (*.pdf)"
     ) };
@@ -543,7 +524,7 @@ void MainWindow::on_generatePdfButton_clicked()
         return;
 
     PDFGenerator::TypeDevis typeDevis{ ui.priceCalculationComboBox->currentIndex() };
-    m_PDFGenerator->generateDevisPDF(m_client, devisResults, typeDevis, m_user, filePath);
+    m_PDFGenerator->generateDevisPDF(*m_client, devisResults, typeDevis, *m_user, filePath);
 }
 
 
@@ -676,13 +657,13 @@ void MainWindow::on_companyInfoPushButton_clicked()
 
 void MainWindow::on_nomLineEdit_editingFinished()
 {
-    m_client.setNom(ui.nomLineEdit->text());
+    m_client->setNom(ui.nomLineEdit->text());
 }
 
 
 void MainWindow::on_prenomLineEdit_editingFinished()
 {
-    m_client.setPrenom(ui.prenomLineEdit->text());
+    m_client->setPrenom(ui.prenomLineEdit->text());
 }
 
 
@@ -719,7 +700,7 @@ void MainWindow::on_numTelLineEdit_editingFinished()
         ui.numTelLineEdit->setToolTip("Le numéro doit contenir 10 chiffres et commencer par 0");
     }
 
-    m_client.setNumTel(ui.numTelLineEdit->text());
+    m_client->setNumTel(ui.numTelLineEdit->text());
 }
 
 
@@ -730,7 +711,7 @@ void MainWindow::on_departDateEdit_editingFinished()
 
     updateSeasonTypeLabel(dateLivraison);
 
-    Adresse adresseArrivee{ m_client.getAdresseArrivee() };
+    Adresse adresseArrivee{ m_client->getAdresseArrivee() };
     if (dateLivraison.month() < dateChargement.month() ||
         dateLivraison.year() < dateChargement.year() ||
         (dateLivraison.month() == dateChargement.month() && dateLivraison.day() < dateChargement.day()))
@@ -738,51 +719,51 @@ void MainWindow::on_departDateEdit_editingFinished()
         ui.livraisonDateEdit->setDate(dateChargement);
 
         adresseArrivee.m_date = ui.livraisonDateEdit->date();
-        m_client.setAdresseArrivee(adresseArrivee);
+        m_client->setAdresseArrivee(adresseArrivee);
     }
 
-    Adresse adresseDepart{ m_client.getAdresseDepart() };
+    Adresse adresseDepart{ m_client->getAdresseDepart() };
     adresseDepart.m_date = ui.departDateEdit->date();
-    m_client.setAdresseDepart(adresseDepart);
+    m_client->setAdresseDepart(adresseDepart);
 }
 
 
 void MainWindow::on_adresseDepartLineEdit_editingFinished()
 {
-    Adresse adresseDepart{ m_client.getAdresseDepart() };
+    Adresse adresseDepart{ m_client->getAdresseDepart() };
     adresseDepart.m_rue = ui.adresseDepartLineEdit->text();
-    m_client.setAdresseDepart(adresseDepart);
+    m_client->setAdresseDepart(adresseDepart);
 }
 
 
 void MainWindow::on_etageDepartSpinBox_editingFinished()
 {
-    Adresse adresseDepart{ m_client.getAdresseDepart() };
+    Adresse adresseDepart{ m_client->getAdresseDepart() };
     adresseDepart.m_etage = ui.etageDepartSpinBox->value();
-    m_client.setAdresseDepart(adresseDepart);
+    m_client->setAdresseDepart(adresseDepart);
 }
 
 
 void MainWindow::on_ascDepartCheckBox_checked()
 {
-    Adresse adresseDepart{ m_client.getAdresseDepart() };
+    Adresse adresseDepart{ m_client->getAdresseDepart() };
     adresseDepart.m_ascenseur = ui.ascDepartCheckBox->isChecked();
-    m_client.setAdresseDepart(adresseDepart);
+    m_client->setAdresseDepart(adresseDepart);
 }
 
 
 void MainWindow::on_mmDepartCheckBox_toggled(bool checked)
 {
-    Adresse adresseDepart{ m_client.getAdresseDepart() };
+    Adresse adresseDepart{ m_client->getAdresseDepart() };
     adresseDepart.m_monteMeubles = checked;
-    m_client.setAdresseDepart(adresseDepart);
+    m_client->setAdresseDepart(adresseDepart);
 }
 
 void MainWindow::on_asDepartCheckBox_toggled(bool checked)
 {
-    Adresse adresseDepart{ m_client.getAdresseDepart() };
+    Adresse adresseDepart{ m_client->getAdresseDepart() };
     adresseDepart.m_autStationnement = checked;
-    m_client.setAdresseDepart(adresseDepart);
+    m_client->setAdresseDepart(adresseDepart);
 }
 
 // Arrival address infos
@@ -798,65 +779,65 @@ void MainWindow::on_livraisonDateEdit_editingFinished()
         (dateLivraison.month() == dateChargement.month() && dateLivraison.day() < dateChargement.day()))
         ui.departDateEdit->setDate(dateLivraison);
 
-    Adresse adresseArrivee{ m_client.getAdresseArrivee() };
+    Adresse adresseArrivee{ m_client->getAdresseArrivee() };
     adresseArrivee.m_date = ui.livraisonDateEdit->date();
-    m_client.setAdresseArrivee(adresseArrivee);
+    m_client->setAdresseArrivee(adresseArrivee);
 }
 
 void MainWindow::on_adresseLivraisonLineEdit_editingFinished()
 {
-    Adresse adresseArrivee{ m_client.getAdresseArrivee() };
+    Adresse adresseArrivee{ m_client->getAdresseArrivee() };
     adresseArrivee.m_rue = ui.adresseLivraisonLineEdit->text();
-    m_client.setAdresseArrivee(adresseArrivee);
+    m_client->setAdresseArrivee(adresseArrivee);
 }
 
 void MainWindow::on_etageLivraisonSpinBox_editingFinished()
 {
-    Adresse adresseArrivee{ m_client.getAdresseArrivee() };
+    Adresse adresseArrivee{ m_client->getAdresseArrivee() };
     adresseArrivee.m_etage = ui.etageLivraisonSpinBox->value();
-    m_client.setAdresseArrivee(adresseArrivee);
+    m_client->setAdresseArrivee(adresseArrivee);
 }
 
 void MainWindow::on_ascLivraisonCheckBox_toggled(bool checked)
 {
-    Adresse adresseArrivee{ m_client.getAdresseArrivee() };
+    Adresse adresseArrivee{ m_client->getAdresseArrivee() };
     adresseArrivee.m_ascenseur = checked;
-    m_client.setAdresseArrivee(adresseArrivee);
+    m_client->setAdresseArrivee(adresseArrivee);
 }
 
 void MainWindow::on_mmLivraisonCheckBox_toggled(bool checked)
 {
-    Adresse adresseArrivee{ m_client.getAdresseArrivee() };
+    Adresse adresseArrivee{ m_client->getAdresseArrivee() };
     adresseArrivee.m_monteMeubles = checked;
-    m_client.setAdresseArrivee(adresseArrivee);
+    m_client->setAdresseArrivee(adresseArrivee);
 }
 
 void MainWindow::on_asLivraisonCheckBox_toggled(bool checked)
 {
-    Adresse adresseArrivee{ m_client.getAdresseArrivee() };
+    Adresse adresseArrivee{ m_client->getAdresseArrivee() };
     adresseArrivee.m_autStationnement = checked;
-    m_client.setAdresseArrivee(adresseArrivee);
+    m_client->setAdresseArrivee(adresseArrivee);
 }
 
 // General infos
 void MainWindow::on_distanceLineEdit_editingFinished()
 {
-    m_client.setDistance(ui.distanceLineEdit->text().toDouble());
+    m_client->setDistance(ui.distanceLineEdit->text().toDouble());
 }
 
 void MainWindow::on_volumelineEdit_textChanged()
 {
-    m_client.setVolume(ui.volumelineEdit->text().toDouble());
+    m_client->setVolume(ui.volumelineEdit->text().toDouble());
 }
 
 void MainWindow::on_prestationComboBox_currentIndexChanged(int index)
 {
     switch (index) 
     {
-    case 0: m_client.setPrestation(Prestation::eco); break;
-    case 1: m_client.setPrestation(Prestation::ecoPlus); break;
-    case 2: m_client.setPrestation(Prestation::standard); break;
-    case 3: m_client.setPrestation(Prestation::luxe); break;
+    case 0: m_client->setPrestation(Prestation::eco); break;
+    case 1: m_client->setPrestation(Prestation::ecoPlus); break;
+    case 2: m_client->setPrestation(Prestation::standard); break;
+    case 3: m_client->setPrestation(Prestation::luxe); break;
     default: break;
     }
 }
@@ -865,9 +846,9 @@ void MainWindow::on_natureComboBox_currentIndexChanged(int index)
 {
     switch (index) 
     {
-    case 0: m_client.setNature(Nature::urbain); break;
-    case 1: m_client.setNature(Nature::special); break;
-    case 2: m_client.setNature(Nature::groupage); break;
+    case 0: m_client->setNature(Nature::urbain); break;
+    case 1: m_client->setNature(Nature::special); break;
+    case 2: m_client->setNature(Nature::groupage); break;
     default: break;
     }
 }
@@ -876,18 +857,18 @@ void MainWindow::on_typeAssuranceComboBox_currentIndexChanged(int index)
 {
     switch (index) 
     {
-    case 0: m_client.setTypeAssurance(TypeAssurance::contractuelle); break;
-    case 1: m_client.setTypeAssurance(TypeAssurance::dommage); break;
+    case 0: m_client->setTypeAssurance(TypeAssurance::contractuelle); break;
+    case 1: m_client->setTypeAssurance(TypeAssurance::dommage); break;
     default: break;
     }
 }
 
 void MainWindow::on_valeurAssuranceLineEdit_textChanged()
 {   
-    m_client.setValeurAssurance(ui.valeurAssuranceLineEdit->text().toInt());
+    m_client->setValeurAssurance(ui.valeurAssuranceLineEdit->text().toInt());
 }
 
 void MainWindow::on_suppAdresseSpinBox_editingFinished()
 {
-    m_client.setNbAdresseSupp(ui.suppAdresseSpinBox->value());
+    m_client->setNbAdresseSupp(ui.suppAdresseSpinBox->value());
 }

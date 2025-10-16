@@ -1,10 +1,10 @@
 ﻿#include "pdfGenerator.h"
 
 
-bool PDFGenerator::generateDevisPDF(const Client& client, const ResultatsDevis& resultats, const TypeDevis& typeDevis, const User& user, const QString& outputPath)
+bool PDFGenerator::generateDevisPDF(const Client& client, const ResultatsDevis& resultats, TypeDevis typeDevis, const User& user, QString& outputPath)
 {
     // Déterminer le chemin de sortie
-    QString finalPath{ outputPath };
+    QString finalPath{ std::move(outputPath) };
     if (finalPath.isEmpty()) 
         finalPath = getDefaultOutputPath();
 
@@ -802,10 +802,10 @@ QString PDFGenerator::generateInventoryRow(const Inventory* const inventory) con
 }
 
 
-bool PDFGenerator::generateInventoryPDF(const Client& client, const User& user, const QString& outputPath)
+bool PDFGenerator::generateInventoryPDF(const Client& client, const User& user, QString& outputPath)
 {
     // Déterminer le chemin de sortie
-    QString finalPath{ outputPath };
+    QString finalPath{ std::move(outputPath) };
     if (finalPath.isEmpty())
         finalPath = getDefaultOutputPath();
 

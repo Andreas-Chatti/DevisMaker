@@ -130,13 +130,13 @@ void IA::createDefaultConfigFile()
 {
     QJsonObject jsonBody;
  
-    jsonBody["primary_model"] = DEFAULT_PRIMARY_MODEL;
-    jsonBody["fallback_model"] = DEFAULT_FALLBACK_MODEL;
-    jsonBody["url"] = DEFAULT_API_URL;
-    jsonBody["max_tokens"] = DEFAULT_MAX_TOKENS;
-    jsonBody["temperature"] = DEFAULT_TEMPERATURE;
+    jsonBody["primary_model"] = m_primaryModel;
+    jsonBody["fallback_model"] = m_fallbackModel;
+    jsonBody["url"] = m_url.toString();
+    jsonBody["max_tokens"] = m_maxTokens;
+    jsonBody["temperature"] = m_temperature;
     jsonBody["api_key"] = "";
-    jsonBody["fallback_max_attempts"] = DEFAULT_MAX_FALLBACK_ATTEMPTS;
+    jsonBody["fallback_max_attempts"] = m_maxFallbackAttempts;
 
     QJsonDocument jsonDocument{ jsonBody };
 

@@ -15,21 +15,18 @@ class Inventory : public QObject
 public:
 
     Inventory(QObject* parent = nullptr)
-        : m_dictionnary{}
-        , m_objects{}
-        , m_totalVolume{}
+        : QObject{parent}
     {
     }
 
-    //double analyse(const QString& inventoryText);
     double getTotalVolume() const { return m_totalVolume; }
     const QVector<MovingObject> getInventory() const { return m_objects; }
 
 private:
 
-    QMap<QString, MovingObject> m_dictionnary;
-    QVector<MovingObject> m_objects;
-    double m_totalVolume;
+    QMap<QString, MovingObject> m_dictionnary{};
+    QVector<MovingObject> m_objects{};
+    double m_totalVolume{};
 
 
     void addObject(const QString& name, double volume, int quantity = 1);

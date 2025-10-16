@@ -117,7 +117,7 @@ double Tarification::getDefaultPrice_5Postes(PriceKey key, PricePreset preset) c
 }
 
 
-double Tarification::getDefaultPrice_M3(PriceKey key, PricePreset preset, Nature&& nature, Prestation&& prestation) const
+double Tarification::getDefaultPrice_M3(PriceKey key, PricePreset preset, Nature nature, Prestation prestation) const
 {
     bool basseSaison{ preset == PricePreset::BasseSaison };
 
@@ -159,7 +159,7 @@ void Tarification::loadSettings_5Postes(QSettings& settings, PricePreset preset)
     settings.endGroup();
 }
 
-void Tarification::loadSettings_M3(QSettings& settings, PricePreset preset, Nature&& nature)
+void Tarification::loadSettings_M3(QSettings& settings, PricePreset preset, Nature nature)
 {
     QString sectionNameSuffix{ preset == PricePreset::BasseSaison ? CONFIG_SECTION_BASSE_SAISON_SUFFIX : CONFIG_SECTION_HAUTE_SAISON_SUFFIX };
 
@@ -184,7 +184,7 @@ void Tarification::loadSettings_M3(QSettings& settings, PricePreset preset, Natu
 }
 
 
-double Tarification::getPrixM3Route(PriceKey&& key)
+double Tarification::getPrixM3Route(PriceKey key)
 {
     switch (key)
     {
@@ -197,7 +197,7 @@ double Tarification::getPrixM3Route(PriceKey&& key)
 }
 
 
-double Tarification::getPrixM3Urbain(Prestation&& prestation)
+double Tarification::getPrixM3Urbain(Prestation prestation)
 {
     switch (prestation)
     {
@@ -209,7 +209,7 @@ double Tarification::getPrixM3Urbain(Prestation&& prestation)
 }
 
 
-void Tarification::setPrixM3Route(PriceKey&& key, double price)
+void Tarification::setPrixM3Route(PriceKey key, double price)
 {
     switch (key)
     {
@@ -226,7 +226,7 @@ void Tarification::setPrixM3Route(PriceKey&& key, double price)
 }
 
 
-void Tarification::setPrixM3Urbain(Prestation&& prestation, double price)
+void Tarification::setPrixM3Urbain(Prestation prestation, double price)
 {
     switch (prestation)
     {

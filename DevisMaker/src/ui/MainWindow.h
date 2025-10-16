@@ -101,14 +101,14 @@ private slots:
 private:
 
     Ui::MainWindowClass ui;
-    Client m_client;
-    Tarification* m_tarification;
+    Client* m_client{ new Client{this} };
+    Tarification* m_tarification{ new Tarification{this} };
     QNetworkAccessManager* m_networkManager{ nullptr };
-    InventoryAnalyzer* m_inventoryAnalyzer;
-    CalculateurDevis* m_calculateurDevis;
-    PDFGenerator* m_PDFGenerator;
-    User* m_user;
-    AddressCompleter* m_addressCompleter;
+    InventoryAnalyzer* m_inventoryAnalyzer{ new InventoryAnalyzer{this} };
+    CalculateurDevis* m_calculateurDevis{ new CalculateurDevis{m_client, m_tarification} };
+    PDFGenerator* m_PDFGenerator{ new PDFGenerator{this} };
+    User* m_user{ new User{this} };
+    AddressCompleter* m_addressCompleter{ nullptr }; // Initialized in constructor
 
 
     void setupValidators();

@@ -26,13 +26,18 @@ public:
         max_model_types,
     };
 
-    IA(QObject* parent = nullptr)
+    explicit IA(QObject* parent = nullptr)
         : QObject(parent)
     {
         initializePrompt();
-
         loadConfigFile();
     }
+
+    ~IA() = default;
+    IA(const IA& ia) = delete;
+    IA& operator=(const IA& ia) = delete;
+    IA(IA&& ia) = delete;
+    IA& operator=(IA&& ia) = delete;
 
     const QString& getCurrentModelString() { return m_currentModel; }
     const QString& getPrimaryModel() { return m_primaryModel; }
@@ -57,25 +62,17 @@ signals:
 
 private:
 
-    QString m_primaryModel;
-    QString m_fallbackModel;
-    QString m_currentModel;
-    int m_maxFallbackAttempts;
-    int m_maxTokens;
-    double m_temperature;
+    QString m_primaryModel{ "llama-3.3-70b-versatile" };
+    QString m_fallbackModel{ "gemma2-9b-it" };
+    QString m_currentModel{ m_primaryModel };
+    int m_maxFallbackAttempts{ 3 };
+    int m_maxTokens{ 4000 };
+    double m_temperature{ 0.1 };
     QString m_currentPrompt;
-    QUrl m_url;
-    QString m_apiKey;
-
-
-    const QString PROMPT_FILE_PATH{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/prompt_template.txt" };
-    const QString IA_CONFIG_FILE_PATH{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/ia_config.json" };
-    const QString DEFAULT_PRIMARY_MODEL{ "llama-3.3-70b-versatile" };
-    const QString DEFAULT_FALLBACK_MODEL{ "gemma2-9b-it" };
-    const QString DEFAULT_API_URL{ "https://api.groq.com/openai/v1/chat/completions" };
-    const int DEFAULT_MAX_TOKENS{ 4000 };
-    const double DEFAULT_TEMPERATURE{ 0.1 };
-    const int DEFAULT_MAX_FALLBACK_ATTEMPTS{ 3 };
+    QUrl m_url{ "https://api.groq.com/openai/v1/chat/completions" };
+    QString m_apiKey{""};
+    static inline const QString PROMPT_FILE_PATH{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/prompt_template.txt" };
+    static inline const QString IA_CONFIG_FILE_PATH{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/ia_config.json" };
 
 
     void initializePrompt();

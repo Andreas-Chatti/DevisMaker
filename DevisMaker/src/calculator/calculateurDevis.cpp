@@ -1,6 +1,6 @@
 #include "calculateurDevis.h"
 
-const ResultatsDevis& CalculateurDevis::calculateDevis(const PricePreset& preset, Tarification::PriceCalculation calculationMethod)
+ResultatsDevis CalculateurDevis::calculateDevis(PricePreset preset, Tarification::PriceCalculation calculationMethod)
 {
     double coutAutStatTotal{ calculerPrixStationnement() };
     double fraisRouteTotal{ calculerFraisRouteTotal() };
@@ -10,7 +10,7 @@ const ResultatsDevis& CalculateurDevis::calculateDevis(const PricePreset& preset
 
     ResultatsDevis_CinqPostes resultatsCinqPostes{};
     if (calculationMethod == Tarification::PriceCalculation::postes)
-        resultatsCinqPostes = calculateDevis_Postes(preset, calculationMethod);
+        resultatsCinqPostes = calculateDevis_Postes();
 
     double prixMetreCube{ calculerPrixMetreCube(preset) };
     double prixTotalHT{ calculerCoutTotalHT(calculationMethod) };
@@ -22,19 +22,27 @@ const ResultatsDevis& CalculateurDevis::calculateDevis(const PricePreset& preset
 }
 
 
+double CalculateurDevis::calculerFraisRouteTotal() const
+{
+    const Nature& nature{ m_client->getNature() };
+    double fraisRouteTotal{ (m_tarification->getFraisRoute() * (calculerNombreCamion() - 1)) * 2 };
+
+    return nature != Nature::urbain ? fraisRouteTotal : 0;
+}
+
 double CalculateurDevis::calculerCoutAssurance() const
 {
-    const double taux{ m_client.getTypeAssurance() == TypeAssurance::contractuelle ? SettingsConstants::CONTRACTUELLE_INSURANCE_RATE : SettingsConstants::DOMMAGE_INSURANCE_RATE };
+    const double taux{ m_client->getTypeAssurance() == TypeAssurance::contractuelle ? SettingsConstants::CONTRACTUELLE_INSURANCE_RATE : SettingsConstants::DOMMAGE_INSURANCE_RATE };
 
-    return (m_client.getValeurAssurance() * taux) / 100;
+    return (m_client->getValeurAssurance() * taux) / 100;
 }
 
 
 double CalculateurDevis::calculerPrixStationnement() const
 {
     double fraisStationnement{};
-    bool autStatChargement{ m_client.getAdresseDepart().m_autStationnement };
-    bool autStatLivraison{ m_client.getAdresseArrivee().m_autStationnement };
+    bool autStatChargement{ m_client->getAdresseDepart().m_autStationnement };
+    bool autStatLivraison{ m_client->getAdresseArrivee().m_autStationnement };
     double coutFraisStationnement_Unitaire{ m_tarification->getCoutFraisStationnement() };
 
     for (const auto autStat : std::vector<bool>{ autStatChargement, autStatLivraison })
@@ -51,8 +59,8 @@ double CalculateurDevis::calculerSupplementMM() const
 {
     double supplement{};
 
-    const Adresse& aChargement{ m_client.getAdresseDepart() };
-    const Adresse& aLivraison{ m_client.getAdresseArrivee() };
+    const Adresse& aChargement{ m_client->getAdresseDepart() };
+    const Adresse& aLivraison{ m_client->getAdresseArrivee() };
     double prixMM_Unitaire{ m_tarification->getCoutMonteMeubles() };
 
     for (const auto& adresse : std::vector<Adresse>{ aChargement, aLivraison })
@@ -69,7 +77,7 @@ double CalculateurDevis::calculerSupplementMM() const
 double CalculateurDevis::calculerVolumeParPersonne() const
 {
     // Volume par personne selon le type de prestation
-    switch (m_client.getPrestation())
+    switch (m_client->getPrestation())
     {
     case Prestation::luxe: return SettingsConstants::Worker::M3_PER_WORKER_LUXE;  // 6m³ par personne en LUXE
 
@@ -86,10 +94,10 @@ int CalculateurDevis::calculerNombreCamion(bool accesComplexe, bool montageImpor
 {
     int nombreJours{ SettingsConstants::MIN_WORKING_DAY }; // Par défaut un jour minimum
 
-    const Nature& nature{ m_client.getNature() };
-    const Prestation& prestation{ m_client.getPrestation() };
-    double distance{ m_client.getDistance() };
-    double volume{ m_client.getVolume() };
+    const Nature& nature{ m_client->getNature() };
+    const Prestation& prestation{ m_client->getPrestation() };
+    double distance{ m_client->getDistance() };
+    double volume{ m_client->getVolume() };
 
 
     // 2. Calcul selon le type de déménagement (urbain ou route)
@@ -146,10 +154,10 @@ int CalculateurDevis::calculerNombreCamion(bool accesComplexe, bool montageImpor
 
 int CalculateurDevis::calculerNombreMO(int nombreCamions) const
 {
-    double volume{ m_client.getVolume() };
-    const Prestation& prestation{ m_client.getPrestation() };
-    const Nature& nature{ m_client.getNature() };
-    double distance{ m_client.getDistance() };
+    double volume{ m_client->getVolume() };
+    const Prestation& prestation{ m_client->getPrestation() };
+    const Nature& nature{ m_client->getNature() };
+    double distance{ m_client->getDistance() };
 
 
     // 1. Utiliser la méthode existante pour déterminer le volume par personne
@@ -204,46 +212,46 @@ int CalculateurDevis::calculerNombreMO(int nombreCamions) const
 
 double CalculateurDevis::calculerPrixMetreCube(PricePreset preset) const
 {
-    const Prestation& prestation{ m_client.getPrestation() };
-    const Nature& nature{ m_client.getNature() };
-    double distance{ m_client.getDistance() };
+    const Prestation& prestation{ m_client->getPrestation() };
+    const Nature& nature{ m_client->getNature() };
+    double distance{ m_client->getDistance() };
     bool basseSaison{ preset == PricePreset::BasseSaison };
 
     if (nature == Nature::urbain)
     {
         switch (prestation)
         {
-        case Prestation::eco: return basseSaison ? Tarification::M3_DefaultPrices::Urbain::BasseSaison::ECO : Tarification::M3_DefaultPrices::Urbain::HauteSaison::ECO;
-        case Prestation::ecoPlus: return basseSaison ? Tarification::M3_DefaultPrices::Urbain::BasseSaison::ECOPLUS : Tarification::M3_DefaultPrices::Urbain::HauteSaison::ECOPLUS;
-        case Prestation::standard: return basseSaison ? Tarification::M3_DefaultPrices::Urbain::BasseSaison::STANDARD : Tarification::M3_DefaultPrices::Urbain::HauteSaison::STANDARD;
-        case Prestation::luxe: return basseSaison ? Tarification::M3_DefaultPrices::Urbain::BasseSaison::LUXE : Tarification::M3_DefaultPrices::Urbain::HauteSaison::LUXE;
+        case Prestation::eco: return basseSaison ? M3_DefaultPrices::Urbain::BasseSaison::ECO : M3_DefaultPrices::Urbain::HauteSaison::ECO;
+        case Prestation::ecoPlus: return basseSaison ? M3_DefaultPrices::Urbain::BasseSaison::ECOPLUS : M3_DefaultPrices::Urbain::HauteSaison::ECOPLUS;
+        case Prestation::standard: return basseSaison ? M3_DefaultPrices::Urbain::BasseSaison::STANDARD : M3_DefaultPrices::Urbain::HauteSaison::STANDARD;
+        case Prestation::luxe: return basseSaison ? M3_DefaultPrices::Urbain::BasseSaison::LUXE : M3_DefaultPrices::Urbain::HauteSaison::LUXE;
         }
     }
 
     else if (nature == Nature::special || nature == Nature::groupage)
     {
         if (distance >= SettingsConstants::Distances::URBAN_DISTANCE_LIMIT && distance <= SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_1)
-            return basseSaison ? Tarification::M3_DefaultPrices::Route::BasseSaison::DISTANCE_150_400 : Tarification::M3_DefaultPrices::Route::HauteSaison::DISTANCE_150_400;
+            return basseSaison ? M3_DefaultPrices::Route::BasseSaison::DISTANCE_150_400 : M3_DefaultPrices::Route::HauteSaison::DISTANCE_150_400;
 
         else if (distance > SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_1 && distance <= SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_2)
-            return basseSaison ? Tarification::M3_DefaultPrices::Route::BasseSaison::DISTANCE_401_600 : Tarification::M3_DefaultPrices::Route::HauteSaison::DISTANCE_401_600;
+            return basseSaison ? M3_DefaultPrices::Route::BasseSaison::DISTANCE_401_600 : M3_DefaultPrices::Route::HauteSaison::DISTANCE_401_600;
 
         else if (distance > SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_2 && distance <= SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_3)
-            return basseSaison ? Tarification::M3_DefaultPrices::Route::BasseSaison::DISTANCE_601_760 : Tarification::M3_DefaultPrices::Route::HauteSaison::DISTANCE_601_760;
+            return basseSaison ? M3_DefaultPrices::Route::BasseSaison::DISTANCE_601_760 : M3_DefaultPrices::Route::HauteSaison::DISTANCE_601_760;
 
         else if (distance > SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_3 && distance <= SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_4)
-            return basseSaison ? Tarification::M3_DefaultPrices::Route::BasseSaison::DISTANCE_761_900 : Tarification::M3_DefaultPrices::Route::HauteSaison::DISTANCE_761_900;
+            return basseSaison ? M3_DefaultPrices::Route::BasseSaison::DISTANCE_761_900 : M3_DefaultPrices::Route::HauteSaison::DISTANCE_761_900;
 
         else if (distance > SettingsConstants::Distances::ROUTE_DISTANCE_LIMIT_4)
-            return basseSaison ? Tarification::M3_DefaultPrices::Route::BasseSaison::DISTANCE_901PLUS : Tarification::M3_DefaultPrices::Route::HauteSaison::DISTANCE_901PLUS;
+            return basseSaison ? M3_DefaultPrices::Route::BasseSaison::DISTANCE_901PLUS : M3_DefaultPrices::Route::HauteSaison::DISTANCE_901PLUS;
     }
 }
 
 
-double CalculateurDevis::calculerCoutTotalHT(const Tarification::PriceCalculation& calculationMethod) const
+double CalculateurDevis::calculerCoutTotalHT(Tarification::PriceCalculation calculationMethod) const
 {
     double prixM3{ m_tarification->getPrixMetreCube() };
-    double volumeTotal{ m_client.getVolume() };
+    double volumeTotal{ m_client->getVolume() };
 
     double prixTotalAssurance{ calculerCoutAssurance() };
     double prixTotalStationnement{ calculerPrixStationnement() };
@@ -268,8 +276,16 @@ double CalculateurDevis::calculerCoutTotalHT(const Tarification::PriceCalculatio
     }
 }
 
+double CalculateurDevis::calculerCoutMainOeuvreTotal() const
+{
+    int nombreCamion{ calculerNombreCamion() };
+    int nombreMO{ calculerNombreMO(nombreCamion) };
 
-ResultatsDevis_CinqPostes CalculateurDevis::calculateDevis_Postes(const PricePreset& preset, const Tarification::PriceCalculation& calculationMethod)
+    return nombreMO * m_tarification->getCoutMO();
+}
+
+
+ResultatsDevis_CinqPostes CalculateurDevis::calculateDevis_Postes()
 {
     double volumeParPersonne{ calculerVolumeParPersonne() };
     int nombreCamion{ calculerNombreCamion() };

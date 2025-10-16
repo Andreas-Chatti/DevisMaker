@@ -1,6 +1,6 @@
 #pragma once
 #include <QString>
-#include <string>
+#include <QObject>
 #include "utils/common.h"
 #include "inventory/inventaire.h"
 
@@ -10,24 +10,12 @@ class Client : public QObject
 
 public:
 
-    Client()
-        : m_nom{}
-        , m_prenom{}
-        , m_depart{}
-        , m_livraison{}
-        , m_prestation{}
-        , m_nature{}
-        , m_typeAssurance{}
-        , m_valeurAssurance{}
-        , m_distance{}
-        , m_volume{}
-        , m_nbAdresseSupp{}
-        , m_tel{}
-        , m_inventory{}
+    Client(QObject* parent = nullptr)
+        : QObject{ parent }
     {
-        m_inventory = new Inventory{ this };
     }
 
+    ~Client() = default;
    
     const QString& getNom() const { return m_nom; }
     const Adresse& getAdresseDepart() const { return m_depart; }
@@ -40,36 +28,36 @@ public:
     double getValeurAssurance() const { return m_valeurAssurance; }
     const QString& getNumTel() const { return m_tel; }
     int getNbAdresseSupp() const { return m_nbAdresseSupp; }
-    const Inventory const* getInventory() const { return m_inventory; }
+    const Inventory* const getInventory() const { return m_inventory; }
 
  
-    void setNom(const QString& nom) { m_nom = nom; }
-    void setPrenom(const QString& prenom) { m_prenom = prenom; }
-    void setAdresseDepart(const Adresse& adresse) { m_depart = adresse; }
-    void setAdresseArrivee(const Adresse& adresse) { m_livraison = adresse; }
+    void setNom(QString nom) { m_nom = std::move(nom); }
+    void setPrenom(QString prenom) { m_prenom = std::move(prenom); }
+    void setAdresseDepart(Adresse adresse) { m_depart = std::move(adresse); }
+    void setAdresseArrivee(Adresse adresse) { m_livraison = std::move(adresse); }
     void setDistance(double distance) { m_distance = distance; }
     void setPrestation(Prestation prestation) { m_prestation = prestation; }
     void setTypeAssurance(TypeAssurance type) { m_typeAssurance = type; }
     void setValeurAssurance(double valeur) { m_valeurAssurance = valeur; }
     void setNature(Nature nature) { m_nature = nature; }
     void setVolume(double volume) { m_volume = volume; }
-    void setNumTel(QString tel) { m_tel = tel; }
+    void setNumTel(QString tel) { m_tel = std::move(tel); }
     void setNbAdresseSupp(int nbAdresseSupp) { m_nbAdresseSupp = nbAdresseSupp; }
 
 
 private:
 
-    QString m_nom;
-    QString m_prenom;
-    Adresse m_depart;
-    Adresse m_livraison;
-    Prestation m_prestation;
-    Nature m_nature;
-    TypeAssurance m_typeAssurance;
-    double m_valeurAssurance;
-    double m_distance;
-    double m_volume;
-    int m_nbAdresseSupp;
-    QString m_tel;
-    Inventory* m_inventory;
+    QString m_nom{"UNDEFINED"};
+    QString m_prenom{"UNDEFINED"};
+    Adresse m_depart{};
+    Adresse m_livraison{};
+    Prestation m_prestation{ Prestation::eco };
+    Nature m_nature{ Nature::urbain };
+    TypeAssurance m_typeAssurance{ TypeAssurance::contractuelle };
+    double m_valeurAssurance{ 0.0 };
+    double m_distance{ 0.0 };
+    double m_volume{ 0.0 };
+    int m_nbAdresseSupp{ 0 };
+    QString m_tel{ "UNDEFINED" };
+    Inventory* m_inventory{ new Inventory{this} };
 };

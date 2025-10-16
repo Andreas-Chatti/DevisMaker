@@ -25,9 +25,7 @@ public:
     explicit OpenStreetMap(QObject* parent = nullptr)
         : QObject(parent)
     {
-        m_networkManager = new QNetworkAccessManager(this);
-
-        connect(m_networkManager, &QNetworkAccessManager::finished, this, [this](QNetworkReply* reply) {
+        const auto handleRequestType{ [this](QNetworkReply* reply) {
 
             RequestType requestType{ static_cast<RequestType>(reply->property("requestType").toInt()) };
 
@@ -36,11 +34,17 @@ public:
 
             else
                 handleDistanceReply(reply);
-            });
+        }};
+
+        connect(m_networkManager, &QNetworkAccessManager::finished, this, handleRequestType);
     }
 
-    const QString& getStreetMapUrl() { return URL_STREET_MAP; }
-    const QString& getOsrmUrl() { return URL_OSRM; }
+    static inline const QUrl URL_STREET_MAP{ "https://nominatim.openstreetmap.org/search" };
+
+    /*
+        Type QString needed for arguments %1 and %2
+    */
+    static inline const QString URL_OSRM{ "http://router.project-osrm.org/route/v1/driving/%1;%2?overview=false&geometries=geojson" };
 
 signals:
 
@@ -62,7 +66,5 @@ private:
     QNetworkRequest createRequest(const QString& qItem);
 
 
-    QNetworkAccessManager* m_networkManager;
-    const QString URL_STREET_MAP{ "https://nominatim.openstreetmap.org/search" };
-    const QString URL_OSRM{ "http://router.project-osrm.org/route/v1/driving/%1;%2?overview=false&geometries=geojson" };
+    QNetworkAccessManager* m_networkManager{ new QNetworkAccessManager{this} };
 };

@@ -1,28 +1,19 @@
 ﻿#include "addressCompleter.h"
 
 AddressCompleter::AddressCompleter(QLineEdit* lineEditChargement, QLineEdit* lineEditLivraison, QObject* parent)
-    : QObject(parent)
-    , m_lineEditChargement(lineEditChargement)
-    , m_lineEditLivraison(lineEditLivraison)
+    : QObject{ parent }
+    , m_lineEditChargement{ lineEditChargement }
+    , m_lineEditLivraison{ lineEditLivraison }
 {
-    m_streetMap = new OpenStreetMap{ this };
-
-    m_model = new QStringListModel(this);
-
     setupCompleter();
+    setupDebounceTimer();
 
-    m_networkManager = new QNetworkAccessManager(this);
     connect(m_networkManager, &QNetworkAccessManager::finished, this, &AddressCompleter::handleNetworkReply);
-
     connect(m_lineEditChargement, &QLineEdit::textEdited, this, &AddressCompleter::startTimer);
     connect(m_lineEditChargement, &QLineEdit::textEdited, this, &AddressCompleter::setCurrentModifiedLineEdit);
-
     connect(m_lineEditLivraison, &QLineEdit::textEdited, this, &AddressCompleter::startTimer);
     connect(m_lineEditLivraison, &QLineEdit::textEdited, this, &AddressCompleter::setCurrentModifiedLineEdit);
-
-    setupDebounceTimer();
     connect(m_debounceTimer, &QTimer::timeout, this, &AddressCompleter::onTextChanged);
-
     connect(m_lineEditChargement, &QLineEdit::editingFinished, this, &AddressCompleter::onEditingFinished);
     connect(m_lineEditLivraison, &QLineEdit::editingFinished, this, &AddressCompleter::onEditingFinished);
 }
@@ -141,7 +132,6 @@ void AddressCompleter::onEditingFinished()
 
 void AddressCompleter::setupCompleter()
 {
-    m_completer = new QCompleter(m_model, this);
     m_completer->setCaseSensitivity(Qt::CaseInsensitive);
     m_completer->setCompletionMode(QCompleter::PopupCompletion);
     m_completer->setMaxVisibleItems(MAX_VISIBLE_ITEMS);
@@ -155,7 +145,6 @@ void AddressCompleter::setupCompleter()
 
 void AddressCompleter::setupDebounceTimer()
 {
-    m_debounceTimer = new QTimer(this);
     m_debounceTimer->setSingleShot(true);
     m_debounceTimer->setInterval(TIMER_DELAY);
 }
@@ -169,7 +158,7 @@ void AddressCompleter::setCurrentModifiedLineEdit(const QString& lineEditText)
 
 QNetworkRequest AddressCompleter::createRequest(const QString& queryItem)
 {
-    QUrl url(m_streetMap->getStreetMapUrl());
+    QUrl url(OpenStreetMap::URL_STREET_MAP);
     QUrlQuery query;
     query.addQueryItem("format", "jsonv2");
     query.addQueryItem("q", queryItem);

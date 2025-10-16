@@ -3,12 +3,8 @@
 InventoryAnalyzer::InventoryAnalyzer(QObject* parent)
     : QObject(parent)
 {
-    m_networkManager = new QNetworkAccessManager(this);
     connect(m_networkManager, &QNetworkAccessManager::finished, this, &InventoryAnalyzer::handleGrokResponse);
-
-    m_ia = new IA{ this };
     connect(m_ia, &IA::error, this, &InventoryAnalyzer::error);
-
     connect(this, &InventoryAnalyzer::resultsAnalysis, this, &InventoryAnalyzer::calculateAverageVolume);
 
     loadVolumeReference();

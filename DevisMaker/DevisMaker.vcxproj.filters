@@ -75,9 +75,6 @@
     <ClInclude Include="src\utils\constants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\misc\devis.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\utils\resultatDevis.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -117,6 +114,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="src\models\client.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="src\misc\devis.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

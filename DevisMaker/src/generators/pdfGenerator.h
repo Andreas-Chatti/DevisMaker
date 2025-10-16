@@ -23,24 +23,22 @@ class PDFGenerator : public QObject
 public:
 
     PDFGenerator(QObject* parent = nullptr)
-        : m_htmlTemplate_m3{}
-        , m_htmlTemplate_Postes{}
-        , HTML_TEMPLATE_LOCATION_M3{ SettingsConstants::FileSettings::TEMPLATE_FILE_PATH + "/devis_template_m3.html" }
-        , HTML_TEMPLATE_LOCATION_POSTES{ SettingsConstants::FileSettings::TEMPLATE_FILE_PATH + "/devis_template_postes.html" }
-        , HTML_TEMPLATE_LOCATION_INVENTORY{ SettingsConstants::FileSettings::TEMPLATE_FILE_PATH + "/inventory_template.html" }
+        : QObject{parent}
     {
         m_htmlTemplate_m3 = load_HTML_Template(TypeDevis::PRIX_PAR_M3);
         m_htmlTemplate_Postes = load_HTML_Template(TypeDevis::CINQ_POSTES);
         m_htmlTemplate_Inventory = loadInventoryTemplate();
     }
 
+    ~PDFGenerator() = default;
+
     enum class PdfGenerationState
     {
-        success,
-        blankFile,
-        errorLoadingFile,
-        errorCreatingTemplateFile,
-        errorCreatingTemplateDir,
+        success = 1,
+        blankFile = 2,
+        errorLoadingFile = 4,
+        errorCreatingTemplateFile = 8,
+        errorCreatingTemplateDir = 16,
     };
 
     enum class TypeDevis 
@@ -49,8 +47,8 @@ public:
         CINQ_POSTES
     };
 
-    bool generateDevisPDF(const Client& client, const ResultatsDevis& resultats, const TypeDevis& typeDevis, const User& user, const QString& outputPath = QString());
-    bool generateInventoryPDF(const Client& client, const User& user, const QString& outputPath = QString());
+    bool generateDevisPDF(const Client& client, const ResultatsDevis& resultats, TypeDevis typeDevis, const User& user, QString& outputPath);
+    bool generateInventoryPDF(const Client& client, const User& user, QString& outputPath);
 
     QString getNatureString(const Nature& nature) const;
     QString getPrestationString(const Prestation& prestation) const;
@@ -77,10 +75,10 @@ private:
     bool createInventoryTemplateFile();
     bool createTemplateDir();
 
-    const QString HTML_TEMPLATE_LOCATION_M3;
-    const QString HTML_TEMPLATE_LOCATION_POSTES;
-    const QString HTML_TEMPLATE_LOCATION_INVENTORY;
-    QString m_htmlTemplate_m3;
-    QString m_htmlTemplate_Postes;
-    QString m_htmlTemplate_Inventory;
+    const QString HTML_TEMPLATE_LOCATION_M3{ SettingsConstants::FileSettings::TEMPLATE_FILE_PATH + "/devis_template_m3.html" };
+    const QString HTML_TEMPLATE_LOCATION_POSTES{ SettingsConstants::FileSettings::TEMPLATE_FILE_PATH + "/devis_template_postes.html" };
+    const QString HTML_TEMPLATE_LOCATION_INVENTORY{ SettingsConstants::FileSettings::TEMPLATE_FILE_PATH + "/inventory_template.html" };
+    QString m_htmlTemplate_m3{""};
+    QString m_htmlTemplate_Postes{""};
+    QString m_htmlTemplate_Inventory{""};
 };
