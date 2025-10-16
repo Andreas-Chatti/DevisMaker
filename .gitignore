@@ -3,6 +3,10 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# EXCEPTIONS : Fichiers à INCLURE malgré les règles ci-dessous
+!**/qt/uic/ui_companyInfoDialog.h
+!**/qt/uic/ui_MainWindow.h
+
 # User-specific files
 *.rsuser
 *.suo
