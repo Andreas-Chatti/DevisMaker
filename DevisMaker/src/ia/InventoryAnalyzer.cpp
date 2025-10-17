@@ -169,7 +169,7 @@ void InventoryAnalyzer::calculateAverageVolume(QVector<double> results, const QS
 
 void InventoryAnalyzer::loadVolumeReference() 
 {
-    QFile file(SettingsConstants::FileSettings::DATA_FILE_PATH + "/volumes_reference.json");
+    QFile file(SettingsConstants::FileSettings::DATA_FILE_PATH + REFERENCE_FILE_NAME);
 
     if (!file.open(QIODevice::ReadOnly)) 
         return;

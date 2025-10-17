@@ -67,6 +67,7 @@ private:
     QVector<double> m_fallbackResults;
     int m_fallbackAttempts;
     static constexpr int NETWORK_REQUEST_DELAY{ 1500 };
+    const QString REFERENCE_FILE_NAME{ "/volumes_reference.json" };
 
     QNetworkAccessManager* m_networkManager{ new QNetworkAccessManager{this} };
     QJsonObject m_volumeReference{};
