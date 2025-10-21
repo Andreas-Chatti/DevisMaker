@@ -64,6 +64,12 @@
     <ClCompile Include="src\inventory\inventaire.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="InventoryModifyierDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemModifyierDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\calculator\calculateurDevis.h">
@@ -119,12 +125,24 @@
     <QtMoc Include="src\misc\devis.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="InventoryModifyierDialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="ItemModifyierDialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="src\ui\MainWindow.ui">
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="src\ui\companyInfoDialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="src\ui\InventoryModifyierDialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="src\ui\ItemModifyierDialog.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

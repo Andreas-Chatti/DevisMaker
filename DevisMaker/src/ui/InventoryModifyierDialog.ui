@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+	<class>InventoryModifyierDialog</class>
+	<widget class="QDialog" name="InventoryModifyierDialog">
+		<property name="geometry">
+			<rect>
+				<x>0</x>
+				<y>0</y>
+				<width>900</width>
+				<height>550</height>
+			</rect>
+		</property>
+		<property name="minimumSize">
+			<size>
+				<width>800</width>
+				<height>500</height>
+			</size>
+		</property>
+		<property name="windowTitle">
+			<string>Modifier l'inventaire</string>
+		</property>
+		<layout class="QVBoxLayout" name="verticalLayout">
+			<property name="spacing">
+				<number>15</number>
+			</property>
+			<property name="leftMargin">
+				<number>20</number>
+			</property>
+			<property name="topMargin">
+				<number>20</number>
+			</property>
+			<property name="rightMargin">
+				<number>20</number>
+			</property>
+			<property name="bottomMargin">
+				<number>20</number>
+			</property>
+
+			<!-- Titre -->
+			<item>
+				<widget class="QLabel" name="titleLabel">
+					<property name="font">
+						<font>
+							<pointsize>12</pointsize>
+							<bold>true</bold>
+						</font>
+					</property>
+					<property name="text">
+						<string>Inventaire détecté</string>
+					</property>
+					<property name="alignment">
+						<set>Qt::AlignmentFlag::AlignCenter</set>
+					</property>
+				</widget>
+			</item>
+
+			<!-- Tableau d'inventaire -->
+			<item>
+				<widget class="QTableWidget" name="inventoryTableWidget">
+					<property name="editTriggers">
+						<set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+					</property>
+					<property name="selectionMode">
+						<enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
+					</property>
+					<property name="selectionBehavior">
+						<enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+					</property>
+					<property name="sortingEnabled">
+						<bool>false</bool>
+					</property>
+					<column>
+						<property name="text">
+							<string>Élément</string>
+						</property>
+					</column>
+					<column>
+						<property name="text">
+							<string>Quantité</string>
+						</property>
+					</column>
+					<column>
+						<property name="text">
+							<string>Volume (m³)</string>
+						</property>
+					</column>
+					<column>
+						<property name="text">
+							<string>Démontage</string>
+						</property>
+					</column>
+					<column>
+						<property name="text">
+							<string>Remontage</string>
+						</property>
+					</column>
+					<column>
+						<property name="text">
+							<string>Objet Lourd</string>
+						</property>
+					</column>
+					<column>
+						<property name="text">
+							<string>Note</string>
+						</property>
+					</column>
+				</widget>
+			</item>
+
+			<!-- Boutons d'action sur l'inventaire -->
+			<item>
+				<layout class="QHBoxLayout" name="actionButtonsLayout">
+					<property name="spacing">
+						<number>15</number>
+					</property>
+					<item>
+						<spacer name="horizontalSpacer_1">
+							<property name="orientation">
+								<enum>Qt::Orientation::Horizontal</enum>
+							</property>
+							<property name="sizeHint" stdset="0">
+								<size>
+									<width>40</width>
+									<height>20</height>
+								</size>
+							</property>
+						</spacer>
+					</item>
+					<item>
+						<widget class="QPushButton" name="addItemButton">
+							<property name="minimumSize">
+								<size>
+									<width>120</width>
+									<height>50</height>
+								</size>
+							</property>
+							<property name="font">
+								<font>
+									<pointsize>10</pointsize>
+									<bold>true</bold>
+								</font>
+							</property>
+							<property name="text">
+								<string>Ajouter</string>
+							</property>
+						</widget>
+					</item>
+					<item>
+						<widget class="QPushButton" name="modifyItemButton">
+							<property name="enabled">
+								<bool>false</bool>
+							</property>
+							<property name="minimumSize">
+								<size>
+									<width>120</width>
+									<height>50</height>
+								</size>
+							</property>
+							<property name="font">
+								<font>
+									<pointsize>10</pointsize>
+									<bold>true</bold>
+								</font>
+							</property>
+							<property name="text">
+								<string>Modifier</string>
+							</property>
+						</widget>
+					</item>
+					<item>
+						<widget class="QPushButton" name="removeItemButton">
+							<property name="enabled">
+								<bool>false</bool>
+							</property>
+							<property name="minimumSize">
+								<size>
+									<width>120</width>
+									<height>50</height>
+								</size>
+							</property>
+							<property name="font">
+								<font>
+									<pointsize>10</pointsize>
+									<bold>true</bold>
+								</font>
+							</property>
+							<property name="text">
+								<string>Retirer</string>
+							</property>
+						</widget>
+					</item>
+					<item>
+						<spacer name="horizontalSpacer_2">
+							<property name="orientation">
+								<enum>Qt::Orientation::Horizontal</enum>
+							</property>
+							<property name="sizeHint" stdset="0">
+								<size>
+									<width>40</width>
+									<height>20</height>
+								</size>
+							</property>
+						</spacer>
+					</item>
+				</layout>
+			</item>
+
+			<!-- Spacer vertical -->
+			<item>
+				<spacer name="verticalSpacer">
+					<property name="orientation">
+						<enum>Qt::Orientation::Vertical</enum>
+					</property>
+					<property name="sizeType">
+						<enum>QSizePolicy::Policy::Fixed</enum>
+					</property>
+					<property name="sizeHint" stdset="0">
+						<size>
+							<width>20</width>
+							<height>20</height>
+						</size>
+					</property>
+				</spacer>
+			</item>
+
+			<!-- Boutons OK/Cancel -->
+			<item>
+				<widget class="QDialogButtonBox" name="buttonBox">
+					<property name="orientation">
+						<enum>Qt::Orientation::Horizontal</enum>
+					</property>
+					<property name="standardButtons">
+						<set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
+					</property>
+					<property name="centerButtons">
+						<bool>false</bool>
+					</property>
+				</widget>
+			</item>
+		</layout>
+	</widget>
+	<resources/>
+	<connections>
+		<connection>
+			<sender>buttonBox</sender>
+			<signal>accepted()</signal>
+			<receiver>InventoryModifyierDialog</receiver>
+			<slot>accept()</slot>
+		</connection>
+		<connection>
+			<sender>buttonBox</sender>
+			<signal>rejected()</signal>
+			<receiver>InventoryModifyierDialog</receiver>
+			<slot>reject()</slot>
+		</connection>
+	</connections>
+</ui>

@@ -103,6 +103,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="InventoryModifyierDialog.cpp" />
+    <ClCompile Include="ItemModifyierDialog.cpp" />
     <ClCompile Include="src\inventory\inventaire.cpp" />
     <ClCompile Include="src\streetmap\addressCompleter.cpp" />
     <ClCompile Include="src\calculator\calculateurDevis.cpp" />
@@ -120,6 +122,8 @@
   <ItemGroup>
     <QtMoc Include="user.h" />
     <QtMoc Include="src\streetmap\addressCompleter.h" />
+    <QtMoc Include="InventoryModifyierDialog.h" />
+    <QtMoc Include="ItemModifyierDialog.h" />
     <ClInclude Include="src\calculator\calculateurDevis.h" />
     <QtMoc Include="src\models\client.h" />
     <QtMoc Include="src\ui\companyInfoDialog.h" />
@@ -138,6 +142,8 @@
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="src\ui\companyInfoDialog.ui" />
+    <QtUic Include="src\ui\InventoryModifyierDialog.ui" />
+    <QtUic Include="src\ui\ItemModifyierDialog.ui" />
     <QtUic Include="src\ui\MainWindow.ui" />
   </ItemGroup>
   <ItemGroup>

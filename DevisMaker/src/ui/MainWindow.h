@@ -21,6 +21,7 @@
 #include "calculator/calculateurDevis.h"
 #include "generators/pdfGenerator.h"
 #include "companyInfoDialog.h"
+#include "InventoryModifyierDialog.h"
 #include "user/user.h"
 
 
@@ -64,6 +65,8 @@ private slots:
     void onCriticalError(const QString& errorMessage);
 
     void on_companyInfoPushButton_clicked();
+
+    void on_modifyInventoryPushButton_clicked();
 
 
     // Updating Client variables in real time

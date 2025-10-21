@@ -20,21 +20,13 @@ public:
     }
 
     double getTotalVolume() const { return m_totalVolume; }
-    const QVector<MovingObject> getInventory() const { return m_objects; }
+    const QVector<MovingObject>& getInventory() const { return m_objects; }
 
 private:
 
-    QMap<QString, MovingObject> m_dictionnary{};
+    //QMap<QString, MovingObject> m_dictionnary{};
     QVector<MovingObject> m_objects{};
     double m_totalVolume{};
-
-
-    void addObject(const QString& name, double volume, int quantity = 1);
-    void addObject(const MovingObject& movingObject, int quantity = 1);
-
-    void removeObject(const QString& name, int quantity = 0);
-    void removeObject(const MovingObject& movingObject, int quantity = 0);
-
 
     void clearInventory();
 
@@ -43,6 +35,17 @@ private:
 public slots:
 
     void handleInventoryAnalysis(double totalVolume, const QStringList& structuredItems);
+    
+    // TODO: Implémenter les fonctions slots suivantes :
+    // addObject(const MovingObject& movingObject)
+    // modifyObject(const MovingObject& movingObject)
+
+    void addObjectByName(const QString& name, double volume, int quantity = 1);
+    void addObject(const MovingObject& movingObject, int quantity = 1);
+
+    void removeObject(const MovingObject& movingObject);
+    void removeObjectByNameAndQuantity(const QString& name, int quantity = 0);
+    void removeObjectByQuantity(const MovingObject& movingObject, int quantity);
 
 signals:
 

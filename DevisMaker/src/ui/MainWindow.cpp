@@ -17,6 +17,9 @@ MainWindow::MainWindow(QWidget* parent)
     connect(m_inventoryAnalyzer, &InventoryAnalyzer::error, this, &MainWindow::onCriticalError);
     connect(m_client->getInventory(), &Inventory::sendNewInventory, this, &MainWindow::handleInventoryAnalysis);
 
+    // TODO : Trouver un moyen de connect chaque nouvelle fenêtre InventoryModifyierDialog avec &Inventory::removeObject
+    //connect(&InventoryModifyierDialog, &InventoryModifyierDialog::removeItem, m_client->getInventory(), &Inventory::removeObject);
+
     setupValidators();
     displaySettings();
     setupPlaceholderText();
@@ -652,6 +655,15 @@ void MainWindow::on_companyInfoPushButton_clicked()
 {
     CompanyInfoDialog dialog{ this, m_user };
     dialog.exec();
+}
+
+void MainWindow::on_modifyInventoryPushButton_clicked()
+{
+    InventoryModifyierDialog* dialog{ new InventoryModifyierDialog{*m_client->getInventory(), this} };
+    connect(dialog, &InventoryModifyierDialog::removeItem, m_client->getInventory(), &Inventory::removeObject);
+    dialog->exec();
+
+    delete dialog;
 }
 
 

@@ -41,7 +41,7 @@ void Inventory::handleInventoryAnalysis(double totalVolume, const QStringList& s
                 double unitVolume{ volumeText.toDouble(&ok) / quantity };
 
                 if (ok && unitVolume > 0.0)
-                    addObject(cleanName, unitVolume, quantity);
+                    addObjectByName(cleanName, unitVolume, quantity);
             }
         }
     }
@@ -50,7 +50,7 @@ void Inventory::handleInventoryAnalysis(double totalVolume, const QStringList& s
 }
 
 
-void Inventory::addObject(const QString& name, double unitaryVolume, int quantity)
+void Inventory::addObjectByName(const QString& name, double unitaryVolume, int quantity)
 {
     for (MovingObject& object : m_objects)
     {
@@ -66,6 +66,9 @@ void Inventory::addObject(const QString& name, double unitaryVolume, int quantit
 
 void Inventory::addObject(const MovingObject& movingObject, int quantity)
 {
+    if (movingObject.getName().isEmpty())
+        return;
+
     for (MovingObject& object : m_objects)
     {
         if (object == movingObject)
@@ -79,7 +82,7 @@ void Inventory::addObject(const MovingObject& movingObject, int quantity)
 }
 
 
-void Inventory::removeObject(const QString& name, int quantity)
+void Inventory::removeObjectByNameAndQuantity(const QString& name, int quantity)
 {
     const auto isSameObject{ [&](const MovingObject& object) {
         if (object.getName() == name)
@@ -104,7 +107,7 @@ void Inventory::removeObject(const QString& name, int quantity)
     }
 }
 
-void Inventory::removeObject(const MovingObject& movingObject, int quantity)
+void Inventory::removeObjectByQuantity(const MovingObject& movingObject, int quantity)
 {
     const auto isSameObject{ [&](const MovingObject& object) {
         if (object == movingObject)
@@ -133,4 +136,18 @@ void Inventory::removeObject(const MovingObject& movingObject, int quantity)
 void Inventory::clearInventory()
 {
     m_objects.clear();
+}
+
+void Inventory::removeObject(const MovingObject& movingObject)
+{
+    const auto isSameObject{ [&](const MovingObject& object) {
+    if (object == movingObject)
+        return true;
+
+    return false;
+    } };
+
+    auto it{ std::find_if(m_objects.begin(), m_objects.end(), isSameObject) };
+    if (it != m_objects.end())
+        m_objects.erase(it);
 }
