@@ -111,7 +111,7 @@ private:
     CalculateurDevis* m_calculateurDevis{ new CalculateurDevis{m_client, m_tarification} };
     PDFGenerator* m_PDFGenerator{ new PDFGenerator{this} };
     User* m_user{ new User{this} };
-    AddressCompleter* m_addressCompleter{ nullptr }; // Initialized in constructor
+    AddressCompleter* m_addressCompleter{ nullptr };
 
 
     void setupValidators();

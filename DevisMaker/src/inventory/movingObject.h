@@ -75,11 +75,6 @@ public:
 		return (this->m_name == movingObject.getName()) && (this->m_unitaryVolume == movingObject.getUnitaryVolume());
 	}
 
-	const QString& getName() const { return m_name; }
-	double getUnitaryVolume() const { return m_unitaryVolume; }
-	int getQuantity() const { return m_quantity; }
-	double getTotalVolume() const { return m_totalVolume; }
-
 	int add()
 	{ 
 		m_totalVolume += m_unitaryVolume;
@@ -113,9 +108,28 @@ public:
 		return m_quantity -= quantity;
 	}
 
+	const QString& getName() const { return m_name; }
+	double getUnitaryVolume() const { return m_unitaryVolume; }
+	int getQuantity() const { return m_quantity; }
+	double getTotalVolume() const { return m_totalVolume; }
 	bool isDisassembly() const { return m_disassembly; }
 	bool isAssembly() const { return m_assembly; }
 	bool isHeavy() const { return m_heavy; }
+
+	void setName(QString name) { m_name = std::move(name); }
+	void setUnitaryVolume(double unitaryVolume) 
+	{ 
+		m_unitaryVolume = unitaryVolume; 
+		m_totalVolume = m_unitaryVolume * m_quantity;
+	}
+	void setQuantity(int quantity) 
+	{ 
+		m_quantity = quantity; 
+		m_totalVolume = m_unitaryVolume * m_quantity;
+	}
+	void setDisassembly(bool isDisassembly) { m_disassembly = isDisassembly; }
+	void setAssembly(bool isAssembly) { m_assembly = isAssembly; }
+	void setHeavy(bool isHeavy) { m_heavy = isHeavy; }
 
 private:
 

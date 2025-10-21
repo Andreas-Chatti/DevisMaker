@@ -21,6 +21,7 @@ public:
 
     double getTotalVolume() const { return m_totalVolume; }
     const QVector<MovingObject>& getInventory() const { return m_objects; }
+    bool isEmpty() const { return m_objects.isEmpty(); }
 
 private:
 
@@ -37,7 +38,6 @@ public slots:
     void handleInventoryAnalysis(double totalVolume, const QStringList& structuredItems);
     
     // TODO: Implémenter les fonctions slots suivantes :
-    // addObject(const MovingObject& movingObject)
     // modifyObject(const MovingObject& movingObject)
 
     void addObjectByName(const QString& name, double volume, int quantity = 1);
@@ -46,6 +46,8 @@ public slots:
     void removeObject(const MovingObject& movingObject);
     void removeObjectByNameAndQuantity(const QString& name, int quantity = 0);
     void removeObjectByQuantity(const MovingObject& movingObject, int quantity);
+
+    void modifyObject(const MovingObject& objectToModify, MovingObject newObject);
 
 signals:
 

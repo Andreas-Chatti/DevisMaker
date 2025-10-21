@@ -77,7 +77,6 @@ void Inventory::addObject(const MovingObject& movingObject, int quantity)
             return;
         }
     }
-
     m_objects.emplaceBack(movingObject);
 }
 
@@ -130,6 +129,21 @@ void Inventory::removeObjectByQuantity(const MovingObject& movingObject, int qua
                 m_objects.erase(it);
         }
     }
+}
+
+void Inventory::modifyObject(const MovingObject& objectToModify, MovingObject newObject)
+{
+    const auto isSameObject{ [&](const MovingObject& object) {
+    if (object == objectToModify)
+        return true;
+
+    return false;
+} };
+
+    auto object{ std::find_if(m_objects.begin(), m_objects.end(), isSameObject) };
+
+    if (object != m_objects.end())
+        *object = std::move(newObject);
 }
 
 

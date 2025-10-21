@@ -14,12 +14,15 @@ void InventoryModifyierDialog::on_addItemButton_clicked()
     auto dialog{ std::make_unique<ItemModifyierDialog>(ItemModifyierDialog::EditState::ADD, this) };
     connect(dialog.get(), &ItemModifyierDialog::addObjectToInventory, &m_inventory, &Inventory::addObject);
     dialog->exec();
+    displayInventory();
 }
 
 void InventoryModifyierDialog::on_modifyItemButton_clicked()
 {
-    auto dialog{ std::make_unique<ItemModifyierDialog>(ItemModifyierDialog::EditState::ADD, this, getMovingObjectFromSelection()) };
+    auto dialog{ std::make_unique<ItemModifyierDialog>(ItemModifyierDialog::EditState::MODIFY, this, getMovingObjectFromSelection()) };
+    connect(dialog.get(), &ItemModifyierDialog::editObjectFromInventory, &m_inventory, &Inventory::modifyObject);
     dialog->exec();
+    displayInventory();
 }
 
 void InventoryModifyierDialog::on_removeItemButton_clicked()

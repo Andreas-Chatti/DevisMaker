@@ -17,9 +17,6 @@ MainWindow::MainWindow(QWidget* parent)
     connect(m_inventoryAnalyzer, &InventoryAnalyzer::error, this, &MainWindow::onCriticalError);
     connect(m_client->getInventory(), &Inventory::sendNewInventory, this, &MainWindow::handleInventoryAnalysis);
 
-    // TODO : Trouver un moyen de connect chaque nouvelle fenêtre InventoryModifyierDialog avec &Inventory::removeObject
-    //connect(&InventoryModifyierDialog, &InventoryModifyierDialog::removeItem, m_client->getInventory(), &Inventory::removeObject);
-
     setupValidators();
     displaySettings();
     setupPlaceholderText();
@@ -267,6 +264,8 @@ void MainWindow::on_AnalyseInventoryPushButton_clicked()
     // Changer le texte du bouton pour indiquer le chargement
     ui.AnalyseInventoryPushButton->setText("Analyse en cours...");
     ui.AnalyseInventoryPushButton->setEnabled(false);
+    ui.modifyInventoryPushButton->setEnabled(false);
+    ui.generateInventoryPushButton->setEnabled(false);
 
     // Lancer l'analyse avec l'IA
     m_inventoryAnalyzer->analyzeInventory(inventoryText);
@@ -275,6 +274,12 @@ void MainWindow::on_AnalyseInventoryPushButton_clicked()
 
 void MainWindow::on_generateInventoryPushButton_clicked()
 {
+    if (m_client->getInventory()->isEmpty())
+    {
+        QMessageBox::warning(this, "Inventaire vide", QString::fromUtf8("Impossible de générer ! L'inventaire est vide !"));
+        return;
+    }
+
     QString filePath{ QFileDialog::getSaveFileName(
         this,
         "Sauvegarder l'inventaire",
@@ -305,9 +310,8 @@ void MainWindow::handleInventoryAnalysis(const Inventory& inventory)
 
     ui.AnalyseInventoryPushButton->setText("Analyser inventaire");
     ui.AnalyseInventoryPushButton->setEnabled(true);
-
-    if (!ui.generateInventoryPushButton->isEnabled())
-        ui.generateInventoryPushButton->setEnabled(true);
+    ui.generateInventoryPushButton->setEnabled(true);
+    ui.modifyInventoryPushButton->setEnabled(true);
 }
 
 
@@ -365,6 +369,8 @@ void MainWindow::handleInventoryAnalysisError(const QString& errorMessage)
 
     ui.AnalyseInventoryPushButton->setText("Analyser inventaire");
     ui.AnalyseInventoryPushButton->setEnabled(true);
+    ui.modifyInventoryPushButton->setEnabled(true);
+    ui.generateInventoryPushButton->setEnabled(true);
 }
 
 

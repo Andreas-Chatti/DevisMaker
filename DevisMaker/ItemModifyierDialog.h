@@ -1,5 +1,6 @@
 #pragma once
 #include <QDialog>
+#include <QMessageBox>
 #include "ui_ItemModifyierDialog.h"
 #include "inventory/movingObject.h"
 
@@ -21,6 +22,7 @@ public:
 signals:
 
     void addObjectToInventory(MovingObject movingObject, int quantity);
+    void editObjectFromInventory(const MovingObject& objectToModify, MovingObject newObject);
 
 private slots:
 

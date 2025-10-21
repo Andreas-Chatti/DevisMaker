@@ -38,7 +38,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
     <QtModules>core;gui;widgets;network;printsupport</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
-    <QtInstall>6.9.0_msvc2022_64</QtInstall>
+    <QtInstall>msvc2022_64</QtInstall>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
     <QtInstall>6.9.0_msvc2022_64</QtInstall>
@@ -66,7 +66,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\DevisMaker\DevisMaker\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Andreas\source\repos\DevisMaker\DevisMaker\src;C:\DevisMaker\DevisMaker\src</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

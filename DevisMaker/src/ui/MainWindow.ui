@@ -51,7 +51,7 @@
        <number>1</number>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="InformationsClient">
        <property name="enabled">
@@ -194,8 +194,8 @@
                <minute>0</minute>
                <second>0</second>
                <year>2025</year>
-               <month>6</month>
-               <day>1</day>
+               <month>5</month>
+               <day>31</day>
               </datetime>
              </property>
              <property name="maximumDateTime">
@@ -215,7 +215,7 @@
                <second>0</second>
                <year>2024</year>
                <month>12</month>
-               <day>31</day>
+               <day>30</day>
               </datetime>
              </property>
              <property name="displayFormat">
@@ -345,8 +345,8 @@
                <minute>0</minute>
                <second>0</second>
                <year>2025</year>
-               <month>6</month>
-               <day>1</day>
+               <month>5</month>
+               <day>31</day>
               </datetime>
              </property>
              <property name="maximumDateTime">
@@ -366,7 +366,7 @@
                <second>0</second>
                <year>2024</year>
                <month>12</month>
-               <day>31</day>
+               <day>30</day>
               </datetime>
              </property>
              <property name="displayFormat">
@@ -774,132 +774,132 @@
         </item>
        </layout>
       </widget>
-		 <widget class="QWidget" name="Inventaire">
-			 <attribute name="title">
-				 <string>Inventaire</string>
-			 </attribute>
-			 <layout class="QGridLayout" name="gridLayout_4">
-				 <item row="0" column="0">
-					 <widget class="QLabel" name="SaisirInventaire">
-						 <property name="font">
-							 <font>
-								 <pointsize>12</pointsize>
-								 <bold>true</bold>
-								 <kerning>true</kerning>
-							 </font>
-						 </property>
-						 <property name="text">
-							 <string>Saisie d'inventaire</string>
-						 </property>
-						 <property name="alignment">
-							 <set>Qt::AlignmentFlag::AlignCenter</set>
-						 </property>
-					 </widget>
-				 </item>
-				 <item row="1" column="0">
-					 <widget class="QTextEdit" name="inventaireTextEdit">
-						 <property name="acceptDrops">
-							 <bool>true</bool>
-						 </property>
-						 <property name="toolTipDuration">
-							 <number>-1</number>
-						 </property>
-						 <property name="styleSheet">
-							 <string notr="true"/>
-						 </property>
-						 <property name="placeholderText">
-							 <string/>
-						 </property>
-					 </widget>
-				 </item>
-				 <item row="3" column="0">
-					 <layout class="QHBoxLayout" name="horizontalLayout_6">
-						 <item>
-							 <widget class="QPushButton" name="AnalyseInventoryPushButton">
-								 <property name="sizeIncrement">
-									 <size>
-										 <width>0</width>
-										 <height>0</height>
-									 </size>
-								 </property>
-								 <property name="baseSize">
-									 <size>
-										 <width>0</width>
-										 <height>0</height>
-									 </size>
-								 </property>
-								 <property name="text">
-									 <string>Analyser inventaire</string>
-								 </property>
-							 </widget>
-						 </item>
-						 <item>
-							 <widget class="QPushButton" name="modifyInventoryPushButton">
-								 <property name="enabled">
-									 <bool>true</bool>
-								 </property>
-								 <property name="sizeIncrement">
-									 <size>
-										 <width>0</width>
-										 <height>0</height>
-									 </size>
-								 </property>
-								 <property name="baseSize">
-									 <size>
-										 <width>0</width>
-										 <height>0</height>
-									 </size>
-								 </property>
-								 <property name="text">
-									 <string>Modifier Inventaire</string>
-								 </property>
-							 </widget>
-						 </item>
-						 <item>
-							 <widget class="QPushButton" name="generateInventoryPushButton">
-								 <property name="enabled">
-									 <bool>false</bool>
-								 </property>
-								 <property name="sizeIncrement">
-									 <size>
-										 <width>0</width>
-										 <height>0</height>
-									 </size>
-								 </property>
-								 <property name="baseSize">
-									 <size>
-										 <width>0</width>
-										 <height>0</height>
-									 </size>
-								 </property>
-								 <property name="text">
-									 <string>Générer PDF</string>
-								 </property>
-							 </widget>
-						 </item>
-					 </layout>
-				 </item>
-				 <item row="5" column="0">
-					 <widget class="QLabel" name="label">
-						 <property name="font">
-							 <font>
-								 <pointsize>12</pointsize>
-								 <bold>true</bold>
-							 </font>
-						 </property>
-						 <property name="text">
-							 <string>Éléments détectés</string>
-						 </property>
-						 <property name="alignment">
-							 <set>Qt::AlignmentFlag::AlignCenter</set>
-						 </property>
-					 </widget>
-				 </item>
-				 <item row="6" column="0">
-					 <widget class="QTableWidget" name="tableWidget"/>
-				 </item>
-			 </layout>
-		 </widget>
+      <widget class="QWidget" name="Inventaire">
+       <attribute name="title">
+        <string>Inventaire</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_4">
+        <item row="0" column="0">
+         <widget class="QLabel" name="SaisirInventaire">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+            <bold>true</bold>
+            <kerning>true</kerning>
+           </font>
+          </property>
+          <property name="text">
+           <string>Saisie d'inventaire</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QTextEdit" name="inventaireTextEdit">
+          <property name="acceptDrops">
+           <bool>true</bool>
+          </property>
+          <property name="toolTipDuration">
+           <number>-1</number>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="placeholderText">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <item>
+           <widget class="QPushButton" name="AnalyseInventoryPushButton">
+            <property name="sizeIncrement">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="baseSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Analyser inventaire</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="modifyInventoryPushButton">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="sizeIncrement">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="baseSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Modifier Inventaire</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="generateInventoryPushButton">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="sizeIncrement">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="baseSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Générer PDF</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="label">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Éléments détectés</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0">
+         <widget class="QTableWidget" name="tableWidget"/>
+        </item>
+       </layout>
+      </widget>
       <widget class="QWidget" name="DevisResults">
        <attribute name="title">
         <string>Résultats et Devis</string>
