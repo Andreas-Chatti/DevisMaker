@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <QDialog>
 #include "ui_CompanyInfoDialog.h"
 #include "user/user.h"
@@ -9,7 +9,7 @@ class CompanyInfoDialog : public QDialog
 
 public:
 
-    explicit CompanyInfoDialog(QWidget* parent = nullptr, User* const = nullptr);
+    CompanyInfoDialog(User& user, QWidget* parent = nullptr);
     ~CompanyInfoDialog() = default;
 
     const QString& getCompanyName() const { return ui.companyNameLineEdit->text(); }
@@ -30,7 +30,7 @@ private slots:
 private:
 
     Ui::CompanyInfoDialog ui;
-    User* const m_user;
+    User& m_user;
 
     void loadUserInfo() const;
 };

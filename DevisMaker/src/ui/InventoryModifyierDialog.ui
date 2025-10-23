@@ -81,7 +81,7 @@
 					</column>
 					<column>
 						<property name="text">
-							<string>Volume (m³)</string>
+							<string>Volume total (m³)</string>
 						</property>
 					</column>
 					<column>
@@ -223,35 +223,49 @@
 				</spacer>
 			</item>
 
-			<!-- Boutons OK/Cancel -->
+			<!-- Bouton OK uniquement -->
 			<item>
-				<widget class="QDialogButtonBox" name="buttonBox">
-					<property name="orientation">
-						<enum>Qt::Orientation::Horizontal</enum>
-					</property>
-					<property name="standardButtons">
-						<set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
-					</property>
-					<property name="centerButtons">
-						<bool>false</bool>
-					</property>
-				</widget>
+				<layout class="QHBoxLayout" name="bottomButtonLayout">
+					<item>
+						<spacer name="horizontalSpacer_bottom">
+							<property name="orientation">
+								<enum>Qt::Orientation::Horizontal</enum>
+							</property>
+							<property name="sizeHint" stdset="0">
+								<size>
+									<width>40</width>
+									<height>20</height>
+								</size>
+							</property>
+						</spacer>
+					</item>
+					<item>
+						<widget class="QPushButton" name="okButton">
+							<property name="minimumSize">
+								<size>
+									<width>100</width>
+									<height>30</height>
+								</size>
+							</property>
+							<property name="text">
+								<string>OK</string>
+							</property>
+							<property name="default">
+								<bool>true</bool>
+							</property>
+						</widget>
+					</item>
+				</layout>
 			</item>
 		</layout>
 	</widget>
 	<resources/>
 	<connections>
 		<connection>
-			<sender>buttonBox</sender>
-			<signal>accepted()</signal>
+			<sender>okButton</sender>
+			<signal>clicked()</signal>
 			<receiver>InventoryModifyierDialog</receiver>
 			<slot>accept()</slot>
-		</connection>
-		<connection>
-			<sender>buttonBox</sender>
-			<signal>rejected()</signal>
-			<receiver>InventoryModifyierDialog</receiver>
-			<slot>reject()</slot>
 		</connection>
 	</connections>
 </ui>

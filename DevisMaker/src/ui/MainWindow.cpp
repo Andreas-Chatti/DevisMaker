@@ -252,13 +252,29 @@ void MainWindow::displayingResults()
 
 void MainWindow::on_AnalyseInventoryPushButton_clicked()
 {
-    // Récupérer le texte d'inventaire
     QString inventoryText{ ui.inventaireTextEdit->toPlainText() };
-
     if (inventoryText.isEmpty()) 
     {
         QMessageBox::warning(this, "Inventaire vide", "Veuillez saisir une liste d'objets avant d'analyser.");
         return;
+    }
+
+    else if (!m_client->getInventory()->getInventory().isEmpty())
+    {
+        QMessageBox msgBox(this);
+        msgBox.setIcon(QMessageBox::Warning);
+        msgBox.setWindowTitle("Écrasement d'inventaire");
+        msgBox.setText("Attention, faire l'analyse va écraser l'inventaire actuel.");
+        msgBox.setInformativeText("Voulez-vous continuer ?");
+
+        QPushButton* ouiBtn = msgBox.addButton("Oui", QMessageBox::YesRole);
+        QPushButton* nonBtn = msgBox.addButton("Non", QMessageBox::NoRole);
+
+        msgBox.setDefaultButton(nonBtn);
+        msgBox.exec();
+
+        if (msgBox.clickedButton() == nonBtn)
+            return;
     }
 
     // Changer le texte du bouton pour indiquer le chargement
@@ -298,15 +314,14 @@ void MainWindow::on_generateInventoryPushButton_clicked()
 
 void MainWindow::handleInventoryAnalysis(const Inventory& inventory)
 {
-    // Mettre à jour le champ de volume
     ui.volumelineEdit->setText(QString::number(inventory.getTotalVolume(), 'f', 2));
 
     displayInventory(inventory);
 
-    // Message de succès
     QString titre{ QString::fromUtf8("Analyse terminée") };
-    QString message{ QString::fromUtf8("Volume total: %1 m3, %2 objet(s) détecté(s)").arg(QString::number(inventory.getTotalVolume(), 'f', 2)).arg(inventory.getInventory().size())};
-    QMessageBox::information(this, titre, message);
+    QString msg1{ QString{"Volume total: %1 m3, %2 "}.arg(QString::number(inventory.getTotalVolume(), 'f', 2)).arg(inventory.getInventory().size()) };
+    QString msg2{ QString::fromUtf8(inventory.getInventory().size() >= 2 ? "objets détectés" : "objet détecté") };
+    QMessageBox::information(this, titre, msg1 + msg2);
 
     ui.AnalyseInventoryPushButton->setText("Analyser inventaire");
     ui.AnalyseInventoryPushButton->setEnabled(true);
@@ -659,17 +674,18 @@ void MainWindow::setupDateEdit() const
 
 void MainWindow::on_companyInfoPushButton_clicked()
 {
-    CompanyInfoDialog dialog{ this, m_user };
+    CompanyInfoDialog dialog{ *m_user, this };
     dialog.exec();
 }
 
 void MainWindow::on_modifyInventoryPushButton_clicked()
 {
-    InventoryModifyierDialog* dialog{ new InventoryModifyierDialog{*m_client->getInventory(), this} };
-    connect(dialog, &InventoryModifyierDialog::removeItem, m_client->getInventory(), &Inventory::removeObject);
+    auto dialog{ std::make_unique<InventoryModifyierDialog>(*m_client->getInventory(), this) };
+    connect(dialog.get(), &InventoryModifyierDialog::removeItem, m_client->getInventory(), &Inventory::removeObject);
     dialog->exec();
 
-    delete dialog;
+    displayInventory(*(m_client->getInventory()));
+    ui.volumelineEdit->setText(QString::number(m_client->getInventory()->getTotalVolume(), 'f', 2));
 }
 
 

@@ -1,12 +1,12 @@
 {
-    "apeNumber": "4942Z",
-    "companyAddress": "\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd\udddd",
+    "apeNumber": "APE",
+    "companyAddress": "2, Rue Jean Cocteau",
     "companyMail": "chattidemenagement@gmail.com",
     "companyName": "CHATTI DEMENAGEMENT",
     "companyPhoneNumber": "01 69 75 18 22",
-    "siretNumber": "390 329 894 00054",
-    "tvaNumber": "FR12345678901",
-    "userMail": "alexischatti@gmail.com",
-    "userName": "Alexis Chatti",
-    "userPhoneNumber": "06 72 85 35 38"
+    "siretNumber": "",
+    "tvaNumber": "",
+    "userMail": "",
+    "userName": "",
+    "userPhoneNumber": ""
 }

@@ -1,4 +1,4 @@
-#include "user.h"
+#include "user/user.h"
 
 User::User(QObject* parent)
 	: QObject(parent)
@@ -6,6 +6,7 @@ User::User(QObject* parent)
 	if (!loadUserFile())
 		createUserFile();
 }
+
 
 bool User::loadUserFile()
 {

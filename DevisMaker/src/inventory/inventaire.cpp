@@ -1,4 +1,4 @@
-#include "inventaire.h"
+ï»¿#include "inventaire.h"
 
 void Inventory::handleInventoryAnalysis(double totalVolume, const QStringList& structuredItems)
 {
@@ -14,13 +14,13 @@ void Inventory::handleInventoryAnalysis(double totalVolume, const QStringList& s
         if (parts.size() == 2)
         {
             QString fullName{ parts[0] };     // Ex: "2 matelas 1 place"
-            QString volumeText{ parts[1] };   // Ex: "1.0 m³"
+            QString volumeText{ parts[1] };   // Ex: "1.0 mÂ³"
 
             QStringList words{ fullName.split(" ") };
-            int quantity{ 1 };  // Par défaut
+            int quantity{ 1 };  // Par dÃ©faut
             QString cleanName{ fullName };
 
-            // Extraire la quantité du nom
+            // Extraire la quantitÃ© du nom
             if (!words.isEmpty())
             {
                 bool ok{};
@@ -74,10 +74,12 @@ void Inventory::addObject(const MovingObject& movingObject, int quantity)
         if (object == movingObject)
         {
             object.add(quantity);
+            m_totalVolume += object.getUnitaryVolume() * quantity;
             return;
         }
     }
     m_objects.emplaceBack(movingObject);
+    m_totalVolume += movingObject.getTotalVolume();
 }
 
 
@@ -143,7 +145,11 @@ void Inventory::modifyObject(const MovingObject& objectToModify, MovingObject ne
     auto object{ std::find_if(m_objects.begin(), m_objects.end(), isSameObject) };
 
     if (object != m_objects.end())
+    {
+        m_totalVolume -= object->getTotalVolume();
         *object = std::move(newObject);
+        m_totalVolume += object->getTotalVolume();
+    }
 }
 
 
@@ -163,5 +169,8 @@ void Inventory::removeObject(const MovingObject& movingObject)
 
     auto it{ std::find_if(m_objects.begin(), m_objects.end(), isSameObject) };
     if (it != m_objects.end())
+    {
+        m_totalVolume -= it->getTotalVolume();
         m_objects.erase(it);
+    }
 }

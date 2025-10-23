@@ -1,4 +1,4 @@
-#include "InventoryModifyierDialog.h"
+Ôªø#include "InventoryModifyierDialog.h"
 
 InventoryModifyierDialog::InventoryModifyierDialog(const Inventory& inventory, QWidget* parent)
 	: QDialog{parent}
@@ -31,9 +31,6 @@ void InventoryModifyierDialog::on_removeItemButton_clicked()
 
     int selectedRow{ ui.inventoryTableWidget->currentRow() };
     ui.inventoryTableWidget->removeRow(selectedRow);
-
-    // TODO : Directement implenter les changements de la liste d'inventaire de la fenÍtre dans la fenÍtre principale
-    hasEditedInventory = true;
 }
 
 void InventoryModifyierDialog::on_inventoryTableWidget_itemSelectionChanged()
@@ -41,23 +38,23 @@ void InventoryModifyierDialog::on_inventoryTableWidget_itemSelectionChanged()
     bool hasSelection{ !ui.inventoryTableWidget->selectedItems().isEmpty() };
     if (hasSelection)
     {
-        ui.modifyItemButton->setEnabled(hasSelection);
-        ui.removeItemButton->setEnabled(hasSelection);
+        ui.modifyItemButton->setEnabled(true);
+        ui.removeItemButton->setEnabled(true);
     }
 
     else
     {
-        ui.modifyItemButton->setEnabled(!hasSelection);
-        ui.removeItemButton->setEnabled(!hasSelection);
+        ui.modifyItemButton->setEnabled(false);
+        ui.removeItemButton->setEnabled(false);
     }
 }
 
 void InventoryModifyierDialog::setupUi()
 {
-    ui.inventoryTableWidget->setColumnWidth(0, 150);  // …lÈment
-    ui.inventoryTableWidget->setColumnWidth(1, 80);   // QuantitÈ
+    ui.inventoryTableWidget->setColumnWidth(0, 150);  // √âl√©ment
+    ui.inventoryTableWidget->setColumnWidth(1, 80);   // Quantit√©
     ui.inventoryTableWidget->setColumnWidth(2, 100);  // Volume
-    ui.inventoryTableWidget->setColumnWidth(3, 100);  // DÈmontage
+    ui.inventoryTableWidget->setColumnWidth(3, 100);  // D√©montage
     ui.inventoryTableWidget->setColumnWidth(4, 100);  // Remontage
     ui.inventoryTableWidget->setColumnWidth(5, 100);  // Objet Lourd
     ui.inventoryTableWidget->horizontalHeader()->setStretchLastSection(true);
@@ -65,21 +62,18 @@ void InventoryModifyierDialog::setupUi()
 
 void InventoryModifyierDialog::displayInventory()
 {
-    // Vider le tableau avant de le remplir
     ui.inventoryTableWidget->setRowCount(0);
 
     const QVector<MovingObject>& objects{ m_inventory.getInventory() };
 
-    // Si l'inventaire est vide, afficher un message
     if (objects.isEmpty())
     {
         ui.titleLabel->setText("Inventaire vide");
         return;
     }
 
-    ui.titleLabel->setText(QString::fromUtf8("Inventaire (%1 ÈlÈments)").arg(objects.size()));
+    ui.titleLabel->setText(QString{ "Inventaire (%1 " }.arg(objects.size()) + QString{ objects.size() >= 2 ? "√©l√©ments)" : "√©l√©ment)" });
 
-    // Parcourir tous les objets et les ajouter au tableau
     for (size_t i{}; i < objects.size(); i++)
         addInventoryItemToTable(objects[i], i, "");
 }
@@ -89,22 +83,22 @@ void InventoryModifyierDialog::addInventoryItemToTable(const MovingObject& movin
     int row{ ui.inventoryTableWidget->rowCount() };
     ui.inventoryTableWidget->insertRow(row);
 
-    // Colonne 0 : Nom de l'ÈlÈment
+    // Colonne 0 : Nom de l'√©l√©ment
     QTableWidgetItem* nameItem{ new QTableWidgetItem(movingObject.getName()) };
     nameItem->setData(Qt::UserRole, inventoryIndex);
     ui.inventoryTableWidget->setItem(row, 0, nameItem);
 
-    // Colonne 1 : QuantitÈ
+    // Colonne 1 : Quantit√©
     QTableWidgetItem* quantityItem{ new QTableWidgetItem(QString::number(movingObject.getQuantity())) };
     quantityItem->setTextAlignment(Qt::AlignCenter);
     ui.inventoryTableWidget->setItem(row, 1, quantityItem);
 
-    // Colonne 2 : Volume (formatÈ avec 2 dÈcimales)
+    // Colonne 2 : Volume (format√© avec 2 d√©cimales)
     QTableWidgetItem* volumeItem{ new QTableWidgetItem(QString::number(movingObject.getTotalVolume(), 'f', 2)) };
     volumeItem->setTextAlignment(Qt::AlignCenter);
     ui.inventoryTableWidget->setItem(row, 2, volumeItem);
 
-    // Colonne 3 : DÈmontage
+    // Colonne 3 : D√©montage
     QTableWidgetItem* disassemblyItem{ new QTableWidgetItem(movingObject.isDisassembly() ? "Oui" : "Non") };
     disassemblyItem->setTextAlignment(Qt::AlignCenter);
     if (movingObject.isDisassembly())
@@ -137,14 +131,14 @@ MovingObject InventoryModifyierDialog::getMovingObjectFromSelection() const
     if (selectedRow < 0)
         return MovingObject{"", 0.0};
 
-    // RÈcupÈrer l'index stockÈ
+    // R√©cup√©rer l'index stock√©
     QTableWidgetItem* item{ ui.inventoryTableWidget->item(selectedRow, 0) };
     if (!item)
         return MovingObject{ "", 0.0 };
 
     size_t inventoryIndex{ static_cast<size_t>(item->data(Qt::UserRole).toInt()) };
 
-    // AccÈder ‡ l'objet original via l'index
+    // Acc√©der √† l'objet original via l'index
     const QVector<MovingObject>& objects{ m_inventory.getInventory() };
 
     if (inventoryIndex >= objects.size())

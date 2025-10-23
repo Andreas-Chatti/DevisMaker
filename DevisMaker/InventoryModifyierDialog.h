@@ -31,7 +31,6 @@ private:
 
     Ui::InventoryModifyierDialog ui;
     const Inventory& m_inventory;
-    bool hasEditedInventory{ false };
 
     void setupUi();
     void displayInventory();

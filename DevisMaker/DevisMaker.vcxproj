@@ -38,7 +38,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
     <QtModules>core;gui;widgets;network;printsupport</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
-    <QtInstall>msvc2022_64</QtInstall>
+    <QtInstall>6.9.0_msvc2022_64</QtInstall>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
     <QtInstall>6.9.0_msvc2022_64</QtInstall>
@@ -67,11 +67,13 @@
     <ClCompile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>C:\Users\Andreas\source\repos\DevisMaker\DevisMaker\src;C:\DevisMaker\DevisMaker\src</AdditionalIncludeDirectories>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>C:\DevisMaker\DevisMaker\src</AdditionalIncludeDirectories>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
@@ -115,12 +117,12 @@
     <ClCompile Include="src\generators\pdfGenerator.cpp" />
     <ClCompile Include="src\streetmap\streetMap.cpp" />
     <ClCompile Include="src\utils\tarification.cpp" />
-    <ClCompile Include="user.cpp" />
+    <ClCompile Include="src\user\user.cpp" />
     <QtRcc Include="DevisMaker.qrc" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="user.h" />
+    <QtMoc Include="src\user\user.h" />
     <QtMoc Include="src\streetmap\addressCompleter.h" />
     <QtMoc Include="InventoryModifyierDialog.h" />
     <QtMoc Include="ItemModifyierDialog.h" />
