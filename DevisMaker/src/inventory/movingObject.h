@@ -1,112 +1,21 @@
-#pragma once
+﻿#pragma once
 #include <QString>
 
 class MovingObject
 {
 public:
 
-	explicit MovingObject(QString objectName, double unitaryVolume, int quantity = 1, bool disassembly = false, bool assembly = false, bool heavy = false)
-		: m_name{ objectName }
-		, m_unitaryVolume{ unitaryVolume }
-		, m_quantity{ quantity }
-		, m_totalVolume{ m_unitaryVolume * m_quantity }
-		, m_disassembly{ disassembly }
-		, m_assembly{ assembly }
-		, m_heavy{ heavy }
-	{
-	}
+	explicit MovingObject(QString objectName, double unitaryVolume, int quantity = 1, bool disassembly = false, bool assembly = false, bool heavy = false, QString notes = "");
+	MovingObject(const MovingObject& object);
+	MovingObject& operator=(const MovingObject& object);
+	MovingObject(MovingObject&& object) noexcept;
+	MovingObject& operator=(MovingObject&& object) noexcept;
+	bool operator== (const MovingObject& movingObject) const;
 
-	MovingObject(const MovingObject& object)
-		: m_name{ object.m_name }
-		, m_unitaryVolume{ object.m_unitaryVolume }
-		, m_quantity{ object.m_quantity }
-		, m_totalVolume{ object.m_unitaryVolume * object.m_quantity }
-		, m_disassembly{ object.m_disassembly }
-		, m_assembly{ object.m_assembly }
-		, m_heavy{ object.m_heavy }
-	{
-	}
-
-	MovingObject& operator=(const MovingObject& object)
-	{
-		if (&object == this)
-			return *this;
-
-		m_name = object.m_name;
-		m_unitaryVolume = object.m_unitaryVolume;
-		m_quantity = object.m_quantity;
-		m_totalVolume = object.m_unitaryVolume * object.m_quantity;
-		m_disassembly = object.m_disassembly;
-		m_assembly = object.m_assembly;
-		m_heavy = object.m_heavy;
-
-		return *this;
-	}
-
-	MovingObject(MovingObject&& object) noexcept
-		: m_name{ std::move(object.m_name) }
-		, m_unitaryVolume{ object.m_unitaryVolume }
-		, m_quantity{ object.m_quantity }
-		, m_totalVolume{ object.m_unitaryVolume * object.m_quantity }
-		, m_disassembly{ object.m_disassembly }
-		, m_assembly{ object.m_assembly }
-		, m_heavy{ object.m_heavy }
-	{
-	}
-
-	MovingObject& operator=(MovingObject&& object) noexcept
-	{
-		if (&object == this)
-			return *this;
-
-		m_name = std::move(object.m_name);
-		m_unitaryVolume = object.m_unitaryVolume;
-		m_quantity = object.m_quantity;
-		m_totalVolume = object.m_unitaryVolume * object.m_quantity;
-		m_disassembly = object.m_disassembly;
-		m_assembly = object.m_assembly;
-		m_heavy = object.m_heavy;
-
-		return *this;
-	}
-
-	bool operator== (const MovingObject& movingObject) const
-	{
-		return (this->m_name == movingObject.getName()) && (this->m_unitaryVolume == movingObject.getUnitaryVolume());
-	}
-
-	int add()
-	{ 
-		m_totalVolume += m_unitaryVolume;
-		return ++m_quantity; 
-	}
-
-	int add(int quantity)
-	{
-		m_totalVolume += m_unitaryVolume * quantity;
-		return m_quantity += quantity;
-	}
-
-	int remove() 
-	{ 
-		if (m_quantity == 0)
-			return 0;
-
-		m_totalVolume -= m_unitaryVolume;
-		return --m_quantity; 
-	}
-
-	int remove(int quantity)
-	{
-		if (quantity > m_quantity)
-		{
-			m_totalVolume -= m_unitaryVolume * m_quantity;
-			return 0;
-		}
-
-		m_totalVolume -= m_unitaryVolume * quantity;
-		return m_quantity -= quantity;
-	}
+	int add();
+	int add(int quantity);
+	int remove();
+	int remove(int quantity);
 
 	const QString& getName() const { return m_name; }
 	double getUnitaryVolume() const { return m_unitaryVolume; }
@@ -115,6 +24,7 @@ public:
 	bool isDisassembly() const { return m_disassembly; }
 	bool isAssembly() const { return m_assembly; }
 	bool isHeavy() const { return m_heavy; }
+	const QString& getNote() const { return m_note; }
 
 	void setName(QString name) { m_name = std::move(name); }
 	void setUnitaryVolume(double unitaryVolume) 
@@ -130,6 +40,7 @@ public:
 	void setDisassembly(bool isDisassembly) { m_disassembly = isDisassembly; }
 	void setAssembly(bool isAssembly) { m_assembly = isAssembly; }
 	void setHeavy(bool isHeavy) { m_heavy = isHeavy; }
+	void setNote(QString note) { m_note = std::move(note); }
 
 private:
 
@@ -140,4 +51,5 @@ private:
 	bool m_disassembly;
 	bool m_assembly;
 	bool m_heavy;
+	QString m_note;
 };

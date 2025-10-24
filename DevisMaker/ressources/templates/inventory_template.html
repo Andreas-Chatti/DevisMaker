@@ -3,38 +3,9 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            margin: 0; 
-            padding: 0;
-            color: #000;
-            font-size: 10px;
-            line-height: 1.2;
-            background-color: #f5f5f5;
-        }
-        
-        .container {
-            width: 100%;
-            margin: 0 auto;
-            padding: 15px;
-        }
-        
-        @media print {
-            body {
-                padding: 0;
-                margin: 0;
-            }
-            .container {
-                width: 100%;
-                padding: 10mm;
-                margin: 0;
-            }
-        }
-    </style>
 </head>
-<body>
-    <div class="container">
+<body style="font-family: Arial, sans-serif; margin: 0; padding: 0; color: #000; font-size: 10px; line-height: 1.2; background-color: #f5f5f5;">
+    <div style="width: 100%; margin: 0 auto; padding: 15px;">
         <div style="margin-bottom: 15px; border-bottom: 2px solid #000; padding-bottom: 10px;">
             <div style="font-size: 16px; font-weight: bold; margin-bottom: 5px; color: #2c3e50;">%COMPANY_NAME%</div>
             <div style="font-size: 9px; line-height: 1.3;">
@@ -48,67 +19,67 @@
     
         <table width="100%" style="width: 100%; min-width: 100%; border-collapse: collapse; border: 2px solid #000; margin-bottom: 15px;">
             <tr>
-                <td colspan="4" style="background-color: #34495e; color: white; font-weight: bold; padding: 4px; font-size: 9px; text-align: center; border-right: 1px solid #000; border-left: 0px; border-top: 1px solid #000; border-bottom: 1px solid #000;">Informations Client</td>
+                <td colspan="4" style="background-color: #34495e; color: white; font-weight: bold; padding: 4px; font-size: 9px; text-align: center; border: 1px solid #000;">Informations Client</td>
             </tr>
             <tr>
                 <td style="background-color: #ecf0f1; font-weight: bold; text-align: left; width: 20%; padding: 4px; font-size: 9px; border: 1px solid #000;">Client N°:</td>
-                <td style="padding: 4px; font-size: 9px; text-align: center; border: 1px solid #000;">%CLIENT_NUMBER%</td>
+                <td style="padding: 4px; font-size: 9px; text-align: center; border: 1px solid #000; vertical-align: middle;">%CLIENT_NUMBER%</td>
                 <td style="background-color: #ecf0f1; font-weight: bold; text-align: left; width: 20%; padding: 4px; font-size: 9px; border: 1px solid #000;">Nom et Prénom:</td>
-                <td style="padding: 4px; font-size: 9px; text-align: left; border: 1px solid #000;">%CLIENT_NAME%</td>
+                <td style="padding: 4px; font-size: 9px; text-align: left; border: 1px solid #000; vertical-align: middle;">%CLIENT_NAME%</td>
             </tr>
             <tr>
                 <td style="background-color: #ecf0f1; font-weight: bold; text-align: left; padding: 4px; font-size: 9px; border: 1px solid #000;">Adresse Chargement:</td>
-                <td style="padding: 4px; font-size: 9px; text-align: left; border: 1px solid #000;">%ADRESSE_CHARGEMENT%</td>
+                <td style="padding: 4px; font-size: 9px; text-align: left; border: 1px solid #000; vertical-align: middle;">%ADRESSE_CHARGEMENT%</td>
                 <td style="background-color: #ecf0f1; font-weight: bold; text-align: left; padding: 4px; font-size: 9px; border: 1px solid #000;">Adresse Livraison:</td>
-                <td style="padding: 4px; font-size: 9px; text-align: left; border: 1px solid #000;">%ADRESSE_LIVRAISON%</td>
+                <td style="padding: 4px; font-size: 9px; text-align: left; border: 1px solid #000; vertical-align: middle;">%ADRESSE_LIVRAISON%</td>
             </tr>
             <tr>
                 <td style="background-color: #ecf0f1; font-weight: bold; text-align: left; padding: 4px; font-size: 9px; border: 1px solid #000;">Période Chargement:</td>
-                <td style="padding: 4px; font-size: 9px; text-align: left; border: 1px solid #000;">%PERIODE_CHARGEMENT%</td>
+                <td style="padding: 4px; font-size: 9px; text-align: left; border: 1px solid #000; vertical-align: middle;">%PERIODE_CHARGEMENT%</td>
                 <td style="background-color: #ecf0f1; font-weight: bold; text-align: left; padding: 4px; font-size: 9px; border: 1px solid #000;">Période Livraison:</td>
-                <td style="padding: 4px; font-size: 9px; text-align: left; border: 1px solid #000;">%PERIODE_LIVRAISON%</td>
+                <td style="padding: 4px; font-size: 9px; text-align: left; border: 1px solid #000; vertical-align: middle;">%PERIODE_LIVRAISON%</td>
             </tr>
             <tr>
                 <td style="background-color: #ecf0f1; font-weight: bold; text-align: left; padding: 4px; font-size: 9px; border: 1px solid #000;">Téléphone:</td>
-                <td style="padding: 4px; font-size: 9px; text-align: center; border: 1px solid #000;">%PHONE_NUMBER%</td>
+                <td style="padding: 4px; font-size: 9px; text-align: center; border: 1px solid #000; vertical-align: middle;">%PHONE_NUMBER%</td>
                 <td style="background-color: #ecf0f1; font-weight: bold; text-align: left; padding: 4px; font-size: 9px; border: 1px solid #000;">Volume Total:</td>
-                <td style="padding: 4px; font-size: 12px; font-weight: bold; text-align: center; background-color: #f8f9fa; border: 1px solid #000;">%VOLUME_TOTAL% m³</td>
+                <td style="padding: 4px; font-size: 12px; font-weight: bold; text-align: center; background-color: #f8f9fa; border: 1px solid #000; vertical-align: middle;">%VOLUME_TOTAL% m³</td>
             </tr>
         </table>
     
         <table width="100%" style="width: 100%; min-width: 100%; border-collapse: collapse; border: 2px solid #000; margin-bottom: 15px;">
             <tr>
-                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 9px; text-align: center; border: 1px solid #000; width: 25%;">Type d'Objet</td>
-                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 9px; text-align: center; border: 1px solid #000; width: 8%;">Quantité</td>
-                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 9px; text-align: center; border: 1px solid #000; width: 12%;">Volume Individuel (m³)</td>
-                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 9px; text-align: center; border: 1px solid #000; width: 12%;">Volume Total (m³)</td>
-                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 14%;">Démontage</td>
-                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 14%;">Remontage</td>
-                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 15%;">Déchetterie</td>
+                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 9px; text-align: center; border: 1px solid #000; width: 25%; vertical-align: middle;">Type d'Objet</td>
+                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 9px; text-align: center; border: 1px solid #000; width: 8%; vertical-align: middle;">Quantité</td>
+                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 9px; text-align: center; border: 1px solid #000; width: 12%; vertical-align: middle;">Volume Individuel (m³)</td>
+                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 9px; text-align: center; border: 1px solid #000; width: 12%; vertical-align: middle;">Volume Total (m³)</td>
+                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 14%; vertical-align: middle;">Démontage</td>
+                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 14%; vertical-align: middle;">Remontage</td>
+                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 15%; vertical-align: middle;">Lourd</td>
             </tr>
             %INVENTAIRE_ROWS%
     
             <tr>
-                <td colspan="3" style="background-color: #2c3e50; color: white; font-weight: bold; font-size: 11px; text-align: right; padding: 4px; border: 1px solid #000;"><strong>VOLUME TOTAL:</strong></td>
-                <td style="background-color: #2c3e50; color: white; font-weight: bold; font-size: 11px; text-align: center; padding: 4px; border: 1px solid #000;"><strong>%VOLUME_TOTAL% m³</strong></td>
+                <td colspan="3" style="background-color: #2c3e50; color: white; font-weight: bold; font-size: 11px; text-align: right; padding: 4px; border: 1px solid #000; vertical-align: middle;"><strong>VOLUME TOTAL:</strong></td>
+                <td style="background-color: #2c3e50; color: white; font-weight: bold; font-size: 11px; text-align: center; padding: 4px; border: 1px solid #000; vertical-align: middle;"><strong>%VOLUME_TOTAL% m³</strong></td>
                 <td colspan="3" style="background-color: #2c3e50; border: 1px solid #000;"></td>
             </tr>
         </table>
     
         <div style="margin-top: 20px; font-size: 9px; line-height: 1.4;">
-            <p><strong>Observations particulières:</strong></p>
+            <p style="font-weight: bold;">Observations particulières:</p>
             <div style="border: 1px solid #000; min-height: 40px; padding: 5px; margin-bottom: 15px;">
             </div>
             
             <table width="100%" style="width: 100%; margin-top: 20px;">
                 <tr>
                     <td style="text-align: center; width: 50%; vertical-align: top;">
-                        <p><strong>Signature du Client:</strong></p>
+                        <p style="font-weight: bold;">Signature du Client:</p>
                         <div style="border-bottom: 1px solid #000; width: 200px; height: 50px; margin: 10px auto;"></div>
                         <p style="font-size: 8px;">Date: %DATE%</p>
                     </td>
                     <td style="text-align: center; width: 50%; vertical-align: top;">
-                        <p><strong>Signature du Déménageur:</strong></p>
+                        <p style="font-weight: bold;">Signature du Déménageur:</p>
                         <div style="border-bottom: 1px solid #000; width: 200px; height: 50px; margin: 10px auto;"></div>
                         <p style="font-size: 8px;">Date: %DATE%</p>
                     </td>

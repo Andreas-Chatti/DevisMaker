@@ -721,7 +721,7 @@ QString PDFGenerator::getDefaultInventoryTemplate() const
                 <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 9px; text-align: center; border: 1px solid #000; width: 12%; vertical-align: middle;">Volume Total (m³)</td>
                 <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 14%; vertical-align: middle;">Démontage</td>
                 <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 14%; vertical-align: middle;">Remontage</td>
-                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 15%; vertical-align: middle;">Déchetterie</td>
+                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 15%; vertical-align: middle;">Lourd</td>
             </tr>
             %INVENTAIRE_ROWS%
     )");
@@ -793,9 +793,9 @@ QString PDFGenerator::generateInventoryRow(const Inventory* const inventory) con
             .arg(QString::number(object.getQuantity())) // object quantity
             .arg(QString::number(object.getUnitaryVolume(), 'f', 2)) // object unitary volume
             .arg(QString::number(object.getTotalVolume(), 'f', 2)) // total object's volume based on quantity
-            .arg(QString{ "☐" })
-            .arg(QString{ "☐" })
-            .arg(QString{ "☐" });
+            .arg(QString{ object.isDisassembly() ? "☑" : "☐" })
+            .arg(QString{ object.isAssembly() ? "☑" : "☐" })
+            .arg(QString{ object.isHeavy() ? "☑" : "☐" });
     }
 
     return supplementRows;
