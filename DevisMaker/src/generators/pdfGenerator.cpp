@@ -775,11 +775,14 @@ QString PDFGenerator::getDefaultInventoryTemplate() const
 QString PDFGenerator::generateInventoryRow(const Inventory* const inventory) const
 {
     QString supplementRows{};
-    const auto& objectList{ inventory->getInventory() };
-
-    for (const auto& object : objectList)
+    const auto& areaList{ inventory->getAreas() };
+    for (const auto& area : areaList)
     {
-        supplementRows += QString(R"(
+        // TODO : Générer une ligne pour démarquer la pièce actuelle et ses objets
+        const auto& objectList{ area.getObjectsList() };
+        for (const auto& object : objectList)
+        {
+            supplementRows += QString(R"(
         <tr>
             <td style="padding: 4px; font-size: 9px; text-align: left; border: 1px solid #000;">%1</td>
             <td style="padding: 4px; font-size: 9px; text-align: center; border: 1px solid #000;">%2</td>
@@ -790,14 +793,14 @@ QString PDFGenerator::generateInventoryRow(const Inventory* const inventory) con
             <td style="padding: 4px; font-size: 12px; text-align: center; border: 1px solid #000;">%7</td>
         </tr>
         )").arg(object.getName())
-            .arg(QString::number(object.getQuantity())) // object quantity
-            .arg(QString::number(object.getUnitaryVolume(), 'f', 2)) // object unitary volume
-            .arg(QString::number(object.getTotalVolume(), 'f', 2)) // total object's volume based on quantity
-            .arg(QString{ object.isDisassembly() ? "☑" : "☐" })
-            .arg(QString{ object.isAssembly() ? "☑" : "☐" })
-            .arg(QString{ object.isHeavy() ? "☑" : "☐" });
+                .arg(QString::number(object.getQuantity())) // object quantity
+                .arg(QString::number(object.getUnitaryVolume(), 'f', 2)) // object unitary volume
+                .arg(QString::number(object.getTotalVolume(), 'f', 2)) // total object's volume based on quantity
+                .arg(QString{ object.isDisassembly() ? "☑" : "☐" })
+                .arg(QString{ object.isAssembly() ? "☑" : "☐" })
+                .arg(QString{ object.isHeavy() ? "☑" : "☐" });
+        }
     }
-
     return supplementRows;
 }
 

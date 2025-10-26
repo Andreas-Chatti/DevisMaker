@@ -5,7 +5,9 @@ class MovingObject
 {
 public:
 
-	explicit MovingObject(QString objectName, double unitaryVolume, int quantity = 1, bool disassembly = false, bool assembly = false, bool heavy = false, QString notes = "");
+	MovingObject();
+
+	explicit MovingObject(QString objectName, double unitaryVolume, QString areaKey = "divers", int quantity = 1, bool disassembly = false, bool assembly = false, bool heavy = false, QString notes = "");
 	MovingObject(const MovingObject& object);
 	MovingObject& operator=(const MovingObject& object);
 	MovingObject(MovingObject&& object) noexcept;
@@ -25,6 +27,7 @@ public:
 	bool isAssembly() const { return m_assembly; }
 	bool isHeavy() const { return m_heavy; }
 	const QString& getNote() const { return m_note; }
+	const QString& getAreaKey() const { return m_areaKey; }
 
 	void setName(QString name) { m_name = std::move(name); }
 	void setUnitaryVolume(double unitaryVolume) 
@@ -41,6 +44,7 @@ public:
 	void setAssembly(bool isAssembly) { m_assembly = isAssembly; }
 	void setHeavy(bool isHeavy) { m_heavy = isHeavy; }
 	void setNote(QString note) { m_note = std::move(note); }
+	void setAreaKey(QString areaKey) { m_areaKey = std::move(areaKey); }
 
 private:
 
@@ -52,4 +56,6 @@ private:
 	bool m_assembly;
 	bool m_heavy;
 	QString m_note;
+
+	QString m_areaKey{"divers"};
 };

@@ -11,23 +11,56 @@ InventoryModifyierDialog::InventoryModifyierDialog(const Inventory& inventory, Q
 
 void InventoryModifyierDialog::on_addItemButton_clicked()
 {
-    auto dialog{ std::make_unique<ItemModifyierDialog>(ItemModifyierDialog::EditState::ADD, this) };
-    connect(dialog.get(), &ItemModifyierDialog::addObjectToInventory, &m_inventory, &Inventory::addObject);
-    dialog->exec();
+    // TODO: Créer la logique qui différenciera la sélection entre un item inventaire et une pièce
+    // comme ça on pourra aussi ajouter/modifier/supprimer des pièces
+    if (getSelectedItemType() == ItemType::AreaHeader)
+    {
+
+    }
+
+    else
+    {
+        auto dialog{ std::make_unique<ItemModifyierDialog>(ItemModifyierDialog::EditState::ADD, &m_inventory, this) };
+        dialog->exec();
+    }
+
     displayInventory();
 }
 
 void InventoryModifyierDialog::on_modifyItemButton_clicked()
 {
-    auto dialog{ std::make_unique<ItemModifyierDialog>(ItemModifyierDialog::EditState::MODIFY, this, getMovingObjectFromSelection()) };
-    connect(dialog.get(), &ItemModifyierDialog::editObjectFromInventory, &m_inventory, &Inventory::modifyObject);
-    dialog->exec();
+    // TODO: Créer la logique qui différenciera la sélection entre un item inventaire et une pièce
+    // comme ça on pourra aussi ajouter/modifier/supprimer des pièces
+
+    if (getSelectedItemType() == ItemType::AreaHeader)
+    {
+
+    }
+
+    else
+    {
+        auto dialog{ std::make_unique<ItemModifyierDialog>(ItemModifyierDialog::EditState::MODIFY, &m_inventory, this, getMovingObjectFromSelection()) };
+        dialog->exec();
+    }
+
     displayInventory();
 }
 
 void InventoryModifyierDialog::on_removeItemButton_clicked()
 {
-    emit removeItem(getMovingObjectFromSelection());
+    // TODO: Créer la logique qui différenciera la sélection entre un item inventaire et une pièce
+    // comme ça on pourra aussi ajouter/modifier/supprimer des pièces
+    if (getSelectedItemType() == ItemType::AreaHeader)
+    {
+
+    }
+
+    else
+    {
+        const MovingObject* selectedObject{ getMovingObjectFromSelection() };
+        if (selectedObject)
+            emit removeItem(selectedObject->getName(), getSelectedMovingObjectArea());
+    }
 
     int selectedRow{ ui.inventoryTableWidget->currentRow() };
     ui.inventoryTableWidget->removeRow(selectedRow);
@@ -64,28 +97,58 @@ void InventoryModifyierDialog::displayInventory()
 {
     ui.inventoryTableWidget->setRowCount(0);
 
-    const QVector<MovingObject>& objects{ m_inventory.getInventory() };
-
-    if (objects.isEmpty())
+    int objectsQuantity{ m_inventory.objectsQuantity() };
+    if (objectsQuantity <= 0)
     {
         ui.titleLabel->setText("Inventaire vide");
         return;
     }
 
-    ui.titleLabel->setText(QString{ "Inventaire (%1 " }.arg(objects.size()) + QString{ objects.size() >= 2 ? "éléments)" : "élément)" });
+    ui.titleLabel->setText(QString{ "Inventaire (%1 " }.arg(objectsQuantity) + QString{ objectsQuantity >= 2 ? "éléments)" : "élément)" });
 
-    for (size_t i{}; i < objects.size(); i++)
-        addInventoryItemToTable(objects[i], i, "");
+    const QHash<QString, Area>& areas{ m_inventory.getAreas() };
+    for (const auto& area : areas)
+    {
+        addAreaItemToTable(area);
+        const QHash<QString, MovingObject>& objects{ area.getObjectsList() };
+        for (const auto& object : objects)
+            addInventoryItemToTable(object, area.getName());
+    }
 }
 
-void InventoryModifyierDialog::addInventoryItemToTable(const MovingObject& movingObject, size_t inventoryIndex, const QString& note)
+void InventoryModifyierDialog::addAreaItemToTable(const Area& area)
+{
+    int row{ ui.inventoryTableWidget->rowCount() };
+    ui.inventoryTableWidget->insertRow(row);
+
+    QString areaText{ QString{ "%1" }.arg(area.getName()) };
+
+    QTableWidgetItem* areaItem{ new QTableWidgetItem(areaText) };
+    areaItem->setData(ITEM_TYPE_ROLE, static_cast<int>(ItemType::AreaHeader));
+
+    QFont font{ areaItem->font() };
+    font.setBold(true);
+    font.setPointSize(font.pointSize() + 2);
+    areaItem->setFont(font);
+
+    areaItem->setBackground(QColor(230, 240, 255));
+
+    areaItem->setTextAlignment(Qt::AlignCenter | Qt::AlignVCenter);
+
+    ui.inventoryTableWidget->setItem(row, 0, areaItem);
+
+    int columnCount{ ui.inventoryTableWidget->columnCount() };
+    ui.inventoryTableWidget->setSpan(row, 0, 1, columnCount);
+}
+
+void InventoryModifyierDialog::addInventoryItemToTable(const MovingObject& movingObject, const QString& areaName)
 {
     int row{ ui.inventoryTableWidget->rowCount() };
     ui.inventoryTableWidget->insertRow(row);
 
     // Colonne 0 : Nom de l'élément
     QTableWidgetItem* nameItem{ new QTableWidgetItem(movingObject.getName()) };
-    nameItem->setData(Qt::UserRole, inventoryIndex);
+    nameItem->setData(AREA_NAME_ROLE, areaName); // Pas sûr de cette ligne, à vérifier plus tard
     ui.inventoryTableWidget->setItem(row, 0, nameItem);
 
     // Colonne 1 : Quantité
@@ -102,47 +165,71 @@ void InventoryModifyierDialog::addInventoryItemToTable(const MovingObject& movin
     QTableWidgetItem* disassemblyItem{ new QTableWidgetItem(movingObject.isDisassembly() ? "Oui" : "Non") };
     disassemblyItem->setTextAlignment(Qt::AlignCenter);
     if (movingObject.isDisassembly())
-        disassemblyItem->setForeground(QColor(0, 120, 0));  // Vert
+        disassemblyItem->setForeground(QColor(0, 120, 0));
     ui.inventoryTableWidget->setItem(row, 3, disassemblyItem);
 
     // Colonne 4 : Remontage
     QTableWidgetItem* assemblyItem{ new QTableWidgetItem(movingObject.isAssembly() ? "Oui" : "Non") };
     assemblyItem->setTextAlignment(Qt::AlignCenter);
     if (movingObject.isAssembly())
-        assemblyItem->setForeground(QColor(0, 120, 0));  // Vert
+        assemblyItem->setForeground(QColor(0, 120, 0));
     ui.inventoryTableWidget->setItem(row, 4, assemblyItem);
 
     // Colonne 5 : Objet lourd
     QTableWidgetItem* heavyItem{ new QTableWidgetItem(movingObject.isHeavy() ? "Oui" : "Non") };
     heavyItem->setTextAlignment(Qt::AlignCenter);
     if (movingObject.isHeavy())
-        heavyItem->setForeground(QColor(200, 0, 0));  // Rouge
+        heavyItem->setForeground(QColor(200, 0, 0));
     ui.inventoryTableWidget->setItem(row, 5, heavyItem);
 
     // Colonne 6 : Note
-    QTableWidgetItem* noteItem{ new QTableWidgetItem(note) };
+    QTableWidgetItem* noteItem{ new QTableWidgetItem(movingObject.getNote()) };
     ui.inventoryTableWidget->setItem(row, 6, noteItem);
 }
 
-MovingObject InventoryModifyierDialog::getMovingObjectFromSelection() const
+const MovingObject* InventoryModifyierDialog::getMovingObjectFromSelection() const
 {
     int selectedRow{ ui.inventoryTableWidget->currentRow() };
 
     if (selectedRow < 0)
-        return MovingObject{"", 0.0};
+        return nullptr;
 
-    // Récupérer l'index stocké
     QTableWidgetItem* item{ ui.inventoryTableWidget->item(selectedRow, 0) };
     if (!item)
-        return MovingObject{ "", 0.0 };
+        return nullptr;
 
-    size_t inventoryIndex{ static_cast<size_t>(item->data(Qt::UserRole).toInt()) };
+    QString areaKey{ item->data(Qt::UserRole).toString() };
+    const Area* area{ m_inventory.findArea(areaKey) };
+    if (!area)
+        return nullptr;
 
-    // Accéder à l'objet original via l'index
-    const QVector<MovingObject>& objects{ m_inventory.getInventory() };
+    QString objectKey{ item->text() };
 
-    if (inventoryIndex >= objects.size())
-        return MovingObject{ "", 0.0 };
+    return area->findObject(objectKey);
+}
 
-    return MovingObject{ objects[inventoryIndex] };
+QString InventoryModifyierDialog::getSelectedMovingObjectArea() const
+{
+    int selectedRow{ ui.inventoryTableWidget->currentRow() };
+
+    if (selectedRow < 0)
+        return nullptr;
+
+    QTableWidgetItem* item{ ui.inventoryTableWidget->item(selectedRow, 0) };
+    if (!item)
+        return nullptr;
+
+    return item->data(Qt::UserRole).toString();
+}
+
+InventoryModifyierDialog::ItemType InventoryModifyierDialog::getSelectedItemType() const
+{
+    int selectedRow{ ui.inventoryTableWidget->currentRow() };
+    if (selectedRow < 0)
+        return;
+    QTableWidgetItem* item{ ui.inventoryTableWidget->item(selectedRow, 0) };
+    if (!item)
+        return;
+
+    return static_cast<ItemType>(item->data(ITEM_TYPE_ROLE).toInt());
 }

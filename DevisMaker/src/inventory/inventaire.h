@@ -6,6 +6,7 @@
 #include <Qvector>
 #include <qdebug.h>
 #include "movingObject.h"
+#include "area.h"
 
 
 class Inventory : public QObject
@@ -20,34 +21,38 @@ public:
     }
 
     double getTotalVolume() const { return m_totalVolume; }
-    const QVector<MovingObject>& getInventory() const { return m_objects; }
-    bool isEmpty() const { return m_objects.isEmpty(); }
+    const QHash<QString, Area>& getAreas() const { return m_areas; }
+
+    bool isEmpty() const { return m_areas.isEmpty(); }
+
 
 private:
 
-    //QMap<QString, MovingObject> m_dictionnary{};
-    QVector<MovingObject> m_objects{};
+    QHash<QString, Area> m_areas{};
+    //QVector<MovingObject> m_objects{};
     double m_totalVolume{};
 
-    void clearInventory();
+    void clear();
 
-    //void loadDictionnary();  // Charge le dictionnaire d'objets standard
 
 public slots:
 
     void handleInventoryAnalysis(double totalVolume, const QStringList& structuredItems);
-    
-    // TODO: Implémenter les fonctions slots suivantes :
-    // modifyObject(const MovingObject& movingObject)
 
-    void addObjectByName(const QString& name, double volume, int quantity = 1);
-    void addObject(const MovingObject& movingObject, int quantity = 1);
+    void addObject(MovingObject movingObject, const QString& areaName);
 
-    void removeObject(const MovingObject& movingObject);
-    void removeObjectByNameAndQuantity(const QString& name, int quantity = 0);
-    void removeObjectByQuantity(const MovingObject& movingObject, int quantity);
+    void removeObject(const QString& movingObject, const QString& areaName);
 
-    void modifyObject(const MovingObject& objectToModify, MovingObject newObject);
+    void modifyObject(const MovingObject* objectToModify, MovingObject newObject);
+
+    void addArea(QString areaName);
+    //void addArea(QString areaName, Area::AreaType areaType);
+
+    void removeArea(const QString& areaName);
+
+    int objectsQuantity() const;
+
+    const Area* findArea(const QString& areaKey) const;
 
 signals:
 

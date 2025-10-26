@@ -1,8 +1,22 @@
 ﻿#include "movingObject.h"
 
-MovingObject::MovingObject(QString objectName, double unitaryVolume, int quantity, bool disassembly, bool assembly, bool heavy, QString notes)
+MovingObject::MovingObject()
+    : m_name{"UNDEFINED"}
+    , m_unitaryVolume{0.0}
+    , m_areaKey{ "default" }
+    , m_quantity{0}
+    , m_totalVolume{0.0}
+    , m_disassembly{false}
+    , m_assembly{false}
+    , m_heavy{false}
+    , m_note{"UNDEFINED"}
+{
+}
+
+MovingObject::MovingObject(QString objectName, double unitaryVolume, QString areaKey, int quantity, bool disassembly, bool assembly, bool heavy, QString notes)
     : m_name{ objectName }
     , m_unitaryVolume{ unitaryVolume }
+    , m_areaKey{ areaKey }
     , m_quantity{ quantity }
     , m_totalVolume{ m_unitaryVolume * m_quantity }
     , m_disassembly{ disassembly }
@@ -15,6 +29,7 @@ MovingObject::MovingObject(QString objectName, double unitaryVolume, int quantit
 MovingObject::MovingObject(const MovingObject& object)
     : m_name{ object.m_name }
     , m_unitaryVolume{ object.m_unitaryVolume }
+    , m_areaKey{ object.m_areaKey }
     , m_quantity{ object.m_quantity }
     , m_totalVolume{ object.m_unitaryVolume * object.m_quantity }
     , m_disassembly{ object.m_disassembly }
@@ -31,6 +46,7 @@ MovingObject& MovingObject::operator=(const MovingObject& object)
 
     m_name = object.m_name;
     m_unitaryVolume = object.m_unitaryVolume;
+    m_areaKey = object.m_areaKey;
     m_quantity = object.m_quantity;
     m_totalVolume = object.m_unitaryVolume * object.m_quantity;
     m_disassembly = object.m_disassembly;
@@ -44,6 +60,7 @@ MovingObject& MovingObject::operator=(const MovingObject& object)
 MovingObject::MovingObject(MovingObject&& object) noexcept
     : m_name{ std::move(object.m_name) }
     , m_unitaryVolume{ object.m_unitaryVolume }
+    , m_areaKey{ std::move(object.m_areaKey) }
     , m_quantity{ object.m_quantity }
     , m_totalVolume{ object.m_unitaryVolume * object.m_quantity }
     , m_disassembly{ object.m_disassembly }
@@ -60,6 +77,7 @@ MovingObject& MovingObject::operator=(MovingObject&& object) noexcept
 
     m_name = std::move(object.m_name);
     m_unitaryVolume = object.m_unitaryVolume;
+    m_areaKey = object.m_areaKey;
     m_quantity = object.m_quantity;
     m_totalVolume = object.m_unitaryVolume * object.m_quantity;
     m_disassembly = object.m_disassembly;

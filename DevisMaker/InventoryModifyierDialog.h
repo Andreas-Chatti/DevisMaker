@@ -10,12 +10,21 @@ class InventoryModifyierDialog : public QDialog
 
 public:
 
+    enum class ItemType
+    {
+        AreaHeader,
+        MovingObject
+    };
+
     explicit InventoryModifyierDialog(const Inventory& inventory, QWidget* parent);
     ~InventoryModifyierDialog() = default;
 
+    static constexpr int AREA_NAME_ROLE{ Qt::UserRole };
+    static constexpr int ITEM_TYPE_ROLE{ Qt::UserRole + 1 };
+
 signals:
 
-    void removeItem(const MovingObject& movingObject);
+    void removeItem(const QString& movingObjectName, const QString& areaName);
 
 private slots:
 
@@ -34,6 +43,9 @@ private:
 
     void setupUi();
     void displayInventory();
-    void addInventoryItemToTable(const MovingObject& movingObject, size_t inventoryIndex, const QString& note);
-    MovingObject getMovingObjectFromSelection() const;
+    void addAreaItemToTable(const Area& area);
+    void addInventoryItemToTable(const MovingObject& movingObject, const QString& areaName);
+    const MovingObject* getMovingObjectFromSelection() const;
+    QString getSelectedMovingObjectArea() const;
+    ItemType getSelectedItemType() const;
 };

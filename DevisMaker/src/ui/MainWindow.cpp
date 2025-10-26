@@ -259,7 +259,7 @@ void MainWindow::on_AnalyseInventoryPushButton_clicked()
         return;
     }
 
-    else if (!m_client->getInventory()->getInventory().isEmpty())
+    else if (m_client->getInventory()->objectsQuantity() > 0)
     {
         QMessageBox msgBox(this);
         msgBox.setIcon(QMessageBox::Warning);
@@ -319,8 +319,8 @@ void MainWindow::handleInventoryAnalysis(const Inventory& inventory)
     displayInventory(inventory);
 
     QString titre{ QString::fromUtf8("Analyse terminée") };
-    QString msg1{ QString{"Volume total: %1 m3, %2 "}.arg(QString::number(inventory.getTotalVolume(), 'f', 2)).arg(inventory.getInventory().size()) };
-    QString msg2{ QString::fromUtf8(inventory.getInventory().size() >= 2 ? "objets détectés" : "objet détecté") };
+    QString msg1{ QString{"Volume total: %1 m3, %2 "}.arg(QString::number(inventory.getTotalVolume(), 'f', 2)).arg(inventory.objectsQuantity()) };
+    QString msg2{ QString::fromUtf8(inventory.objectsQuantity() >= 2 ? "objets détectés" : "objet détecté")};
     QMessageBox::information(this, titre, msg1 + msg2);
 
     ui.AnalyseInventoryPushButton->setText("Analyser inventaire");
@@ -332,11 +332,10 @@ void MainWindow::handleInventoryAnalysis(const Inventory& inventory)
 
 void MainWindow::displayInventory(const Inventory& inventory) const
 {
-    ui.tableWidget->setRowCount(inventory.getInventory().size());
+    ui.tableWidget->setRowCount(0);
     constexpr int columnCount{ 4 };
     ui.tableWidget->setColumnCount(columnCount);
     ui.tableWidget->verticalHeader()->setVisible(false);
-
 
     ui.tableWidget->setHorizontalHeaderLabels({
         QString::fromUtf8("Quantité"),
@@ -345,33 +344,66 @@ void MainWindow::displayInventory(const Inventory& inventory) const
         "Volume - Total: " + QString::number(inventory.getTotalVolume(), 'f', 2) + " m\u00B3"
         });
 
-    int i{};
-    for (const auto& e : inventory.getInventory())
+    auto createCenteredItem = [](const QString& text) {
+        auto item = new QTableWidgetItem(text);
+        item->setTextAlignment(Qt::AlignCenter);
+        return item;
+        };
+
+    int currentRow{};
+
+    const auto& areaList = inventory.getAreas();
+    for (const auto& area : areaList)
     {
-        QString itemName{ e.getName() };
-        QString itemQuantity{ QString::number(e.getQuantity(), 'f', 0) };
-        QString itemUnitaryVolume{ QString::number(e.getUnitaryVolume(), 'f', 1) + " m\u00B3" };
-        QString itemTotalVolume{ QString::number(e.getTotalVolume(), 'f', 1) + " m\u00B3" };
+        ui.tableWidget->insertRow(currentRow);
 
+        QString areaText{ QString("%1").arg(area.getName()) };
 
-        auto createCenteredItem{ [](const QString& name) {
-            auto item{ new QTableWidgetItem(name) };
-            item->setTextAlignment(Qt::AlignCenter);
-            return item;
-        } };
+        QTableWidgetItem* areaItem{ new QTableWidgetItem(areaText) };
 
-        ui.tableWidget->setItem(i, 0, createCenteredItem(itemQuantity));
-        ui.tableWidget->setItem(i, 1, createCenteredItem(itemName));
-        ui.tableWidget->setItem(i, 2, createCenteredItem(itemUnitaryVolume));
-        ui.tableWidget->setItem(i, 3, createCenteredItem(itemTotalVolume));
+        // Style : texte en gras et plus gros
+        QFont font{ areaItem->font() };
+        font.setBold(true);
+        font.setPointSize(font.pointSize() + 2);
+        areaItem->setFont(font);
 
-        i++;
+        // Couleur de fond pour distinguer visuellement
+        areaItem->setBackground(QColor(230, 240, 255));  // Bleu clair
+
+        // Centrer le texte
+        areaItem->setTextAlignment(Qt::AlignCenter | Qt::AlignVCenter);
+
+        // Ajouter l'item à la première colonne
+        ui.tableWidget->setItem(currentRow, 0, areaItem);
+
+        // Fusionner toutes les colonnes pour que le nom prenne toute la largeur
+        ui.tableWidget->setSpan(currentRow, 0, 1, columnCount);
+
+        currentRow++;  // ✅ Passe à la ligne suivante
+
+        // ✅ Ajouter les objets de cette pièce
+        for (const auto& object : area.getObjectsList())
+        {
+            ui.tableWidget->insertRow(currentRow);
+
+            QString itemQuantity = QString::number(object.getQuantity());
+            QString itemName = object.getName();
+            QString itemUnitaryVolume = QString::number(object.getUnitaryVolume(), 'f', 1) + " m\u00B3";
+            QString itemTotalVolume = QString::number(object.getTotalVolume(), 'f', 1) + " m\u00B3";
+
+            ui.tableWidget->setItem(currentRow, 0, createCenteredItem(itemQuantity));
+            ui.tableWidget->setItem(currentRow, 1, createCenteredItem(itemName));
+            ui.tableWidget->setItem(currentRow, 2, createCenteredItem(itemUnitaryVolume));
+            ui.tableWidget->setItem(currentRow, 3, createCenteredItem(itemTotalVolume));
+
+            currentRow++;
+        }
     }
 
     QHeaderView* header{ ui.tableWidget->horizontalHeader() };
-    header->setSectionResizeMode(0, QHeaderView::ResizeToContents); // Quantitée : contenu
+    header->setSectionResizeMode(0, QHeaderView::ResizeToContents);  // Quantité : contenu
     header->setSectionResizeMode(1, QHeaderView::ResizeToContents);  // Objet : contenu
-    header->setSectionResizeMode(2, QHeaderView::ResizeToContents); // Volume unitaire
+    header->setSectionResizeMode(2, QHeaderView::ResizeToContents);  // Volume unitaire
     header->setSectionResizeMode(3, QHeaderView::Stretch);           // Volume : étirement
 }
 

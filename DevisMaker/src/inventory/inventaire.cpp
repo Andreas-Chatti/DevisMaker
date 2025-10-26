@@ -2,7 +2,7 @@
 
 void Inventory::handleInventoryAnalysis(double totalVolume, const QStringList& structuredItems)
 {
-    clearInventory();
+    clear();
 
     m_totalVolume = totalVolume;
 
@@ -41,7 +41,7 @@ void Inventory::handleInventoryAnalysis(double totalVolume, const QStringList& s
                 double unitVolume{ volumeText.toDouble(&ok) / quantity };
 
                 if (ok && unitVolume > 0.0)
-                    addObjectByName(cleanName, unitVolume, quantity);
+                    addObject(MovingObject{ cleanName, unitVolume, "IA_AREA_NAME", quantity}, "IA_AREA_NAME");
             }
         }
     }
@@ -49,128 +49,128 @@ void Inventory::handleInventoryAnalysis(double totalVolume, const QStringList& s
     emit sendNewInventory(*this);
 }
 
-
-void Inventory::addObjectByName(const QString& name, double unitaryVolume, int quantity)
-{
-    for (MovingObject& object : m_objects)
-    {
-        if (object.getName() == name && object.getUnitaryVolume() == unitaryVolume)
-        {
-            object.add(quantity);
-            return;
-        }
-    }
-
-    m_objects.emplaceBack(MovingObject{ name, unitaryVolume, quantity });
-}
-
-void Inventory::addObject(const MovingObject& movingObject, int quantity)
+void Inventory::addObject(MovingObject movingObject, const QString& areaName)
 {
     if (movingObject.getName().isEmpty())
         return;
 
-    for (MovingObject& object : m_objects)
+    auto area{ m_areas.find(areaName) };
+    if (area == m_areas.end())
+        addArea(areaName);
+
+    area = m_areas.find(areaName);
+    if (area != m_areas.end())
     {
-        if (object == movingObject)
-        {
-            object.add(quantity);
-            m_totalVolume += object.getUnitaryVolume() * quantity;
-            return;
-        }
+        m_totalVolume += movingObject.getUnitaryVolume() * movingObject.getQuantity();
+        area->addObject(std::move(movingObject));
     }
-    m_objects.emplaceBack(movingObject);
-    m_totalVolume += movingObject.getTotalVolume();
 }
 
-
-void Inventory::removeObjectByNameAndQuantity(const QString& name, int quantity)
+void Inventory::modifyObject(const MovingObject* objectToModify, MovingObject newObject)
 {
-    const auto isSameObject{ [&](const MovingObject& object) {
-        if (object.getName() == name)
-        return true;
+    const QString& oldAreaKey{ objectToModify->getAreaKey() };
+    const QString& newAreaKey{ newObject.getAreaKey() };
 
-        return false;
-    } };
+    auto areaIt{ m_areas.find(oldAreaKey) };
+    if (areaIt != m_areas.end())
+    {
+        m_totalVolume -= objectToModify->getTotalVolume();
+        m_totalVolume += newObject.getTotalVolume();
 
-    if (quantity <= 0)
-        m_objects.erase(std::remove_if(m_objects.begin(), m_objects.end(), isSameObject), m_objects.end());
+        bool isSameArea{ oldAreaKey == newAreaKey };
+        if (isSameArea)
+            areaIt->modifyObject(objectToModify, std::move(newObject));
+
+        else
+        {
+            areaIt->removeObject(objectToModify->getName());
+            if (areaIt->getObjectsList().isEmpty())
+                m_areas.erase(areaIt);
+
+            areaIt = m_areas.find(newAreaKey);
+            if (areaIt != m_areas.end())
+            {
+                const MovingObject* object{ areaIt->findObject(newObject.getName()) };
+                if (object)
+                    areaIt->modifyObject(objectToModify, std::move(newObject)); // REMPLACE L'OBJET PAR LE NOUVEAU
+
+                else
+                    areaIt->addObject(newObject);
+            }
+        }
+    }
+}
+
+void Inventory::addArea(QString areaName)
+{
+    auto area{ m_areas.find(areaName) };
+    if (area == m_areas.end())
+        m_areas[areaName] = Area{ areaName };
+    
+    else
+    {
+        // TODO : Si une pièce existe déjà sous le nom areaName, ajouter "#2" en plus dans le nom pour pouvoir créer une pièce avec le même nom
+        // ou sinon, juste créer un QMessageBox prévenant l'utilisateur de choisir un autre nom car celui-ci est déjà pris
+    }
+}
+
+/*void Inventory::addArea(QString areaName, Area::AreaType areaType)
+{
+    auto area{ m_areas.find(areaName) };
+    if (area == m_areas.end())
+        m_areas[areaName] = Area{ std::move(areaName), areaType };
 
     else
     {
-        auto it{ std::find_if(m_objects.begin(), m_objects.end(), isSameObject) };
-
-        if (it != m_objects.end())
-        {
-            int newQuantity{ it->remove(quantity) };
-            if (newQuantity <= 0)
-                m_objects.erase(it);
-        }
+        // TODO : Si une pièce existe déjà sous le nom areaName, ajouter "#2" en plus dans le nom pour pouvoir créer une pièce avec le même nom
+        // ou sinon, juste créer un QMessageBox prévenant l'utilisateur de choisir un autre nom car celui-ci est déjà pris
     }
+}*/
+
+void Inventory::removeArea(const QString& areaName)
+{
+    m_areas.remove(areaName);
 }
 
-void Inventory::removeObjectByQuantity(const MovingObject& movingObject, int quantity)
+int Inventory::objectsQuantity() const
 {
-    const auto isSameObject{ [&](const MovingObject& object) {
-        if (object == movingObject)
-            return true;
-
-        return false;
-    } };
-
-    if (quantity <= 0)
-        m_objects.erase(std::remove_if(m_objects.begin(), m_objects.end(), isSameObject), m_objects.end());
-
-    else
+    int size{};
+    for (const auto& area : m_areas)
     {
-        auto it{ std::find_if(m_objects.begin(), m_objects.end(), isSameObject) };
-
-        if (it != m_objects.end())
-        {
-            int newQuantity{ it->remove(quantity) };
-            if (newQuantity <= 0)
-                m_objects.erase(it);
-        }
+        size += static_cast<int>(area.getObjectsList().size());
     }
+
+    return size;
 }
 
-void Inventory::modifyObject(const MovingObject& objectToModify, MovingObject newObject)
+const Area* Inventory::findArea(const QString& areaKey) const
 {
-    const auto isSameObject{ [&](const MovingObject& object) {
-    if (object == objectToModify)
-        return true;
+    const auto areaIt{ m_areas.find(areaKey) };
+    if (areaIt == m_areas.end())
+        return nullptr;
 
-    return false;
-} };
+    return &(*areaIt);
+}
 
-    auto object{ std::find_if(m_objects.begin(), m_objects.end(), isSameObject) };
+void Inventory::clear()
+{
+    m_areas.clear();
+}
 
-    if (object != m_objects.end())
+void Inventory::removeObject(const QString& movingObjectName, const QString& areaName)
+{
+    auto areaIt{ m_areas.find(areaName) };
+    if (areaIt == m_areas.end())
+        return;
+
+    const QHash<QString, MovingObject>& objectsList{ areaIt->getObjectsList() };
+    const auto objectIt{ objectsList.find(movingObjectName) };
+    if (objectIt != objectsList.end())
     {
-        m_totalVolume -= object->getTotalVolume();
-        *object = std::move(newObject);
-        m_totalVolume += object->getTotalVolume();
-    }
-}
+        m_totalVolume -= objectIt->getTotalVolume();
+        areaIt->removeObject(movingObjectName);
 
-
-void Inventory::clearInventory()
-{
-    m_objects.clear();
-}
-
-void Inventory::removeObject(const MovingObject& movingObject)
-{
-    const auto isSameObject{ [&](const MovingObject& object) {
-    if (object == movingObject)
-        return true;
-
-    return false;
-    } };
-
-    auto it{ std::find_if(m_objects.begin(), m_objects.end(), isSameObject) };
-    if (it != m_objects.end())
-    {
-        m_totalVolume -= it->getTotalVolume();
-        m_objects.erase(it);
+        if (objectsList.isEmpty())
+            m_areas.erase(areaIt);
     }
 }

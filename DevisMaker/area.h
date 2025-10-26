@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <QString>
-#include <vector>
+#include <QVector>
+#include <QHash>
 #include <memory>
 #include "inventory/movingObject.h"
 
@@ -113,28 +114,31 @@ public:
 		max_room_types
 	};
 
-	explicit Area(QString name, AreaType type);
+	Area();
 
-	// Gestion des objets
-	void addObject(const MovingObject& object);
+	explicit Area(QString name, AreaType type = AreaType::none);
+
+	void addObject(MovingObject object);
 	void removeObject(const QString& objectName);
-	const std::vector<MovingObject>& getObjects() const { return m_objects; }
+	void removeObject(const QString& objectName, int quantity);
+	void modifyObject(const MovingObject* objectToModify, MovingObject newObject);
 
-	// Getters
+	const QHash<QString, MovingObject>& getObjectsList() const { return m_objects; }
 	const QString& getName() const { return m_name; }
 	AreaType getType() const { return m_type; }
-	double getTotalVolume() const;
+	double getTotalVolume() const { return m_totalVolume; }
 	int getObjectCount() const { return m_objects.size(); }
 
-	// Setters
 	void setName(QString name) { m_name = std::move(name); }
 	void setType(AreaType type) { m_type = type; }
 
-	// Utilitaire
-	static QString AreaTypeToString(AreaType type);
+	const MovingObject* findObject(const QString& objectKey) const;
+
+	//static QString AreaTypeToString(AreaType type);
 
 private:
-	QString m_name;                      // "Chambre d'amis 1", "Salon principal"
-	AreaType m_type;                     // Le type générique
-	std::vector<MovingObject> m_objects{}; // Les objets dans cette pièce
+	QString m_name{"UNDEFINED"};                      // "Chambre d'amis 1", "Salon principal"
+	AreaType m_type{ AreaType::none };                     // Le type générique
+	QHash<QString, MovingObject> m_objects{}; // Les objets dans cette pièce
+	double m_totalVolume{ 0.0 };
 };
