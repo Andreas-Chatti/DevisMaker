@@ -129,7 +129,12 @@ void Inventory::addArea(QString areaName)
 
 void Inventory::removeArea(const QString& areaName)
 {
-    m_areas.remove(areaName);
+    auto it{ m_areas.find(areaName) };
+    if (it != m_areas.end())
+    {
+        m_totalVolume -= it->getTotalVolume();
+        m_areas.erase(it);
+    }
 }
 
 int Inventory::objectsQuantity() const
@@ -151,6 +156,24 @@ const Area* Inventory::findArea(const QString& areaKey) const
 
     return &(*areaIt);
 }
+
+void Inventory::modifyAreaName(const QString& currentName, const QString& newName)
+{
+    auto areaIt = m_areas.find(currentName);
+    if (areaIt != m_areas.end())
+    {
+        if (m_areas.find(newName) != m_areas.end())
+            return;
+
+        areaIt->updateObjectsAreaKey(newName);
+        areaIt->setName(newName);
+
+        Area areaCopy{ *areaIt };
+        m_areas.erase(areaIt);
+        m_areas.insert(newName, std::move(areaCopy));
+    }
+}
+
 
 void Inventory::clear()
 {

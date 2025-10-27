@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <QObject>
 #include <QString>
 #include <QStringList>
@@ -53,6 +53,8 @@ public slots:
     int objectsQuantity() const;
 
     const Area* findArea(const QString& areaKey) const;
+
+    void modifyAreaName(const QString& currentName, const QString& newName);
 
 signals:
 

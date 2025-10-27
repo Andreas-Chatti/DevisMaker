@@ -1,5 +1,7 @@
-#pragma once
+﻿#pragma once
+#include <QMessageBox>
 #include <QDialog>
+#include <optional>
 #include "ui_InventoryModifyierDialog.h"
 #include "ItemModifyierDialog.h"
 #include "inventory/inventaire.h"
@@ -25,6 +27,8 @@ public:
 signals:
 
     void removeItem(const QString& movingObjectName, const QString& areaName);
+    void removeArea(const QString& areaName);
+    void modifyAreaName(const QString& oldAreaName, const QString& newAreaName);
 
 private slots:
 
@@ -46,6 +50,6 @@ private:
     void addAreaItemToTable(const Area& area);
     void addInventoryItemToTable(const MovingObject& movingObject, const QString& areaName);
     const MovingObject* getMovingObjectFromSelection() const;
-    QString getSelectedMovingObjectArea() const;
-    ItemType getSelectedItemType() const;
+    std::optional<QString> getSelectedMovingObjectArea() const;
+    std::optional<ItemType> getSelectedItemType() const;
 };

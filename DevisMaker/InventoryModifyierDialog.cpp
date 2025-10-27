@@ -7,13 +7,17 @@ InventoryModifyierDialog::InventoryModifyierDialog(const Inventory& inventory, Q
 	ui.setupUi(this);
     setupUi();
     displayInventory();
+
+    connect(this, &InventoryModifyierDialog::removeArea, &m_inventory, &Inventory::removeArea);
+    connect(this, &InventoryModifyierDialog::modifyAreaName, &m_inventory, &Inventory::modifyAreaName);
 }
 
 void InventoryModifyierDialog::on_addItemButton_clicked()
 {
     // TODO: Créer la logique qui différenciera la sélection entre un item inventaire et une pièce
     // comme ça on pourra aussi ajouter/modifier/supprimer des pièces
-    if (getSelectedItemType() == ItemType::AreaHeader)
+    std::optional<ItemType> itemType{ getSelectedItemType() };
+    if (itemType && itemType == ItemType::AreaHeader)
     {
 
     }
@@ -29,12 +33,53 @@ void InventoryModifyierDialog::on_addItemButton_clicked()
 
 void InventoryModifyierDialog::on_modifyItemButton_clicked()
 {
-    // TODO: Créer la logique qui différenciera la sélection entre un item inventaire et une pièce
-    // comme ça on pourra aussi ajouter/modifier/supprimer des pièces
-
-    if (getSelectedItemType() == ItemType::AreaHeader)
+    std::optional<ItemType> itemType{ getSelectedItemType() };
+    if (itemType && itemType == ItemType::AreaHeader)
     {
+        QDialog renameDialog(this);
+        renameDialog.setWindowTitle("Renommer pièce");
 
+        QVBoxLayout* layout{ new QVBoxLayout(&renameDialog) };
+
+        QLabel* label{ new QLabel("Saisissez un nouveau nom pour cette pièce :", &renameDialog) };
+        layout->addWidget(label);
+
+        QLineEdit* lineEdit{ new QLineEdit(&renameDialog) };
+        lineEdit->setMaxLength(20);
+        layout->addWidget(lineEdit);
+
+        QHBoxLayout* buttonLayout{ new QHBoxLayout() };
+        QPushButton* changeButton{new QPushButton("Changer", &renameDialog)};
+        QPushButton* cancelButton{ new QPushButton("Annuler", &renameDialog) };
+        buttonLayout->addWidget(changeButton);
+        buttonLayout->addWidget(cancelButton);
+        layout->addLayout(buttonLayout);
+
+        QObject::connect(changeButton, &QPushButton::clicked, &renameDialog, &QDialog::accept);
+        QObject::connect(cancelButton, &QPushButton::clicked, &renameDialog, &QDialog::reject);
+
+        if (renameDialog.exec() == QDialog::Accepted)
+        {
+            QString newAreaName{ lineEdit->text().trimmed().toLower() };
+            std::optional<QString> currentAreaName{ getSelectedMovingObjectArea() };
+            if (!newAreaName.isEmpty() && currentAreaName)
+            {
+                if(currentAreaName == newAreaName)
+                    QMessageBox::critical(this, "Erreur", "Vous devez mettre un nom différent du nom actuel !");
+
+                else if (m_inventory.findArea(newAreaName))
+                    QMessageBox::critical(this, "Erreur", "Une pièce avec le même nom existe déjà !");
+                
+                else if(!m_inventory.findArea(currentAreaName.value()))
+                    QMessageBox::critical(this, "Erreur", "La pièce sélectionnée n'existe pas !");
+
+                else
+                {
+                    emit modifyAreaName(currentAreaName.value(), newAreaName);
+                    displayInventory();
+                }
+            }
+        }
     }
 
     else
@@ -48,22 +93,41 @@ void InventoryModifyierDialog::on_modifyItemButton_clicked()
 
 void InventoryModifyierDialog::on_removeItemButton_clicked()
 {
-    // TODO: Créer la logique qui différenciera la sélection entre un item inventaire et une pièce
-    // comme ça on pourra aussi ajouter/modifier/supprimer des pièces
-    if (getSelectedItemType() == ItemType::AreaHeader)
+    std::optional<ItemType> itemType{ getSelectedItemType() };
+    if (itemType && itemType == ItemType::AreaHeader)
     {
+        QMessageBox msgBox;
+        msgBox.setIcon(QMessageBox::Warning);
+        msgBox.setWindowTitle("Supprimer la pièce");
+        msgBox.setText("Si vous supprimez cette pièce, tous les objets à l'intérieur seront supprimés aussi.\nVoulez-vous continuer ?");
+        msgBox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);
+        msgBox.button(QMessageBox::Ok)->setText("Supprimer");
+        msgBox.button(QMessageBox::Cancel)->setText("Annuler");
 
+        int ret{ msgBox.exec() };
+        bool confirmed{ (ret == QMessageBox::Ok) };
+
+        if (!confirmed)
+            return;
+
+        std::optional<QString> areaName{ getSelectedMovingObjectArea() };
+        if (areaName)
+        {
+            emit removeArea(areaName.value());
+            int selectedRow{ ui.inventoryTableWidget->currentRow() };
+            ui.inventoryTableWidget->removeRow(selectedRow);
+        }
     }
 
     else
     {
         const MovingObject* selectedObject{ getMovingObjectFromSelection() };
-        if (selectedObject)
-            emit removeItem(selectedObject->getName(), getSelectedMovingObjectArea());
+        std::optional<QString> areaName{ getSelectedMovingObjectArea() };
+        if (selectedObject && areaName)
+            emit removeItem(selectedObject->getName(), areaName.value());
     }
 
-    int selectedRow{ ui.inventoryTableWidget->currentRow() };
-    ui.inventoryTableWidget->removeRow(selectedRow);
+    displayInventory();
 }
 
 void InventoryModifyierDialog::on_inventoryTableWidget_itemSelectionChanged()
@@ -121,10 +185,11 @@ void InventoryModifyierDialog::addAreaItemToTable(const Area& area)
     int row{ ui.inventoryTableWidget->rowCount() };
     ui.inventoryTableWidget->insertRow(row);
 
-    QString areaText{ QString{ "%1" }.arg(area.getName()) };
+    QString areaName{ QString{ "%1" }.arg(area.getName()) };
 
-    QTableWidgetItem* areaItem{ new QTableWidgetItem(areaText) };
+    QTableWidgetItem* areaItem{ new QTableWidgetItem(areaName) };
     areaItem->setData(ITEM_TYPE_ROLE, static_cast<int>(ItemType::AreaHeader));
+    areaItem->setData(AREA_NAME_ROLE, areaName);
 
     QFont font{ areaItem->font() };
     font.setBold(true);
@@ -148,7 +213,8 @@ void InventoryModifyierDialog::addInventoryItemToTable(const MovingObject& movin
 
     // Colonne 0 : Nom de l'élément
     QTableWidgetItem* nameItem{ new QTableWidgetItem(movingObject.getName()) };
-    nameItem->setData(AREA_NAME_ROLE, areaName); // Pas sûr de cette ligne, à vérifier plus tard
+    nameItem->setData(AREA_NAME_ROLE, areaName);
+    nameItem->setData(ITEM_TYPE_ROLE, static_cast<int>(ItemType::MovingObject));
     ui.inventoryTableWidget->setItem(row, 0, nameItem);
 
     // Colonne 1 : Quantité
@@ -198,7 +264,7 @@ const MovingObject* InventoryModifyierDialog::getMovingObjectFromSelection() con
     if (!item)
         return nullptr;
 
-    QString areaKey{ item->data(Qt::UserRole).toString() };
+    QString areaKey{ item->data(AREA_NAME_ROLE).toString() };
     const Area* area{ m_inventory.findArea(areaKey) };
     if (!area)
         return nullptr;
@@ -208,28 +274,29 @@ const MovingObject* InventoryModifyierDialog::getMovingObjectFromSelection() con
     return area->findObject(objectKey);
 }
 
-QString InventoryModifyierDialog::getSelectedMovingObjectArea() const
+std::optional<QString> InventoryModifyierDialog::getSelectedMovingObjectArea() const
 {
     int selectedRow{ ui.inventoryTableWidget->currentRow() };
 
     if (selectedRow < 0)
-        return nullptr;
+        return std::nullopt;
 
     QTableWidgetItem* item{ ui.inventoryTableWidget->item(selectedRow, 0) };
     if (!item)
-        return nullptr;
+        return std::nullopt;
 
-    return item->data(Qt::UserRole).toString();
+    return item->data(AREA_NAME_ROLE).toString();
 }
 
-InventoryModifyierDialog::ItemType InventoryModifyierDialog::getSelectedItemType() const
+std::optional<InventoryModifyierDialog::ItemType> InventoryModifyierDialog::getSelectedItemType() const
 {
     int selectedRow{ ui.inventoryTableWidget->currentRow() };
     if (selectedRow < 0)
-        return;
+        return std::nullopt;
+
     QTableWidgetItem* item{ ui.inventoryTableWidget->item(selectedRow, 0) };
     if (!item)
-        return;
+        return std::nullopt;
 
-    return static_cast<ItemType>(item->data(ITEM_TYPE_ROLE).toInt());
+    return std::make_optional(static_cast<ItemType>(item->data(ITEM_TYPE_ROLE).toInt()));
 }

@@ -134,6 +134,9 @@ public:
 
 	const MovingObject* findObject(const QString& objectKey) const;
 
+	void updateObjectsAreaKey(const QString& newKey);
+
+
 	//static QString AreaTypeToString(AreaType type);
 
 private:

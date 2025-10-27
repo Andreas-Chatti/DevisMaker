@@ -81,4 +81,11 @@ const MovingObject* Area::findObject(const QString& objectKey) const
 	return &(*objectIt);
 }
 
+void Area::updateObjectsAreaKey(const QString& newKey)
+{
+	for (auto& object : m_objects)
+		object.setAreaKey(newKey);
+}
+
+
 
