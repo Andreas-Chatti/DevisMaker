@@ -87,10 +87,30 @@ std::optional<InventoryAnalyzer::ReplyInfos> InventoryAnalyzer::extractReplyInfo
 
                     for (const QJsonValue& item : items)
                     {
-                        QJsonObject itemObj = item.toObject();
-                        QString name = itemObj["name"].toString();
-                        double volume = itemObj["volume"].toDouble();
-                        structuredItems.append(QString("%1 - %2 m\u00B3").arg(name).arg(volume));
+                        QJsonObject itemObj{ item.toObject() };
+                        QString name{ itemObj["name"].toString() };
+                        double volume{ itemObj["volume"].toDouble() };
+                        bool disassembly{ itemObj["disassembly"].toBool() };
+                        bool assembly{ itemObj["assembly"].toBool() };
+                        bool heavy{ itemObj["heavy"].toBool() };
+                        QString areaKey{ itemObj["areaKey"].toString() };
+
+                        // Construire les tags (D, R, L) seulement si présents
+                        QStringList tags;
+                        if (disassembly) tags.append("D");
+                        if (assembly) tags.append("R");
+                        if (heavy) tags.append("L");
+
+                        // Format: "armoire - 2.5 m³ (D, R, L) - cuisine"
+                        QString formatted{ QString("%1 - %2 m³").arg(name).arg(volume) };
+
+                        if (!tags.isEmpty())
+                            formatted += QString(" (%1)").arg(tags.join(", "));
+
+                        if (areaKey != "divers")
+                            formatted += QString(" - %1").arg(areaKey);
+
+                        structuredItems.append(formatted);
                     }
 
                     return std::make_optional<ReplyInfos>({ totalVolume, structuredItems });
