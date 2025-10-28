@@ -11,16 +11,22 @@ void Inventory::handleInventoryAnalysis(double totalVolume, const QStringList& s
         QString item{ structuredItems[i] };
         QStringList parts{ item.split(" - ") };
 
-        if (parts.size() == 2)
+        // Format attendu: "nom - volume m³" ou "nom - volume m³ (D, R, L)" ou "nom - volume m³ - pièce" ou "nom - volume m³ (D, R, L) - pièce"
+        if (parts.size() >= 2)
         {
-            QString fullName{ parts[0] };     // Ex: "2 matelas 1 place"
-            QString volumeText{ parts[1] };   // Ex: "1.0 m³"
+            QString fullName{ parts[0] };        // Ex: "2 matelas 1 place"
+            QString volumePart{ parts[1] };      // Ex: "1.0 m³" ou "1.0 m³ (D, R, L)"
+            QString areaKey{ "divers" };         // Par défaut
 
+            // Si on a 3 parties, la 3ème est l'areaKey (la pièce)
+            if (parts.size() == 3)
+                areaKey = parts[2];
+
+            // Parser le nom pour extraire la quantité
             QStringList words{ fullName.split(" ") };
             int quantity{ 1 };  // Par défaut
             QString cleanName{ fullName };
 
-            // Extraire la quantité du nom
             if (!words.isEmpty())
             {
                 bool ok{};
@@ -33,6 +39,35 @@ void Inventory::handleInventoryAnalysis(double totalVolume, const QStringList& s
                 }
             }
 
+            // Parser volumePart pour extraire volume et tags (D, R, L)
+            // Format: "2.5 m³ (D, R, L)" ou "2.5 m³"
+            QString volumeText{ volumePart };
+            bool disassembly{ false };
+            bool assembly{ false };
+            bool heavy{ false };
+
+            // Chercher les tags entre parenthèses
+            int tagStart{ volumePart.indexOf("(") };
+            if (tagStart >= 0)
+            {
+                int tagEnd{ volumePart.indexOf(")") };
+                if (tagEnd > tagStart)
+                {
+                    // Extraire le texte des tags: "D, R, L"
+                    QString tagsText{ volumePart.mid(tagStart + 1, tagEnd - tagStart - 1) };
+                    QStringList tagList{ tagsText.split(", ") };
+
+                    // Détecter quels tags sont présents
+                    disassembly = tagList.contains("D");
+                    assembly = tagList.contains("R");
+                    heavy = tagList.contains("L");
+
+                    // Extraire le volume sans les tags
+                    volumeText = volumePart.left(tagStart).trimmed();
+                }
+            }
+
+            // Parser le volume
             volumeText = volumeText.trimmed();
             if (volumeText.endsWith(" m\u00b3") || volumeText.endsWith(" m3"))
             {
@@ -41,7 +76,11 @@ void Inventory::handleInventoryAnalysis(double totalVolume, const QStringList& s
                 double unitVolume{ volumeText.toDouble(&ok) / quantity };
 
                 if (ok && unitVolume > 0.0)
-                    addObject(MovingObject{ cleanName, unitVolume, "IA_AREA_NAME", quantity}, "IA_AREA_NAME");
+                {
+                    // Créer le MovingObject avec tous les paramètres
+                    MovingObject movingObject{ cleanName, unitVolume, areaKey, quantity, disassembly, assembly, heavy };
+                    addObject(std::move(movingObject), areaKey);
+                }
             }
         }
     }
