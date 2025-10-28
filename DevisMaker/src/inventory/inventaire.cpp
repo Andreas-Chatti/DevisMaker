@@ -83,19 +83,30 @@ void Inventory::modifyObject(const MovingObject* objectToModify, MovingObject ne
 
         else
         {
-            areaIt->removeObject(objectToModify->getName());
+            areaIt->removeObject(objectToModify->getName()); // Remove object from current Area
             if (areaIt->getObjectsList().isEmpty())
-                m_areas.erase(areaIt);
+                m_areas.erase(areaIt); // Erase area if empty
 
             areaIt = m_areas.find(newAreaKey);
             if (areaIt != m_areas.end())
             {
-                const MovingObject* object{ areaIt->findObject(newObject.getName()) };
-                if (object)
+                objectToModify = areaIt->findObject(newObject.getName()); // Checking if there's another object of the same name in new Area
+                if (objectToModify)
+                {
+                    if (objectToModify->getUnitaryVolume() == newObject.getUnitaryVolume())
+                        newObject.add(objectToModify->getQuantity());
+
                     areaIt->modifyObject(objectToModify, std::move(newObject)); // REMPLACE L'OBJET PAR LE NOUVEAU
+                }
 
                 else
-                    areaIt->addObject(newObject);
+                    areaIt->addObject(std::move(newObject));
+            }
+
+            else
+            {
+                addArea(newAreaKey);
+                addObject(std::move(newObject), newAreaKey);
             }
         }
     }

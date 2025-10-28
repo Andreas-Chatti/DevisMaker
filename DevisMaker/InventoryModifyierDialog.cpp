@@ -14,20 +14,8 @@ InventoryModifyierDialog::InventoryModifyierDialog(const Inventory& inventory, Q
 
 void InventoryModifyierDialog::on_addItemButton_clicked()
 {
-    // TODO: Créer la logique qui différenciera la sélection entre un item inventaire et une pièce
-    // comme ça on pourra aussi ajouter/modifier/supprimer des pièces
-    std::optional<ItemType> itemType{ getSelectedItemType() };
-    if (itemType && itemType == ItemType::AreaHeader)
-    {
-
-    }
-
-    else
-    {
-        auto dialog{ std::make_unique<ItemModifyierDialog>(ItemModifyierDialog::EditState::ADD, &m_inventory, this) };
-        dialog->exec();
-    }
-
+    auto dialog{ std::make_unique<ItemModifyierDialog>(ItemModifyierDialog::EditState::ADD, &m_inventory, this) };
+    dialog->exec();
     displayInventory();
 }
 

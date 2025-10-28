@@ -90,7 +90,8 @@ QString PDFGenerator::fillHTMLTemplate(const Client& client, const ResultatsDevi
 
 QString PDFGenerator::fillInventoryTemplate(const Client& client, const User& user, QString& htmlTemplate)
 {
-    QString supplementsRows{ generateInventoryRow(client.getInventory()) };
+    const Inventory* inventory{ client.getInventory() };
+    QString supplementsRows{ generateInventoryRow(inventory) };
 
     return htmlTemplate
         .replace("%CLIENT_NUMBER%", generateClientNumber())
@@ -101,7 +102,7 @@ QString PDFGenerator::fillInventoryTemplate(const Client& client, const User& us
         .replace("%PHONE_NUMBER%", client.getNumTel())
         .replace("%PERIODE_CHARGEMENT%", QLocale{ QLocale::French, QLocale::France }.toString(client.getAdresseDepart().m_date, "dddd dd MMMM yyyy"))
         .replace("%PERIODE_LIVRAISON%", QLocale{ QLocale::French, QLocale::France }.toString(client.getAdresseArrivee().m_date, "dddd dd MMMM yyyy"))
-        .replace("%VOLUME_TOTAL%", QString::number(client.getVolume(), 'f', 2))
+        .replace("%VOLUME_TOTAL%", QString::number(inventory->getTotalVolume(), 'f', 2))
         .replace("%COMPANY_NAME%", user.getCompanyName())
         .replace("%COMPANY_ADRESS%", user.getCompanyAddress())
         .replace("%COMPANY_NUMBER%", user.getCompanyPhoneNumber())
@@ -715,13 +716,14 @@ QString PDFGenerator::getDefaultInventoryTemplate() const
     QString tableauInventaireHeader = QString(R"(
         <table width="100%" style="width: 100%; min-width: 100%; border-collapse: collapse; border: 2px solid #000; margin-bottom: 15px;">
             <tr>
-                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 9px; text-align: center; border: 1px solid #000; width: 25%; vertical-align: middle;">Type d'Objet</td>
+                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 9px; text-align: center; border: 1px solid #000; width: 20%; vertical-align: middle;">Type d'Objet</td>
                 <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 9px; text-align: center; border: 1px solid #000; width: 8%; vertical-align: middle;">Quantité</td>
                 <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 9px; text-align: center; border: 1px solid #000; width: 12%; vertical-align: middle;">Volume Individuel (m³)</td>
                 <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 9px; text-align: center; border: 1px solid #000; width: 12%; vertical-align: middle;">Volume Total (m³)</td>
-                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 14%; vertical-align: middle;">Démontage</td>
-                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 14%; vertical-align: middle;">Remontage</td>
-                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 15%; vertical-align: middle;">Lourd</td>
+                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 10%; vertical-align: middle;">Démontage</td>
+                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 10%; vertical-align: middle;">Remontage</td>
+                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 10%; vertical-align: middle;">Lourd</td>
+                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 18%; vertical-align: middle;">Note</td>
             </tr>
             %INVENTAIRE_ROWS%
     )");
@@ -776,9 +778,20 @@ QString PDFGenerator::generateInventoryRow(const Inventory* const inventory) con
 {
     QString supplementRows{};
     const auto& areaList{ inventory->getAreas() };
+    
     for (const auto& area : areaList)
     {
-        // TODO : Générer une ligne pour démarquer la pièce actuelle et ses objets
+        QString areaName{ area.getName() };
+        areaName[0] = areaName[0].toUpper();
+
+        supplementRows += QString(R"(
+        <tr>
+            <td colspan="7" style="background-color: #2c3e50; color: white; font-weight: bold; font-size: 10px; text-align: center; padding: 6px; border: 1px solid #000;">
+                📍 %1
+            </td>
+        </tr>
+        )").arg(areaName);
+
         const auto& objectList{ area.getObjectsList() };
         for (const auto& object : objectList)
         {
@@ -791,23 +804,25 @@ QString PDFGenerator::generateInventoryRow(const Inventory* const inventory) con
             <td style="padding: 4px; font-size: 12px; text-align: center; border: 1px solid #000;">%5</td>
             <td style="padding: 4px; font-size: 12px; text-align: center; border: 1px solid #000;">%6</td>
             <td style="padding: 4px; font-size: 12px; text-align: center; border: 1px solid #000;">%7</td>
+            <td style="padding: 4px; font-size: 9px; text-align: left; border: 1px solid #000;">%8</td>
         </tr>
         )").arg(object.getName())
-                .arg(QString::number(object.getQuantity())) // object quantity
-                .arg(QString::number(object.getUnitaryVolume(), 'f', 2)) // object unitary volume
-                .arg(QString::number(object.getTotalVolume(), 'f', 2)) // total object's volume based on quantity
+                .arg(QString::number(object.getQuantity()))
+                .arg(QString::number(object.getUnitaryVolume(), 'f', 2))
+                .arg(QString::number(object.getTotalVolume(), 'f', 2))
                 .arg(QString{ object.isDisassembly() ? "☑" : "☐" })
                 .arg(QString{ object.isAssembly() ? "☑" : "☐" })
-                .arg(QString{ object.isHeavy() ? "☑" : "☐" });
+                .arg(QString{ object.isHeavy() ? "☑" : "☐" })
+                .arg(object.getNote());
         }
     }
+    
     return supplementRows;
 }
 
 
 bool PDFGenerator::generateInventoryPDF(const Client& client, const User& user, QString& outputPath)
 {
-    // Déterminer le chemin de sortie
     QString finalPath{ std::move(outputPath) };
     if (finalPath.isEmpty())
         finalPath = getDefaultOutputPath();
@@ -818,7 +833,6 @@ bool PDFGenerator::generateInventoryPDF(const Client& client, const User& user, 
         return false;
     }
 
-    // Créer le contenu HTML
     QString devis_html{ fillInventoryTemplate(client, user, m_htmlTemplate_Inventory)};
 
     // Créer le document PDF

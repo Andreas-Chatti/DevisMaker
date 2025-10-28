@@ -52,21 +52,44 @@ void ItemModifyierDialog::on_buttonBox_accepted()
 	}
 
 	MovingObject newObject{
-	ui.nameLineEdit->text(),
-	ui.volumeDoubleSpinBox->value(),
-	ui.areaComboBox->currentText(),
-	ui.quantitySpinBox->value(),
-	ui.demontageCheckBox->isChecked(),
-	ui.remontageCheckBox->isChecked(),
-	ui.heavyCheckBox->isChecked(),
-	ui.noteTextEdit->toPlainText() };
+		ui.nameLineEdit->text().trimmed().toLower(),
+		ui.volumeDoubleSpinBox->value(),
+		ui.areaComboBox->currentText(),
+		ui.quantitySpinBox->value(),
+		ui.demontageCheckBox->isChecked(),
+		ui.remontageCheckBox->isChecked(),
+		ui.heavyCheckBox->isChecked(),
+		ui.noteTextEdit->toPlainText()
+	};
 
 	switch (m_state)
 	{
 	case ItemModifyierDialog::EditState::MODIFY:
+	{
+		const Area* newObjectArea{ m_inventory->findArea(newObject.getAreaKey()) };
+		const MovingObject* existingObject{ nullptr };
+		if (newObjectArea)
+			existingObject = newObjectArea->findObject(newObject.getName());
+
+		if (existingObject && existingObject->getUnitaryVolume() != newObject.getUnitaryVolume())
+		{
+			QMessageBox msgBox;
+			msgBox.setWindowTitle("Objet existant détecté");
+			msgBox.setText("Un objet portant le même nom avec des données différentes existe déjà dans la pièce sélectionnée.\n"
+				"Continuer va écraser l'objet existant par le nouveau.\nVoulez-vous continuer ?");
+			msgBox.setIcon(QMessageBox::Warning);
+			QAbstractButton* continueButton = msgBox.addButton("Continuer", QMessageBox::AcceptRole);
+			QAbstractButton* cancelButton = msgBox.addButton("Annuler", QMessageBox::RejectRole);
+			msgBox.setDefaultButton(static_cast<QPushButton*>(continueButton));
+			msgBox.exec();
+
+			if (msgBox.clickedButton() == cancelButton)
+				return;
+		}
+
 		emit editObjectFromInventory(m_modifiedObject, newObject);
 		break;
-
+	}
 	case ItemModifyierDialog::EditState::ADD:
 		emit addObjectToInventory(newObject, ui.areaComboBox->currentText());
 		break;

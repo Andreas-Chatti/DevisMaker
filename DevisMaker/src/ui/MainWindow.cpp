@@ -292,7 +292,7 @@ void MainWindow::on_generateInventoryPushButton_clicked()
 {
     if (m_client->getInventory()->isEmpty())
     {
-        QMessageBox::warning(this, "Inventaire vide", QString::fromUtf8("Impossible de générer ! L'inventaire est vide !"));
+        QMessageBox::warning(this, "Inventaire vide", "Impossible de générer ! L'inventaire est vide !");
         return;
     }
 
@@ -318,9 +318,9 @@ void MainWindow::handleInventoryAnalysis(const Inventory& inventory)
 
     displayInventory(inventory);
 
-    QString titre{ QString::fromUtf8("Analyse terminée") };
+    QString titre{ "Analyse terminée" };
     QString msg1{ QString{"Volume total: %1 m3, %2 "}.arg(QString::number(inventory.getTotalVolume(), 'f', 2)).arg(inventory.objectsQuantity()) };
-    QString msg2{ QString::fromUtf8(inventory.objectsQuantity() >= 2 ? "objets détectés" : "objet détecté")};
+    QString msg2{ inventory.objectsQuantity() >= 2 ? "objets détectés" : "objet détecté"};
     QMessageBox::information(this, titre, msg1 + msg2);
 
     ui.AnalyseInventoryPushButton->setText("Analyser inventaire");
