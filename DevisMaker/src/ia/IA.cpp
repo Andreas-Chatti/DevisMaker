@@ -49,30 +49,55 @@ bool IA::savePrompt(const QString& promptContent)
     return true;
 }
 
-QString IA::getDefaultPrompt() 
+QString IA::getDefaultPrompt()
 {
-    return R"(Tu dois analyser cet inventaire de déménagement et calculer les volumes avec cette référence : %1
+    return R"(Tu dois analyser cet inventaire de dï¿½mï¿½nagement et calculer les volumes avec cette rï¿½fï¿½rence : %1
 
-RÈGLES IMPORTANTES:
+Rï¿½GLES IMPORTANTES:
 - Lis chaque ligne attentivement
-- Si tu vois "matelas ET sommiers" = ce sont 2 objets différents à lister séparément
+- Si tu vois "matelas ET sommiers" = ce sont 2 objets diffï¿½rents ï¿½ lister sï¿½parï¿½ment
 - Si tu vois "2 matelas et 2 sommiers" = 4 objets au total (2+2)
-- Utilise UNIQUEMENT les volumes de la référence fournie
-- CALCULE le résultat final : 6 valises = 6 × 0.3 = 1.8 (pas "6 * 0.3" !)
-- Les volumes doivent être des NOMBRES PURS uniquement
+- Utilise UNIQUEMENT les volumes de la rï¿½fï¿½rence fournie
+- CALCULE le rï¿½sultat final : 6 valises = 6 ï¿½ 0.3 = 1.8 (pas "6 * 0.3" !)
+- Les volumes doivent ï¿½tre des NOMBRES PURS uniquement
 
-RÉPONSE OBLIGATOIRE: JSON pur uniquement, sans texte avant ou après.
-INTERDICTION ABSOLUE d'expressions mathématiques dans les valeurs !
+Dï¿½TECTION DES PARAMï¿½TRES SUPPLï¿½MENTAIRES (par dï¿½faut = false):
+- Si tu vois "D" ou "dï¿½montage" ou "dï¿½monter" ou "ï¿½ dï¿½monter" ï¿½ mets "disassembly": true
+- Si tu vois "R" ou "remontage" ou "remonter" ou "ï¿½ remonter" ï¿½ mets "assembly": true
+- Si tu vois "L" ou "lourd" ou "trï¿½s lourd" ou "heavy" ï¿½ mets "heavy": true
+- Si tu dï¿½tectes une piï¿½ce (salon, cuisine, chambre, bureau, cave, grenier, garage, etc.) ï¿½ mets "areaKey": "nom_de_la_piece"
+- Par dï¿½faut: disassembly=false, assembly=false, heavy=false, areaKey="divers"
+
+Rï¿½PONSE OBLIGATOIRE: JSON pur uniquement, sans texte avant ou aprï¿½s.
+INTERDICTION ABSOLUE d'expressions mathï¿½matiques dans les valeurs !
 
 Format exact:
 {
   "items": [
-    {"name": "6 valises", "volume": 1.8 }
+    {
+      "name": "6 valises",
+      "volume": 1.8,
+      "disassembly": false,
+      "assembly": false,
+      "heavy": false,
+      "areaKey": "divers"
+    }
   ],
   "totalVolume": 1.8
 }
 
-INVENTAIRE À ANALYSER:
+Exemple avec paramï¿½tres:
+"1 armoire (D, R, L) cuisine" devient:
+{
+  "name": "armoire",
+  "volume": 2.5,
+  "disassembly": true,
+  "assembly": true,
+  "heavy": true,
+  "areaKey": "cuisine"
+}
+
+INVENTAIRE ï¿½ ANALYSER:
 %2)";
 }
 
@@ -97,15 +122,15 @@ void IA::reloadPrompt()
 
 QNetworkRequest IA::buildRequest(const QString& inventoryText, const QString& jsonReference) 
 {
-    // Construire le prompt avec les paramètres
+    // Construire le prompt avec les paramï¿½tres
     QString prompt{ m_currentPrompt.arg(jsonReference, inventoryText) };
 
-    // Créer la requête
+    // Crï¿½er la requï¿½te
     QNetworkRequest request(m_url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     request.setRawHeader("Authorization", ("Bearer " + m_apiKey).toUtf8());
 
-    // Corps de la requête JSON
+    // Corps de la requï¿½te JSON
     QJsonObject jsonBody;
     jsonBody["model"] = m_currentModel;
     jsonBody["max_tokens"] = m_maxTokens;
@@ -118,7 +143,7 @@ QNetworkRequest IA::buildRequest(const QString& inventoryText, const QString& js
     messages.append(userMessage);
     jsonBody["messages"] = messages;
 
-    // Stocker le JSON dans la requête (via un attribut custom)
+    // Stocker le JSON dans la requï¿½te (via un attribut custom)
     QJsonDocument doc(jsonBody);
     request.setAttribute(QNetworkRequest::User, doc.toJson());
 
