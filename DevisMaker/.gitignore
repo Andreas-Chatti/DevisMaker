@@ -1,0 +1,18 @@
+# Fichiers de configuration locaux
+settings.local.json
+
+# Fichiers de build Visual Studio
+x64/
+Debug/
+Release/
+*.user
+*.suo
+*.sdf
+*.opensdf
+*.db
+*.opendb
+.vs/
+
+# Fichiers temporaires
+*.log
+*.tmp
