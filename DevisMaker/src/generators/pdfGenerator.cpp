@@ -5,7 +5,7 @@ bool PDFGenerator::generateDevisPDF(const Client& client, const ResultatsDevis& 
 {
     // Déterminer le chemin de sortie
     QString finalPath{ std::move(outputPath) };
-    if (finalPath.isEmpty()) 
+    if (finalPath.isEmpty())
         finalPath = getDefaultOutputPath();
 
     QString m_htmlTemplate{ typeDevis == TypeDevis::PRIX_PAR_M3 ? m_htmlTemplate_m3 : m_htmlTemplate_Postes };
@@ -38,7 +38,7 @@ bool PDFGenerator::generateDevisPDF(const Client& client, const ResultatsDevis& 
 }
 
 
-QString PDFGenerator::fillHTMLTemplate(const Client& client, const ResultatsDevis& resultats, QString& htmlTemplate, const User& user)
+QString PDFGenerator::fillHTMLTemplate(const Client& client, const ResultatsDevis& resultats, QString htmlTemplate, const User& user)
 {
     QString supplementsRows{ createSupplementsRows(resultats) };
 
@@ -88,7 +88,7 @@ QString PDFGenerator::fillHTMLTemplate(const Client& client, const ResultatsDevi
 }
 
 
-QString PDFGenerator::fillInventoryTemplate(const Client& client, const User& user, QString& htmlTemplate)
+QString PDFGenerator::fillInventoryTemplate(const Client& client, const User& user, QString htmlTemplate)
 {
     const Inventory* inventory{ client.getInventory() };
     QString supplementsRows{ generateInventoryRow(inventory) };
@@ -116,7 +116,7 @@ QString PDFGenerator::fillInventoryTemplate(const Client& client, const User& us
 
 QString PDFGenerator::getNatureString(const Nature& nature) const
 {
-    switch (nature) 
+    switch (nature)
     {
     case Nature::urbain: return "Urbain";
     case Nature::special: return "Spécial";
@@ -127,7 +127,7 @@ QString PDFGenerator::getNatureString(const Nature& nature) const
 
 QString PDFGenerator::getPrestationString(const Prestation& prestation) const
 {
-    switch (prestation) 
+    switch (prestation)
     {
     case Prestation::eco: return "ECONOMIQUE";
     case Prestation::ecoPlus: return "ECONOMIQUE +";
@@ -146,7 +146,7 @@ QString PDFGenerator::createSupplementsRows(const ResultatsDevis& resultats) con
     QString cellStyleLeft = "border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle;";
     QString cellStyleRight = "border: 1px solid #000; border-top: 0px; padding: 3px; font-size: 10px; vertical-align: middle; text-align: right; font-weight: bold; width: 120px; background-color: #f8f9fa;";
 
-    if (resultats.coutStationnement > 0) 
+    if (resultats.coutStationnement > 0)
     {
         rows += QString("<tr><td style=\"%1\"><strong>Autorisation de stationnement</strong></td><td style=\"%2\">%3 €</td></tr>")
             .arg(cellStyleLeft)
@@ -154,7 +154,7 @@ QString PDFGenerator::createSupplementsRows(const ResultatsDevis& resultats) con
             .arg(QString::number(resultats.coutStationnement, 'f', 2));
     }
 
-    if (resultats.fraisMonteMeubles > 0) 
+    if (resultats.fraisMonteMeubles > 0)
     {
         rows += QString("<tr><td style=\"%1\"><strong>Monte-meubles</strong></td><td style=\"%2\">%3 €</td></tr>")
             .arg(cellStyleLeft)
@@ -162,7 +162,7 @@ QString PDFGenerator::createSupplementsRows(const ResultatsDevis& resultats) con
             .arg(QString::number(resultats.fraisMonteMeubles, 'f', 2));
     }
 
-    if (resultats.prixSuppAdresse > 0) 
+    if (resultats.prixSuppAdresse > 0)
     {
         rows += QString("<tr><td style=\"%1\"><strong>Supplément adresse</strong></td><td style=\"%2\">%3 €</td></tr>")
             .arg(cellStyleLeft)
@@ -170,7 +170,7 @@ QString PDFGenerator::createSupplementsRows(const ResultatsDevis& resultats) con
             .arg(QString::number(resultats.prixSuppAdresse, 'f', 2));
     }
 
-    if (resultats.fraisRoute > 0) 
+    if (resultats.fraisRoute > 0)
     {
         rows += QString("<tr><td style=\"%1\"><strong>Frais de route</strong></td><td style=\"%2\">%3 €</td></tr>")
             .arg(cellStyleLeft)
@@ -217,7 +217,7 @@ QString PDFGenerator::load_HTML_Template(const TypeDevis& typeDevis)
     if (!templateFile.exists())
         createTemplateFile(typeDevis);
 
-    if (!templateFile.open(QIODevice::ReadOnly | QIODevice::Text)) 
+    if (!templateFile.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         emit pdfGenerationStatusReport(PdfGenerationState::errorLoadingFile);
         qDebug() << "Erreur: Impossible d'ouvrir le fichier template:" << HTML_TEMPLATE_LOCATION;
@@ -305,7 +305,7 @@ bool PDFGenerator::createTemplateFile(const TypeDevis& typeDevis)
     ecrivain << get_Default_HTML_Template(typeDevis);
 
 
-    if (ecrivain.status() != QTextStream::Ok) 
+    if (ecrivain.status() != QTextStream::Ok)
     {
         emit pdfGenerationStatusReport(PdfGenerationState::errorCreatingTemplateFile);
         qDebug() << "Erreur lors de l'écriture du template";
@@ -323,7 +323,7 @@ bool PDFGenerator::createTemplateDir()
 
     QDir templateDir{ SettingsConstants::FileSettings::TEMPLATE_FILE_PATH };
 
-    if(!templateDir.mkpath("."))
+    if (!templateDir.mkpath("."))
     {
         emit pdfGenerationStatusReport(PdfGenerationState::errorCreatingTemplateDir);
         qDebug() << "Impossible de creer le dossier templates";
@@ -717,13 +717,13 @@ QString PDFGenerator::getDefaultInventoryTemplate() const
         <table width="100%" style="width: 100%; min-width: 100%; border-collapse: collapse; border: 2px solid #000; margin-bottom: 15px;">
             <tr>
                 <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 9px; text-align: center; border: 1px solid #000; width: 20%; vertical-align: middle;">Type d'Objet</td>
-                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 9px; text-align: center; border: 1px solid #000; width: 8%; vertical-align: middle;">Quantité</td>
-                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 9px; text-align: center; border: 1px solid #000; width: 12%; vertical-align: middle;">Volume Individuel (m³)</td>
-                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 9px; text-align: center; border: 1px solid #000; width: 12%; vertical-align: middle;">Volume Total (m³)</td>
-                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 10%; vertical-align: middle;">Démontage</td>
-                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 10%; vertical-align: middle;">Remontage</td>
-                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 10%; vertical-align: middle;">Lourd</td>
-                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 18%; vertical-align: middle;">Note</td>
+                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 9px; text-align: center; border: 1px solid #000; width: 5%; vertical-align: middle;">Qté</td>
+                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 8%; vertical-align: middle;">Vol. Unit.<br/>(m³)</td>
+                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 8%; vertical-align: middle;">Vol. Total<br/>(m³)</td>
+                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 5%; vertical-align: middle;">Démont.</td>
+                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 5%; vertical-align: middle;">Remont.</td>
+                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 5%; vertical-align: middle;">Lourd</td>
+                <td style="background-color: #34495e; color: white; font-weight: bold; padding: 6px; font-size: 8px; text-align: center; border: 1px solid #000; width: 44%; vertical-align: middle;">Note</td>
             </tr>
             %INVENTAIRE_ROWS%
     )");
@@ -732,7 +732,7 @@ QString PDFGenerator::getDefaultInventoryTemplate() const
             <tr>
                 <td colspan="3" style="background-color: #2c3e50; color: white; font-weight: bold; font-size: 11px; text-align: right; padding: 4px; border: 1px solid #000; vertical-align: middle;"><strong>VOLUME TOTAL:</strong></td>
                 <td style="background-color: #2c3e50; color: white; font-weight: bold; font-size: 11px; text-align: center; padding: 4px; border: 1px solid #000; vertical-align: middle;"><strong>%VOLUME_TOTAL% m³</strong></td>
-                <td colspan="3" style="background-color: #2c3e50; border: 1px solid #000;"></td>
+                <td colspan="4" style="background-color: #2c3e50; border: 1px solid #000;"></td>
             </tr>
         </table>
     )");
@@ -778,7 +778,7 @@ QString PDFGenerator::generateInventoryRow(const Inventory* const inventory) con
 {
     QString supplementRows{};
     const auto& areaList{ inventory->getAreas() };
-    
+
     for (const auto& area : areaList)
     {
         QString areaName{ area.getName() };
@@ -786,7 +786,7 @@ QString PDFGenerator::generateInventoryRow(const Inventory* const inventory) con
 
         supplementRows += QString(R"(
         <tr>
-            <td colspan="7" style="background-color: #2c3e50; color: white; font-weight: bold; font-size: 10px; text-align: center; padding: 6px; border: 1px solid #000;">
+                        <td colspan="8" style="background-color: #2c3e50; color: white; font-weight: bold; font-size: 10px; text-align: center; padding: 6px; border: 1px solid #000;">
                 📍 %1
             </td>
         </tr>
@@ -797,14 +797,14 @@ QString PDFGenerator::generateInventoryRow(const Inventory* const inventory) con
         {
             supplementRows += QString(R"(
         <tr>
-            <td style="padding: 4px; font-size: 9px; text-align: left; border: 1px solid #000;">%1</td>
-            <td style="padding: 4px; font-size: 9px; text-align: center; border: 1px solid #000;">%2</td>
-            <td style="padding: 4px; font-size: 9px; text-align: center; border: 1px solid #000;">%3</td>
-            <td style="padding: 4px; font-size: 9px; text-align: center; background-color: #f8f9fa; font-weight: bold; border: 1px solid #000;">%4</td>
-            <td style="padding: 4px; font-size: 12px; text-align: center; border: 1px solid #000;">%5</td>
-            <td style="padding: 4px; font-size: 12px; text-align: center; border: 1px solid #000;">%6</td>
-            <td style="padding: 4px; font-size: 12px; text-align: center; border: 1px solid #000;">%7</td>
-            <td style="padding: 4px; font-size: 9px; text-align: left; border: 1px solid #000;">%8</td>
+            <td style="padding: 4px; font-size: 9px; text-align: left; border: 1px solid #000; width: 20%;">%1</td>
+            <td style="padding: 4px; font-size: 9px; text-align: center; border: 1px solid #000; width: 5%;">%2</td>
+            <td style="padding: 4px; font-size: 9px; text-align: center; border: 1px solid #000; width: 8%;">%3</td>
+            <td style="padding: 4px; font-size: 9px; text-align: center; background-color: #f8f9fa; font-weight: bold; border: 1px solid #000; width: 8%;">%4</td>
+            <td style="padding: 4px; font-size: 12px; text-align: center; border: 1px solid #000; width: 5%;">%5</td>
+            <td style="padding: 4px; font-size: 12px; text-align: center; border: 1px solid #000; width: 5%;">%6</td>
+            <td style="padding: 4px; font-size: 12px; text-align: center; border: 1px solid #000; width: 5%;">%7</td>
+            <td style="padding: 4px; font-size: 9px; text-align: left; border: 1px solid #000; width: 44%;">%8</td>
         </tr>
         )").arg(object.getName())
                 .arg(QString::number(object.getQuantity()))
@@ -816,7 +816,7 @@ QString PDFGenerator::generateInventoryRow(const Inventory* const inventory) con
                 .arg(object.getNote());
         }
     }
-    
+
     return supplementRows;
 }
 
@@ -833,10 +833,14 @@ bool PDFGenerator::generateInventoryPDF(const Client& client, const User& user, 
         return false;
     }
 
-    QString devis_html{ fillInventoryTemplate(client, user, m_htmlTemplate_Inventory)};
+    if (QFile::exists(finalPath))
+        QFile::remove(finalPath);
+
+    QString devis_html{ fillInventoryTemplate(client, user, m_htmlTemplate_Inventory) };
 
     // Créer le document PDF
     QTextDocument document;
+    document.clear();
     document.setHtml(devis_html);
 
     // Configuration de l'impression

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <QString>
 #include <QTextDocument>
 #include <QFileDialog>
@@ -59,10 +59,10 @@ signals:
 
 private:
 
-    QString fillHTMLTemplate(const Client& client, const ResultatsDevis& resultats, QString& htmlTemplate, const User& user);
-    QString fillInventoryTemplate(const Client& client, const User& user, QString& htmlTemplate);
+    QString fillHTMLTemplate(const Client& client, const ResultatsDevis& resultats, QString htmlTemplate, const User& user);
+    QString fillInventoryTemplate(const Client& client, const User& user, QString htmlTemplate);
     QString getDefaultOutputPath() const;
-    QString formatCurrency(double value, const QString& suffix = " � H.T.") const;
+    QString formatCurrency(double value, const QString& suffix = " € H.T.") const;
     QString getCurrentDate() const;
     QString createSupplementsRows(const ResultatsDevis& resultats) const;
     QString load_HTML_Template(const TypeDevis& typeDevis);
@@ -70,7 +70,7 @@ private:
     QString get_Default_HTML_Template(const TypeDevis& typeDevis) const;
     QString getDefaultInventoryTemplate() const;
     QString generateClientNumber();
-    QString generateInventoryRow(const Inventory* const inventory /*bool demontage, bool remontage, bool dechetterie*/) const;
+    QString generateInventoryRow(const Inventory* const inventory) const;
     bool createTemplateFile(const TypeDevis& typeDevis);
     bool createInventoryTemplateFile();
     bool createTemplateDir();
