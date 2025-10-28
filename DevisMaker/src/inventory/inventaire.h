@@ -29,7 +29,6 @@ public:
 private:
 
     QHash<QString, Area> m_areas{};
-    //QVector<MovingObject> m_objects{};
     double m_totalVolume{};
 
     void clear();

@@ -47,10 +47,10 @@ void Inventory::handleInventoryAnalysis(double totalVolume, const QStringList& s
             bool heavy{ false };
 
             // Chercher les tags entre parenthèses
-            int tagStart{ volumePart.indexOf("(") };
+            int tagStart{ static_cast<int>(volumePart.indexOf("(")) };
             if (tagStart >= 0)
             {
-                int tagEnd{ volumePart.indexOf(")") };
+                int tagEnd{ static_cast<int>(volumePart.indexOf(")")) };
                 if (tagEnd > tagStart)
                 {
                     // Extraire le texte des tags: "D, R, L"

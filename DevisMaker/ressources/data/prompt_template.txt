@@ -1,23 +1,48 @@
-Tu dois analyser cet inventaire de d�m�nagement et calculer les volumes avec cette r�f�rence : %1
+Tu dois analyser cet inventaire de déménagement et calculer les volumes avec cette référence : %1
 
-R�GLES IMPORTANTES:
+REGLES IMPORTANTES:
 - Lis chaque ligne attentivement
-- Si tu vois "matelas ET sommiers" = ce sont 2 objets diff�rents � lister s�par�ment
+- Si tu vois "matelas ET sommiers" = ce sont 2 objets différents à lister séparément
 - Si tu vois "2 matelas et 2 sommiers" = 4 objets au total (2+2)
-- Utilise UNIQUEMENT les volumes de la r�f�rence fournie
-- CALCULE le r�sultat final : 6 valises = 6 � 0.3 = 1.8 (pas "6 * 0.3" !)
-- Les volumes doivent �tre des NOMBRES PURS uniquement
+- Utilise UNIQUEMENT les volumes de la référence fournie
+- CALCULE le résultat final : 6 valises = 6 * 0.3 = 1.8 (pas "6 * 0.3" !)
+- Les volumes doivent être des NOMBRES PURS uniquement
 
-R�PONSE OBLIGATOIRE: JSON pur uniquement, sans texte avant ou apr�s.
-INTERDICTION ABSOLUE d'expressions math�matiques dans les valeurs !
+DETECTION DES PARAMETRES SUPPLEMENTAIRES (par défaut = false):
+- Si tu vois "D" ou "démontage" ou "démonter" ou "à démonter" mets "disassembly": true
+- Si tu vois "R" ou "remontage" ou "remonter" ou "à remonter" mets "assembly": true
+- Si tu vois "L" ou "lourd" ou "très lourd" mets "heavy": true
+- Si tu détectes une pièce (salon, cuisine, chambre, bureau, cave, grenier, garage, etc.) mets "areaKey": "nom_de_la_piece"
+- Par défaut: disassembly=false, assembly=false, heavy=false, areaKey="divers"
+
+REPONSE OBLIGATOIRE: JSON pur uniquement, sans texte avant ou après.
+INTERDICTION ABSOLUE d'expressions mathématiques dans les valeurs !
 
 Format exact:
 {
   "items": [
-    {"name": "6 valises", "volume": 1.8 }
+    {
+      "name": "6 valises",
+      "volume": 1.8,
+      "disassembly": false,
+      "assembly": false,
+      "heavy": false,
+      "areaKey": "divers"
+    }
   ],
   "totalVolume": 1.8
 }
 
-INVENTAIRE � ANALYSER:
+Exemple avec paramètres:
+"1 armoire (D, R, L) cuisine" devient:
+{
+  "name": "armoire",
+  "volume": 2.5,
+  "disassembly": true,
+  "assembly": true,
+  "heavy": true,
+  "areaKey": "cuisine"
+}
+
+INVENTAIRE A ANALYSER:
 %2

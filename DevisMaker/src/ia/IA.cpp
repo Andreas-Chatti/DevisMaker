@@ -51,25 +51,25 @@ bool IA::savePrompt(const QString& promptContent)
 
 QString IA::getDefaultPrompt()
 {
-    return R"(Tu dois analyser cet inventaire de d�m�nagement et calculer les volumes avec cette r�f�rence : %1
+    return R"(Tu dois analyser cet inventaire de déménagement et calculer les volumes avec cette référence : %1
 
-R�GLES IMPORTANTES:
+REGLES IMPORTANTES:
 - Lis chaque ligne attentivement
-- Si tu vois "matelas ET sommiers" = ce sont 2 objets diff�rents � lister s�par�ment
+- Si tu vois "matelas ET sommiers" = ce sont 2 objets différents à lister séparément
 - Si tu vois "2 matelas et 2 sommiers" = 4 objets au total (2+2)
-- Utilise UNIQUEMENT les volumes de la r�f�rence fournie
-- CALCULE le r�sultat final : 6 valises = 6 � 0.3 = 1.8 (pas "6 * 0.3" !)
-- Les volumes doivent �tre des NOMBRES PURS uniquement
+- Utilise UNIQUEMENT les volumes de la référence fournie
+- CALCULE le résultat final : 6 valises = 6 * 0.3 = 1.8 (pas "6 * 0.3" !)
+- Les volumes doivent être des NOMBRES PURS uniquement
 
-D�TECTION DES PARAM�TRES SUPPL�MENTAIRES (par d�faut = false):
-- Si tu vois "D" ou "d�montage" ou "d�monter" ou "� d�monter" � mets "disassembly": true
-- Si tu vois "R" ou "remontage" ou "remonter" ou "� remonter" � mets "assembly": true
-- Si tu vois "L" ou "lourd" ou "tr�s lourd" ou "heavy" � mets "heavy": true
-- Si tu d�tectes une pi�ce (salon, cuisine, chambre, bureau, cave, grenier, garage, etc.) � mets "areaKey": "nom_de_la_piece"
-- Par d�faut: disassembly=false, assembly=false, heavy=false, areaKey="divers"
+DETECTION DES PARAMETRES SUPPLEMENTAIRES (par défaut = false):
+- Si tu vois "D" ou "démontage" ou "démonter" ou "à démonter" mets "disassembly": true
+- Si tu vois "R" ou "remontage" ou "remonter" ou "à remonter" mets "assembly": true
+- Si tu vois "L" ou "lourd" ou "très lourd" mets "heavy": true
+- Si tu détectes une pièce (salon, cuisine, chambre, bureau, cave, grenier, garage, etc.) mets "areaKey": "nom_de_la_piece"
+- Par défaut: disassembly=false, assembly=false, heavy=false, areaKey="divers"
 
-R�PONSE OBLIGATOIRE: JSON pur uniquement, sans texte avant ou apr�s.
-INTERDICTION ABSOLUE d'expressions math�matiques dans les valeurs !
+REPONSE OBLIGATOIRE: JSON pur uniquement, sans texte avant ou après.
+INTERDICTION ABSOLUE d'expressions mathématiques dans les valeurs !
 
 Format exact:
 {
@@ -86,7 +86,7 @@ Format exact:
   "totalVolume": 1.8
 }
 
-Exemple avec param�tres:
+Exemple avec paramètres:
 "1 armoire (D, R, L) cuisine" devient:
 {
   "name": "armoire",
@@ -97,7 +97,7 @@ Exemple avec param�tres:
   "areaKey": "cuisine"
 }
 
-INVENTAIRE � ANALYSER:
+INVENTAIRE A ANALYSER:
 %2)";
 }
 
@@ -125,12 +125,12 @@ QNetworkRequest IA::buildRequest(const QString& inventoryText, const QString& js
     // Construire le prompt avec les param�tres
     QString prompt{ m_currentPrompt.arg(jsonReference, inventoryText) };
 
-    // Cr�er la requ�te
+    // Cr�er la requête
     QNetworkRequest request(m_url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     request.setRawHeader("Authorization", ("Bearer " + m_apiKey).toUtf8());
 
-    // Corps de la requ�te JSON
+    // Corps de la requête JSON
     QJsonObject jsonBody;
     jsonBody["model"] = m_currentModel;
     jsonBody["max_tokens"] = m_maxTokens;
@@ -143,7 +143,7 @@ QNetworkRequest IA::buildRequest(const QString& inventoryText, const QString& js
     messages.append(userMessage);
     jsonBody["messages"] = messages;
 
-    // Stocker le JSON dans la requ�te (via un attribut custom)
+    // Stocker le JSON dans la requête (via un attribut custom)
     QJsonDocument doc(jsonBody);
     request.setAttribute(QNetworkRequest::User, doc.toJson());
 

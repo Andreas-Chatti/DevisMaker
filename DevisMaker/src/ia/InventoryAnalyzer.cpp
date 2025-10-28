@@ -71,30 +71,39 @@ std::optional<InventoryAnalyzer::ReplyInfos> InventoryAnalyzer::extractReplyInfo
 
             if (jsonStart >= 0 && jsonEnd > jsonStart)
             {
-                QString jsonText = responseText.mid(jsonStart, jsonEnd - jsonStart);
+                QString jsonText{ responseText.mid(jsonStart, jsonEnd - jsonStart) };
 
-                QJsonDocument itemsDoc = QJsonDocument::fromJson(jsonText.toUtf8());
-                QJsonObject itemsObj = itemsDoc.object();
+                QJsonDocument itemsDoc{ QJsonDocument::fromJson(jsonText.toUtf8()) };
+                QJsonObject itemsObj{ itemsDoc.object() };
 
                 if (itemsObj.contains("items") && itemsObj.contains("totalVolume"))
                 {
                     // Extraire le volume total
-                    double totalVolume = itemsObj["totalVolume"].toDouble();
+                    double totalVolume{ itemsObj["totalVolume"].toDouble() };
 
                     // Extraire les éléments structurés
                     QStringList structuredItems;
-                    QJsonArray items = itemsObj["items"].toArray();
-
+                    QJsonArray items{ itemsObj["items"].toArray() };
+                    QVector<MovingObject> objectList{};
                     for (const QJsonValue& item : items)
                     {
                         QJsonObject itemObj{ item.toObject() };
                         QString name{ itemObj["name"].toString() };
-                        double volume{ itemObj["volume"].toDouble() };
+                        int quantity{ itemObj["quantity"].toInt() };
+                        double unitaryVolume{ itemObj["unitaryVolume"].toDouble() };
                         bool disassembly{ itemObj["disassembly"].toBool() };
                         bool assembly{ itemObj["assembly"].toBool() };
                         bool heavy{ itemObj["heavy"].toBool() };
                         QString areaKey{ itemObj["areaKey"].toString() };
 
+                        MovingObject movingObject{ std::move(name), unitaryVolume, std::move(areaKey), quantity, disassembly,
+                            assembly, heavy };
+
+                        objectList.emplace_back(std::move(movingObject));
+
+                        // TODO : TERMINER LA REFACTORISATION ET SIMPLIFIER LA LOGIQUE
+                        // OBJECTIF : RETOURNER le QVector<MovingObject> objectList
+                    }
                         // Construire les tags (D, R, L) seulement si présents
                         QStringList tags;
                         if (disassembly) tags.append("D");

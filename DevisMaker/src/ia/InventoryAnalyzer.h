@@ -12,6 +12,7 @@
 #include <optional>
 #include "ia/IA.h"
 #include "utils/constants.h"
+#include "inventory/movingObject.h"
 
 class InventoryAnalyzer : public QObject
 {
