@@ -81,12 +81,16 @@ QVector<MovingObject> InventoryAnalyzer::extractReplyInfos(QNetworkReply* reply)
                     {
                         QJsonObject itemObj{ item.toObject() };
                         QString name{ itemObj["name"].toString() };
+                        if (name.contains('_'))
+                            name.replace('_', ' ');
                         int quantity{ itemObj["quantity"].toInt() };
                         double unitaryVolume{ itemObj["unitaryVolume"].toDouble() };
                         bool disassembly{ itemObj["disassembly"].toBool() };
                         bool assembly{ itemObj["assembly"].toBool() };
                         bool heavy{ itemObj["heavy"].toBool() };
                         QString areaKey{ itemObj["areaKey"].toString() };
+                        if (areaKey.contains('_'))
+                            areaKey.replace('_', ' ');
 
                         MovingObject movingObject{ std::move(name), unitaryVolume, std::move(areaKey), quantity, disassembly,
                             assembly, heavy };
