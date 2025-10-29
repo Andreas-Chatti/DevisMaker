@@ -10,7 +10,13 @@ void Inventory::handleInventoryAnalysis(double listTotalVolume, QVector<MovingOb
     {
         auto areaIt{ m_areas.find(object.getAreaKey()) };
         if (areaIt == m_areas.end())
+        {
             addArea(object.getAreaKey());
+            
+            areaIt = m_areas.find(object.getAreaKey());
+            if (areaIt != m_areas.end())
+                areaIt->addObject(std::move(object));
+        }
 
         else
             areaIt->addObject(std::move(object));
