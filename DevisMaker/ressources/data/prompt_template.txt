@@ -5,8 +5,8 @@ REGLES IMPORTANTES:
 - Si tu vois "matelas ET sommiers" = ce sont 2 objets différents à lister séparément
 - Si tu vois "2 matelas et 2 sommiers" = 4 objets au total (2+2)
 - Utilise UNIQUEMENT les volumes de la référence fournie
-- CALCULE le résultat final : 6 valises = 6 * 0.3 = 1.8 (pas "6 * 0.3" !)
-- Les volumes doivent être des NOMBRES PURS uniquement
+- IDENTIFIE la quantité et le volume unitaire : "6 valises" = quantity:6, unitaryVolume:0.3
+- Les volumes et quantités doivent être des NOMBRES PURS uniquement
 
 DETECTION DES PARAMETRES SUPPLEMENTAIRES (par défaut = false):
 - Si tu vois "D" ou "démontage" ou "démonter" ou "à démonter" mets "disassembly": true
@@ -22,22 +22,23 @@ Format exact:
 {
   "items": [
     {
-      "name": "6 valises",
-      "volume": 1.8,
+      "name": "valise",
+      "quantity": 6,
+      "unitaryVolume": 0.3,
       "disassembly": false,
       "assembly": false,
       "heavy": false,
       "areaKey": "divers"
     }
-  ],
-  "totalVolume": 1.8
+  ]
 }
 
 Exemple avec paramètres:
 "1 armoire (D, R, L) cuisine" devient:
 {
   "name": "armoire",
-  "volume": 2.5,
+  "quantity": 1,
+  "unitaryVolume": 2.5,
   "disassembly": true,
   "assembly": true,
   "heavy": true,
