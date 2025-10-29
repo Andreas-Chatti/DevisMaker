@@ -36,7 +36,7 @@ private:
 
 public slots:
 
-    void handleInventoryAnalysis(double totalVolume, const QStringList& structuredItems);
+    void handleInventoryAnalysis(double listTotalVolume, QVector<MovingObject>& objectList);
 
     void addObject(MovingObject movingObject, const QString& areaName);
 

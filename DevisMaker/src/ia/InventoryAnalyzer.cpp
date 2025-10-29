@@ -46,7 +46,7 @@ InventoryAnalyzer::Request InventoryAnalyzer::createRequest(const QString& inven
 }
 
 
-std::optional<InventoryAnalyzer::ReplyInfos> InventoryAnalyzer::extractReplyInfos(QNetworkReply* reply)
+QVector<MovingObject> InventoryAnalyzer::extractReplyInfos(QNetworkReply* reply)
 {
     QByteArray data{ reply->readAll() };
 
@@ -63,11 +63,8 @@ std::optional<InventoryAnalyzer::ReplyInfos> InventoryAnalyzer::extractReplyInfo
             QJsonObject firstChoice{ choices[0].toObject() };
             QString responseText{ firstChoice["message"].toObject()["content"].toString() };
 
-            // Extraire le JSON de la réponse
-            // Chercher le début et la fin du JSON dans la réponse
-            int jsonStart = responseText.indexOf("{");
-            int jsonEnd = responseText.lastIndexOf("}") + 1;
-
+            int jsonStart{ static_cast<int>(responseText.indexOf("{")) };
+            int jsonEnd{ static_cast<int>(responseText.lastIndexOf("}") + 1) };
 
             if (jsonStart >= 0 && jsonEnd > jsonStart)
             {
@@ -75,16 +72,11 @@ std::optional<InventoryAnalyzer::ReplyInfos> InventoryAnalyzer::extractReplyInfo
 
                 QJsonDocument itemsDoc{ QJsonDocument::fromJson(jsonText.toUtf8()) };
                 QJsonObject itemsObj{ itemsDoc.object() };
+                QVector<MovingObject> objectList{};
 
-                if (itemsObj.contains("items") && itemsObj.contains("totalVolume"))
+                if (itemsObj.contains("items"))
                 {
-                    // Extraire le volume total
-                    double totalVolume{ itemsObj["totalVolume"].toDouble() };
-
-                    // Extraire les éléments structurés
-                    QStringList structuredItems;
                     QJsonArray items{ itemsObj["items"].toArray() };
-                    QVector<MovingObject> objectList{};
                     for (const QJsonValue& item : items)
                     {
                         QJsonObject itemObj{ item.toObject() };
@@ -100,34 +92,13 @@ std::optional<InventoryAnalyzer::ReplyInfos> InventoryAnalyzer::extractReplyInfo
                             assembly, heavy };
 
                         objectList.emplace_back(std::move(movingObject));
-
-                        // TODO : TERMINER LA REFACTORISATION ET SIMPLIFIER LA LOGIQUE
-                        // OBJECTIF : RETOURNER le QVector<MovingObject> objectList
                     }
-                        // Construire les tags (D, R, L) seulement si présents
-                        QStringList tags;
-                        if (disassembly) tags.append("D");
-                        if (assembly) tags.append("R");
-                        if (heavy) tags.append("L");
-
-                        // Format: "armoire - 2.5 m³ (D, R, L) - cuisine"
-                        QString formatted{ QString("%1 - %2 m³").arg(name).arg(volume) };
-
-                        if (!tags.isEmpty())
-                            formatted += QString(" (%1)").arg(tags.join(", "));
-
-                        if (areaKey != "divers")
-                            formatted += QString(" - %1").arg(areaKey);
-
-                        structuredItems.append(formatted);
-                    }
-
-                    return std::make_optional<ReplyInfos>({ totalVolume, structuredItems });
                 }
+                return std::move(objectList);
             }
         }
     }
-    return std::nullopt;
+    return QVector<MovingObject>{};
 }
 
 
@@ -140,8 +111,8 @@ void InventoryAnalyzer::handleGrokResponse(QNetworkReply* reply)
        return;
    }
 
-   auto replyInfos{ extractReplyInfos(reply) };
-   if (!replyInfos)
+   QVector<MovingObject> objectList{ extractReplyInfos(reply) };
+   if (objectList.isEmpty())
    {
        emit analysisError("Format de reponse Grok inattendu");
 
@@ -151,16 +122,17 @@ void InventoryAnalyzer::handleGrokResponse(QNetworkReply* reply)
 
    else
    {
-       double volume{ replyInfos.value().volume };
-       QStringList structuredItems{ replyInfos.value().structuredItems };
+       double listTotalVolume{};
+       for (const MovingObject& object : objectList)
+           listTotalVolume += object.getTotalVolume();
 
-       addFallbackResult(volume);
+       addFallbackResult(listTotalVolume);
        addFallbackAttempt();
 
        bool hasReachedMaxAttempts{ getFallbackAttempts() >= m_ia->getMaxFallbackAttempts() };
        if (hasReachedMaxAttempts)
        {
-           emit resultsAnalysis(getFallbackResults(), structuredItems);
+           emit resultsAnalysis(getFallbackResults(), objectList);
            
            if (m_ia->getCurrentModelString() == m_ia->getFallbackModel())
                m_ia->setCurrentModel(IA::primary);
@@ -182,17 +154,17 @@ void InventoryAnalyzer::handleGrokResponse(QNetworkReply* reply)
 }
 
 
-void InventoryAnalyzer::calculateAverageVolume(QVector<double> results, const QStringList& structuredItems)
+void InventoryAnalyzer::calculateAverageVolume(const QVector<double>& results, QVector<MovingObject>& objectList)
 {
-    double finalVolume{};
+    double averageVolume{};
     double resultsNumber{ static_cast<double>(results.size()) };
 
-    for (double value : results)
-        finalVolume += value;
+    for (double volume : results)
+        averageVolume += volume;
 
-    finalVolume /= resultsNumber;
+    averageVolume /= resultsNumber;
 
-    emit analysisComplete(finalVolume, structuredItems);
+    emit analysisComplete(averageVolume, objectList);
 }
 
 
