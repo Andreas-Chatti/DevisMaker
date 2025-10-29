@@ -16,10 +16,10 @@ Area::Area(QString name, AreaType type)
 
 void Area::addObject(MovingObject object)
 {
-	auto it{ m_objects.find(object.getName()) };
-	if (it != m_objects.end())
+	auto objectIt{ m_objects.find(object.getName()) };
+	if (objectIt != m_objects.end())
 	{
-		it->add(object.getQuantity()); 
+		objectIt->add(object.getQuantity());
 		m_totalVolume += object.getTotalVolume();
 		return;
 	}

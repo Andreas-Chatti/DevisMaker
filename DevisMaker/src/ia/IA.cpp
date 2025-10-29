@@ -1,4 +1,4 @@
-#include "IA.h"
+ï»¿#include "IA.h"
 
 void IA::initializePrompt() 
 {
@@ -49,30 +49,57 @@ bool IA::savePrompt(const QString& promptContent)
     return true;
 }
 
-QString IA::getDefaultPrompt() 
+QString IA::getDefaultPrompt()
 {
-    return R"(Tu dois analyser cet inventaire de déménagement et calculer les volumes avec cette référence : %1
+    return R"(Tu dois analyser cet inventaire de dÃ©mÃ©nagement et calculer les volumes avec cette rÃ©fÃ©rence : %1
 
-RÈGLES IMPORTANTES:
+REGLES IMPORTANTES:
 - Lis chaque ligne attentivement
-- Si tu vois "matelas ET sommiers" = ce sont 2 objets différents à lister séparément
+- Si tu vois "matelas ET sommiers" = ce sont 2 objets diffÃ©rents Ã  lister sÃ©parÃ©ment
 - Si tu vois "2 matelas et 2 sommiers" = 4 objets au total (2+2)
-- Utilise UNIQUEMENT les volumes de la référence fournie
-- CALCULE le résultat final : 6 valises = 6 × 0.3 = 1.8 (pas "6 * 0.3" !)
-- Les volumes doivent être des NOMBRES PURS uniquement
+- Utilise UNIQUEMENT les volumes de la rÃ©fÃ©rence fournie
+- Si tu vois que l'objet est un nom composÃ© avec des espaces, exemple: "buffet haut et bas" ne fais pas "name": "buffet_haut_et_bas" mais comme Ã§a: "name:": "buffet haut et bas"
+- IDENTIFIE la quantitÃ© et le volume unitaire : "6 valises" = quantity:6, unitaryVolume:0.3
+- Les volumes et quantitÃ©s doivent Ãªtre des NOMBRES PURS uniquement
 
-RÉPONSE OBLIGATOIRE: JSON pur uniquement, sans texte avant ou après.
-INTERDICTION ABSOLUE d'expressions mathématiques dans les valeurs !
+DETECTION DES PARAMETRES SUPPLEMENTAIRES (par dÃ©faut = false):
+- Si tu vois "D" ou "dÃ©montage" ou "dÃ©monter" ou "Ã  dÃ©monter" mets "disassembly": true
+- Si tu vois "R" ou "remontage" ou "remonter" ou "Ã  remonter" mets "assembly": true
+- Si tu vois "L" ou "lourd" ou "trÃ¨s lourd" mets "heavy": true
+- Si tu dÃ©tectes une piÃ¨ce (salon, cuisine, chambre, bureau, cave, grenier, garage, etc.) mets "areaKey": "nom_de_la_piece" sans les '_'
+- Par dÃ©faut: disassembly=false, assembly=false, heavy=false, areaKey="divers"
+
+REPONSE OBLIGATOIRE: JSON pur uniquement, sans texte avant ou aprÃ¨s.
+INTERDICTION ABSOLUE d'expressions mathÃ©matiques dans les valeurs !
 
 Format exact:
 {
   "items": [
-    {"name": "6 valises", "volume": 1.8 }
-  ],
-  "totalVolume": 1.8
+    {
+      "name": "valise",
+      "quantity": 6,
+      "unitaryVolume": 0.3,
+      "disassembly": false,
+      "assembly": false,
+      "heavy": false,
+      "areaKey": "divers"
+    }
+  ]
 }
 
-INVENTAIRE À ANALYSER:
+Exemple avec paramÃ¨tres:
+"1 armoire (D, R, L) cuisine" devient:
+{
+  "name": "armoire",
+  "quantity": 1,
+  "unitaryVolume": 2.5,
+  "disassembly": true,
+  "assembly": true,
+  "heavy": true,
+  "areaKey": "cuisine"
+}
+
+INVENTAIRE A ANALYSER:
 %2)";
 }
 
@@ -97,15 +124,15 @@ void IA::reloadPrompt()
 
 QNetworkRequest IA::buildRequest(const QString& inventoryText, const QString& jsonReference) 
 {
-    // Construire le prompt avec les paramètres
+    // Construire le prompt avec les paramï¿½tres
     QString prompt{ m_currentPrompt.arg(jsonReference, inventoryText) };
 
-    // Créer la requête
+    // Crï¿½er la requÃªte
     QNetworkRequest request(m_url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     request.setRawHeader("Authorization", ("Bearer " + m_apiKey).toUtf8());
 
-    // Corps de la requête JSON
+    // Corps de la requÃªte JSON
     QJsonObject jsonBody;
     jsonBody["model"] = m_currentModel;
     jsonBody["max_tokens"] = m_maxTokens;
@@ -118,7 +145,7 @@ QNetworkRequest IA::buildRequest(const QString& inventoryText, const QString& js
     messages.append(userMessage);
     jsonBody["messages"] = messages;
 
-    // Stocker le JSON dans la requête (via un attribut custom)
+    // Stocker le JSON dans la requÃªte (via un attribut custom)
     QJsonDocument doc(jsonBody);
     request.setAttribute(QNetworkRequest::User, doc.toJson());
 

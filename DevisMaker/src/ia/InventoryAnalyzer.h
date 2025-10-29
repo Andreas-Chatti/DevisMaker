@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <QObject>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
@@ -12,6 +12,7 @@
 #include <optional>
 #include "ia/IA.h"
 #include "utils/constants.h"
+#include "inventory/movingObject.h"
 
 class InventoryAnalyzer : public QObject
 {
@@ -38,15 +39,14 @@ public:
 
 signals:
 
-    void analysisComplete(double totalVolume, const QStringList& structuredItems);
+    void analysisComplete(double totalVolume, QVector<MovingObject>& objectList);
     void analysisError(const QString& errorMessage);
-    void resultsAnalysis(QVector<double> results, const QStringList& structuredItems);
     void error(const QString& errorMessage);
 
 private slots:
 
     void handleGrokResponse(QNetworkReply* reply);
-    void calculateAverageVolume(QVector<double> results, const QStringList& structuredItems);
+    double calculateAverageVolume(const QVector<double>& results);
 
 private:
 
@@ -54,7 +54,7 @@ private:
 
     Request createRequest(const QString& inventoryText);
 
-    std::optional<ReplyInfos> extractReplyInfos(QNetworkReply* reply);
+    QVector<MovingObject> extractReplyInfos(QNetworkReply* reply);
 
     void addFallbackResult(double result) { m_fallbackResults.emplace_back(result); }
     void addFallbackAttempt() { m_fallbackAttempts++; }

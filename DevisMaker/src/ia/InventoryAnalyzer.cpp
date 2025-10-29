@@ -5,7 +5,6 @@ InventoryAnalyzer::InventoryAnalyzer(QObject* parent)
 {
     connect(m_networkManager, &QNetworkAccessManager::finished, this, &InventoryAnalyzer::handleGrokResponse);
     connect(m_ia, &IA::error, this, &InventoryAnalyzer::error);
-    connect(this, &InventoryAnalyzer::resultsAnalysis, this, &InventoryAnalyzer::calculateAverageVolume);
 
     loadVolumeReference();
 }
@@ -46,7 +45,7 @@ InventoryAnalyzer::Request InventoryAnalyzer::createRequest(const QString& inven
 }
 
 
-std::optional<InventoryAnalyzer::ReplyInfos> InventoryAnalyzer::extractReplyInfos(QNetworkReply* reply)
+QVector<MovingObject> InventoryAnalyzer::extractReplyInfos(QNetworkReply* reply)
 {
     QByteArray data{ reply->readAll() };
 
@@ -63,42 +62,46 @@ std::optional<InventoryAnalyzer::ReplyInfos> InventoryAnalyzer::extractReplyInfo
             QJsonObject firstChoice{ choices[0].toObject() };
             QString responseText{ firstChoice["message"].toObject()["content"].toString() };
 
-            // Extraire le JSON de la réponse
-            // Chercher le début et la fin du JSON dans la réponse
-            int jsonStart = responseText.indexOf("{");
-            int jsonEnd = responseText.lastIndexOf("}") + 1;
-
+            int jsonStart{ static_cast<int>(responseText.indexOf("{")) };
+            int jsonEnd{ static_cast<int>(responseText.lastIndexOf("}") + 1) };
 
             if (jsonStart >= 0 && jsonEnd > jsonStart)
             {
-                QString jsonText = responseText.mid(jsonStart, jsonEnd - jsonStart);
+                QString jsonText{ responseText.mid(jsonStart, jsonEnd - jsonStart) };
 
-                QJsonDocument itemsDoc = QJsonDocument::fromJson(jsonText.toUtf8());
-                QJsonObject itemsObj = itemsDoc.object();
+                QJsonDocument itemsDoc{ QJsonDocument::fromJson(jsonText.toUtf8()) };
+                QJsonObject itemsObj{ itemsDoc.object() };
+                QVector<MovingObject> objectList{};
 
-                if (itemsObj.contains("items") && itemsObj.contains("totalVolume"))
+                if (itemsObj.contains("items"))
                 {
-                    // Extraire le volume total
-                    double totalVolume = itemsObj["totalVolume"].toDouble();
-
-                    // Extraire les éléments structurés
-                    QStringList structuredItems;
-                    QJsonArray items = itemsObj["items"].toArray();
-
+                    QJsonArray items{ itemsObj["items"].toArray() };
                     for (const QJsonValue& item : items)
                     {
-                        QJsonObject itemObj = item.toObject();
-                        QString name = itemObj["name"].toString();
-                        double volume = itemObj["volume"].toDouble();
-                        structuredItems.append(QString("%1 - %2 m\u00B3").arg(name).arg(volume));
-                    }
+                        QJsonObject itemObj{ item.toObject() };
+                        QString name{ itemObj["name"].toString() };
+                        if (name.contains('_'))
+                            name.replace('_', ' ');
+                        int quantity{ itemObj["quantity"].toInt() };
+                        double unitaryVolume{ itemObj["unitaryVolume"].toDouble() };
+                        bool disassembly{ itemObj["disassembly"].toBool() };
+                        bool assembly{ itemObj["assembly"].toBool() };
+                        bool heavy{ itemObj["heavy"].toBool() };
+                        QString areaKey{ itemObj["areaKey"].toString() };
+                        if (areaKey.contains('_'))
+                            areaKey.replace('_', ' ');
 
-                    return std::make_optional<ReplyInfos>({ totalVolume, structuredItems });
+                        MovingObject movingObject{ std::move(name), unitaryVolume, std::move(areaKey), quantity, disassembly,
+                            assembly, heavy };
+
+                        objectList.emplace_back(std::move(movingObject));
+                    }
                 }
+                return std::move(objectList);
             }
         }
     }
-    return std::nullopt;
+    return QVector<MovingObject>{};
 }
 
 
@@ -111,8 +114,8 @@ void InventoryAnalyzer::handleGrokResponse(QNetworkReply* reply)
        return;
    }
 
-   auto replyInfos{ extractReplyInfos(reply) };
-   if (!replyInfos)
+   QVector<MovingObject> objectList{ extractReplyInfos(reply) };
+   if (objectList.isEmpty())
    {
        emit analysisError("Format de reponse Grok inattendu");
 
@@ -122,16 +125,18 @@ void InventoryAnalyzer::handleGrokResponse(QNetworkReply* reply)
 
    else
    {
-       double volume{ replyInfos.value().volume };
-       QStringList structuredItems{ replyInfos.value().structuredItems };
+       double listTotalVolume{};
+       for (const MovingObject& object : objectList)
+           listTotalVolume += object.getTotalVolume();
 
-       addFallbackResult(volume);
+       addFallbackResult(listTotalVolume);
        addFallbackAttempt();
 
        bool hasReachedMaxAttempts{ getFallbackAttempts() >= m_ia->getMaxFallbackAttempts() };
        if (hasReachedMaxAttempts)
        {
-           emit resultsAnalysis(getFallbackResults(), structuredItems);
+           double averageVolume{ calculateAverageVolume(getFallbackResults()) };
+           emit analysisComplete(averageVolume, objectList);
            
            if (m_ia->getCurrentModelString() == m_ia->getFallbackModel())
                m_ia->setCurrentModel(IA::primary);
@@ -153,17 +158,15 @@ void InventoryAnalyzer::handleGrokResponse(QNetworkReply* reply)
 }
 
 
-void InventoryAnalyzer::calculateAverageVolume(QVector<double> results, const QStringList& structuredItems)
+double InventoryAnalyzer::calculateAverageVolume(const QVector<double>& results)
 {
-    double finalVolume{};
+    double averageVolume{};
     double resultsNumber{ static_cast<double>(results.size()) };
 
-    for (double value : results)
-        finalVolume += value;
+    for (double volume : results)
+        averageVolume += volume;
 
-    finalVolume /= resultsNumber;
-
-    emit analysisComplete(finalVolume, structuredItems);
+    return averageVolume /= resultsNumber;
 }
 
 

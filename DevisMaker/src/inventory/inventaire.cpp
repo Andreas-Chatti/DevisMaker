@@ -1,49 +1,25 @@
 ﻿#include "inventaire.h"
 
-void Inventory::handleInventoryAnalysis(double totalVolume, const QStringList& structuredItems)
+void Inventory::handleInventoryAnalysis(double listTotalVolume, QVector<MovingObject>& objectList)
 {
     clear();
 
-    m_totalVolume = totalVolume;
+    m_totalVolume = listTotalVolume;
 
-    for (qsizetype i{}; i < structuredItems.size(); ++i)
+    for (MovingObject& object : objectList)
     {
-        QString item{ structuredItems[i] };
-        QStringList parts{ item.split(" - ") };
-
-        if (parts.size() == 2)
+        auto areaIt{ m_areas.find(object.getAreaKey()) };
+        if (areaIt == m_areas.end())
         {
-            QString fullName{ parts[0] };     // Ex: "2 matelas 1 place"
-            QString volumeText{ parts[1] };   // Ex: "1.0 m³"
-
-            QStringList words{ fullName.split(" ") };
-            int quantity{ 1 };  // Par défaut
-            QString cleanName{ fullName };
-
-            // Extraire la quantité du nom
-            if (!words.isEmpty())
-            {
-                bool ok{};
-                int qty{ words.first().toInt(&ok) };
-                if (ok && qty > 0)
-                {
-                    quantity = qty;
-                    words.removeFirst();
-                    cleanName = words.join(" ");
-                }
-            }
-
-            volumeText = volumeText.trimmed();
-            if (volumeText.endsWith(" m\u00b3") || volumeText.endsWith(" m3"))
-            {
-                volumeText.chop(3);
-                bool ok{};
-                double unitVolume{ volumeText.toDouble(&ok) / quantity };
-
-                if (ok && unitVolume > 0.0)
-                    addObject(MovingObject{ cleanName, unitVolume, "IA_AREA_NAME", quantity}, "IA_AREA_NAME");
-            }
+            addArea(object.getAreaKey());
+            
+            areaIt = m_areas.find(object.getAreaKey());
+            if (areaIt != m_areas.end())
+                areaIt->addObject(std::move(object));
         }
+
+        else
+            areaIt->addObject(std::move(object));
     }
 
     emit sendNewInventory(*this);
