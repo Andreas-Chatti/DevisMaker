@@ -41,13 +41,12 @@ signals:
 
     void analysisComplete(double totalVolume, QVector<MovingObject>& objectList);
     void analysisError(const QString& errorMessage);
-    void resultsAnalysis(const QVector<double>& results, QVector<MovingObject>& objectList);
     void error(const QString& errorMessage);
 
 private slots:
 
     void handleGrokResponse(QNetworkReply* reply);
-    void calculateAverageVolume(const QVector<double>& results, QVector<MovingObject>& objectList);
+    double calculateAverageVolume(const QVector<double>& results);
 
 private:
 

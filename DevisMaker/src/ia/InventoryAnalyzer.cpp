@@ -5,7 +5,6 @@ InventoryAnalyzer::InventoryAnalyzer(QObject* parent)
 {
     connect(m_networkManager, &QNetworkAccessManager::finished, this, &InventoryAnalyzer::handleGrokResponse);
     connect(m_ia, &IA::error, this, &InventoryAnalyzer::error);
-    connect(this, &InventoryAnalyzer::resultsAnalysis, this, &InventoryAnalyzer::calculateAverageVolume);
 
     loadVolumeReference();
 }
@@ -136,7 +135,8 @@ void InventoryAnalyzer::handleGrokResponse(QNetworkReply* reply)
        bool hasReachedMaxAttempts{ getFallbackAttempts() >= m_ia->getMaxFallbackAttempts() };
        if (hasReachedMaxAttempts)
        {
-           emit resultsAnalysis(getFallbackResults(), objectList);
+           double averageVolume{ calculateAverageVolume(getFallbackResults()) };
+           emit analysisComplete(averageVolume, objectList);
            
            if (m_ia->getCurrentModelString() == m_ia->getFallbackModel())
                m_ia->setCurrentModel(IA::primary);
@@ -158,7 +158,7 @@ void InventoryAnalyzer::handleGrokResponse(QNetworkReply* reply)
 }
 
 
-void InventoryAnalyzer::calculateAverageVolume(const QVector<double>& results, QVector<MovingObject>& objectList)
+double InventoryAnalyzer::calculateAverageVolume(const QVector<double>& results)
 {
     double averageVolume{};
     double resultsNumber{ static_cast<double>(results.size()) };
@@ -166,9 +166,7 @@ void InventoryAnalyzer::calculateAverageVolume(const QVector<double>& results, Q
     for (double volume : results)
         averageVolume += volume;
 
-    averageVolume /= resultsNumber;
-
-    emit analysisComplete(averageVolume, objectList);
+    return averageVolume /= resultsNumber;
 }
 
 
