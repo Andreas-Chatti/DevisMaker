@@ -1,13 +1,18 @@
-#pragma once
+﻿#pragma once
 
 #include <QObject>
 #include <QString>
 #include <QMutex>
 
 // Windows headers pour SAPI (Speech API)
+// Désactiver temporairement l'avertissement C4996 (fonctions dépréciées)
+// car sphelper.h utilise GetVersionExW qui est déprécié mais toujours nécessaire
+#pragma warning(push)
+#pragma warning(disable: 4996)
 #include <windows.h>
 #include <sapi.h>      // Speech API de Windows
 #include <sphelper.h>  // Helpers pour SAPI
+#pragma warning(pop)   // Réactiver les avertissements
 
 /**
  * @class WindowsSpeechRecognizer
@@ -28,15 +33,9 @@ class WindowsSpeechRecognizer : public QObject
     Q_OBJECT
 
 public:
-    /**
-     * @brief Constructeur
-     * @param parent L'objet parent Qt (pour la gestion automatique de la mémoire)
-     */
+
     explicit WindowsSpeechRecognizer(QObject* parent = nullptr);
 
-    /**
-     * @brief Destructeur - nettoie les ressources COM
-     */
     ~WindowsSpeechRecognizer();
 
     /**
