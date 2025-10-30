@@ -78,7 +78,8 @@ private:
 
     void initializePrompt();
     QString loadPrompt();
-    QString getDefaultPrompt();
+    static QString getDefaultPrompt();
+    static QString getDefaultCleanListPrompt();
 
     void createDefaultConfigFile();
     void loadConfigFile(int loadAttempts = 0, QString errorMessage = "");
