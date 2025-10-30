@@ -34,7 +34,7 @@ public:
 
     InventoryAnalyzer(QObject* parent = nullptr);
 
-
+    void cleanList(QString text);
     void analyzeInventory(const QString& inventoryText);
 
 signals:
@@ -46,6 +46,7 @@ signals:
 private slots:
 
     void handleGrokResponse(QNetworkReply* reply);
+    void handleCleanNameResponse(QNetworkReply* reply);
     double calculateAverageVolume(const QVector<double>& results);
 
 private:

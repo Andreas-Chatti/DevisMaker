@@ -55,6 +55,7 @@ public:
     void reloadPrompt();
     bool savePrompt(const QString& promptContent);
     QNetworkRequest buildRequest(const QString& inventoryText, const QString& jsonReference);
+    QNetworkRequest buildCleanTextRequest(const QString& rawText);
 
 signals:
 

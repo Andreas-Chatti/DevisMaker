@@ -152,6 +152,39 @@ QNetworkRequest IA::buildRequest(const QString& inventoryText, const QString& js
     return request;
 }
 
+QNetworkRequest IA::buildCleanTextRequest(const QString& rawText)
+{
+    // Construire le prompt avec les paramètres
+    QString prompt{ QString{R"(Voici une liste d'inventaire : %1\n 
+        Je veux que tu mettre au propre cette liste et faire des sauts de lignes entre chaque élément.
+        Aussi, donne moi la liste directement sans me faire aucun text supplémentaire comme: "D'accord ! Voici la liste [...]"
+)"}.arg(rawText)};
+
+    // Créer la requête
+    QNetworkRequest request(m_url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    request.setRawHeader("Authorization", ("Bearer " + m_apiKey).toUtf8());
+
+    // Corps de la requête JSON
+    QJsonObject jsonBody;
+    jsonBody["model"] = m_currentModel;
+    jsonBody["max_tokens"] = m_maxTokens;
+    jsonBody["temperature"] = m_temperature;
+
+    QJsonArray messages;
+    QJsonObject userMessage;
+    userMessage["role"] = "user";
+    userMessage["content"] = prompt;
+    messages.append(userMessage);
+    jsonBody["messages"] = messages;
+
+    // Stocker le JSON dans la requête (via un attribut custom)
+    QJsonDocument doc(jsonBody);
+    request.setAttribute(QNetworkRequest::User, doc.toJson());
+
+    return request;
+}
+
 
 void IA::createDefaultConfigFile()
 {
