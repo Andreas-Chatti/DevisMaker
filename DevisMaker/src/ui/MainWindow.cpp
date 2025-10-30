@@ -17,6 +17,12 @@ MainWindow::MainWindow(QWidget* parent)
     connect(m_inventoryAnalyzer, &InventoryAnalyzer::error, this, &MainWindow::onCriticalError);
     connect(m_client->getInventory(), &Inventory::sendNewInventory, this, &MainWindow::handleInventoryAnalysis);
 
+    // Connexions pour la reconnaissance vocale
+    connect(m_speechRecognizer, &WindowsSpeechRecognizer::textRecognized, this, &MainWindow::onTextRecognized);
+    connect(m_speechRecognizer, &WindowsSpeechRecognizer::errorOccurred, this, [this](const QString& error) {
+        QMessageBox::warning(this, "Erreur de reconnaissance vocale", error);
+    });
+
     setupValidators();
     displaySettings();
     setupPlaceholderText();
@@ -937,4 +943,72 @@ void MainWindow::on_valeurAssuranceLineEdit_textChanged()
 void MainWindow::on_suppAdresseSpinBox_editingFinished()
 {
     m_client->setNbAdresseSupp(ui.suppAdresseSpinBox->value());
+}
+
+void MainWindow::on_btnVoiceInput_clicked()
+{
+    // Bascule entre démarrer et arrêter la reconnaissance vocale
+    // Analogie : C'est comme un interrupteur on/off
+
+    if (m_speechRecognizer->isListening())
+    {
+        // Si on est en train d'écouter, on arrête
+        m_speechRecognizer->stopListening();
+        ui.btnVoiceInput->setText("Dicter l'inventaire");
+        qDebug() << "Reconnaissance vocale arrêtée par l'utilisateur";
+    }
+    else
+    {
+        // Sinon, on démarre la reconnaissance
+        bool success = m_speechRecognizer->startListening();
+
+        if (success)
+        {
+            // Changer le texte du bouton pour indiquer qu'on écoute
+            ui.btnVoiceInput->setText("Arrêter la dictée");
+            qDebug() << "Reconnaissance vocale démarrée";
+        }
+        else
+        {
+            QMessageBox::warning(
+                this,
+                "Erreur",
+                "Impossible de démarrer la reconnaissance vocale.\n"
+                "Vérifiez que votre microphone est connecté et configuré."
+            );
+        }
+    }
+}
+
+void MainWindow::onTextRecognized(const QString& text)
+{
+    // Cette méthode est appelée chaque fois que SAPI reconnaît du texte
+    // On ajoute le texte progressivement dans le QTextEdit d'inventaire
+
+    if (text.isEmpty())
+    {
+        return;
+    }
+
+    // Récupérer le contenu actuel du QTextEdit
+    QString currentText = ui.inventaireTextEdit->toPlainText();
+
+    // Ajouter le nouveau texte reconnu
+    // Si le texte actuel n'est pas vide, on ajoute un espace avant
+    if (!currentText.isEmpty() && !currentText.endsWith(' ') && !currentText.endsWith('\n'))
+    {
+        currentText += " ";
+    }
+
+    currentText += text;
+
+    // Mettre à jour le QTextEdit
+    ui.inventaireTextEdit->setPlainText(currentText);
+
+    // Déplacer le curseur à la fin pour que l'utilisateur voie le nouveau texte
+    QTextCursor cursor = ui.inventaireTextEdit->textCursor();
+    cursor.movePosition(QTextCursor::End);
+    ui.inventaireTextEdit->setTextCursor(cursor);
+
+    qDebug() << "Texte ajouté à l'inventaire :" << text;
 }

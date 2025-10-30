@@ -23,6 +23,7 @@
 #include "companyInfoDialog.h"
 #include "InventoryModifyierDialog.h"
 #include "user/user.h"
+#include "speech/WindowsSpeechRecognizer.h"
 
 
 
@@ -68,6 +69,9 @@ private slots:
 
     void on_modifyInventoryPushButton_clicked();
 
+    void on_btnVoiceInput_clicked();
+
+    void onTextRecognized(const QString& text);
 
     // Updating Client variables in real time
 
@@ -112,6 +116,7 @@ private:
     PDFGenerator* m_PDFGenerator{ new PDFGenerator{this} };
     User* m_user{ new User{this} };
     AddressCompleter* m_addressCompleter{ nullptr };
+    WindowsSpeechRecognizer* m_speechRecognizer{ new WindowsSpeechRecognizer{this} };
 
 
     void setupValidators();
