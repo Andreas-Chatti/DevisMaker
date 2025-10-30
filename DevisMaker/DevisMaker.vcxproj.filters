@@ -58,9 +58,6 @@
     <ClCompile Include="src\ui\companyInfoDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="user.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\inventory\inventaire.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -68,6 +65,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ItemModifyierDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="area.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\inventory\movingObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\user\user.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\speech\WindowsSpeechRecognizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -85,6 +94,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\inventory\movingObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="area.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -113,9 +125,6 @@
     <QtMoc Include="src\ui\companyInfoDialog.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="user.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="src\inventory\inventaire.h">
       <Filter>Header Files</Filter>
     </QtMoc>
@@ -129,6 +138,12 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="ItemModifyierDialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="src\user\user.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="src\speech\WindowsSpeechRecognizer.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
