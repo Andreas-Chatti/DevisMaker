@@ -283,8 +283,7 @@ void MainWindow::on_AnalyseInventoryPushButton_clicked()
     ui.modifyInventoryPushButton->setEnabled(false);
     ui.generateInventoryPushButton->setEnabled(false);
 
-    // Lancer l'analyse avec l'IA
-    m_inventoryAnalyzer->analyzeInventory(inventoryText);
+    m_inventoryAnalyzer->cleanList(inventoryText);
 }
 
 

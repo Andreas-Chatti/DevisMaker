@@ -103,6 +103,100 @@ INVENTAIRE A ANALYSER:
 %2)";
 }
 
+QString IA::getDefaultCleanListPrompt()
+{
+    return R"(
+
+Voici une liste d'inventaire : %1
+
+Trie et formate cette liste d'inventaire de déménagement selon les règles ci-dessous.
+
+FORMAT DE SORTIE :
+quantité - nom de l'objet (nom de la pièce) [D/R/L]
+
+RÈGLES DE FORMATAGE :
+1. Réponds UNIQUEMENT avec la liste formatée, sans texte d'introduction ni commentaire
+2. Chaque élément sur une nouvelle ligne
+3. Nom de l'objet toujours au SINGULIER
+
+QUANTITÉ :
+- Si mentionnée : utilise la quantité indiquée
+- Si NON mentionnée ET objet au singulier : quantité = 1
+- Si NON mentionnée ET objet au pluriel : quantité = 2
+
+RÈGLE DE REGROUPEMENT DES QUANTITÉS :
+- Si plusieurs objets IDENTIQUES sont mentionnés dans la MÊME PIÈCE, 
+  REGROUPE-les en UNE SEULE ligne avec la quantité totale
+- Si des objets identiques sont dans des PIÈCES DIFFÉRENTES, 
+  garde-les sur des lignes SÉPARÉES
+
+Exemples :
+✅ "3 chaises dans la cuisine, 2 chaises dans la cuisine" 
+   → 5 - chaise (cuisine)
+
+✅ "un carton livre au salon, 4 cartons livres au salon"
+   → 5 - carton livre (salon)
+
+❌ "2 chaises dans la cuisine, 3 chaises dans le salon"
+   → 2 - chaise (cuisine)
+   → 3 - chaise (salon)
+   [NE PAS regrouper car pièces différentes !]
+
+✅ "table basse normale au salon, table basse en marbre au salon"
+   → 1 - table basse (salon)
+   → 1 - table basse en marbre (salon) [L]
+   [NE PAS regrouper car descriptions/tags différents !]
+
+ATTENTION : Regroupe UNIQUEMENT si :
+1. Même nom d'objet exact
+2. Même pièce
+3. Mêmes tags [D], [R], [L] ou absence de tags
+4. Même description spécifique (ex: "IKEA", "en marbre", etc.)
+
+NOM DE LA PIÈCE :
+- Si mentionnée : indique entre parenthèses
+- Si NON mentionnée : ne rien mettre
+
+TYPES DE CARTONS (importante distinction) :
+- "carton standard" → garder tel quel
+- "carton livre" → garder tel quel  
+- "carton" (sans précision) → renommer en "carton standard"
+
+MENTIONS [D/R/L] :
+N'ajoute ces lettres QUE si explicitement mentionné OU exception ci-dessous :
+
+D = Démontage
+- Ajouter si mention "à démonter"
+
+R = Remontage  
+- Ajouter si mention "à remonter"
+
+L = Lourd
+- Ajouter si mention "lourd"
+RÈGLE [L] AUTOMATIQUE - EXCEPTIONS IMPORTANTES :
+- Piano, coffre-fort, moto → TOUJOURS [L]
+- SAUF SI explicitement décrit comme "léger", "pas lourd", "numérique léger"
+- Si le texte dit "piano numérique léger" → PAS de [L] !
+- Les mentions "léger" ou "pas lourd" ANNULENT le tag [L] automatique
+
+EXTRACTION COMPLÈTE :
+- Analyse TOUT le texte du début à la fin
+- N'ignore AUCUN objet mentionné, même en fin de phrase
+- Vérifie bien les mentions tardives comme "ah et puis des tableaux j'en ai 3"
+
+CONSERVATION DES DÉTAILS :
+- Si un objet a une description spécifique (ex: "piano à queue", "lit king size"),
+  CONSERVE cette description exacte dans le nom
+- Exemple : "piano à queue" et NON juste "piano"
+
+EXEMPLES :
+- "3 chaises de cuisine" → 3 - chaise (cuisine)
+- "table à démonter salon" → 1 - table (salon) [D]
+- "piano droit" → 1 - piano droit [L]
+- "carton" → 1 - carton standard
+- "2 cartons livre bureau" → 2 - carton livre (bureau)
+)";
+}
 
 void IA::reloadPrompt() 
 {
@@ -128,6 +222,36 @@ QNetworkRequest IA::buildRequest(const QString& inventoryText, const QString& js
     QString prompt{ m_currentPrompt.arg(jsonReference, inventoryText) };
 
     // Cr�er la requête
+    QNetworkRequest request(m_url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    request.setRawHeader("Authorization", ("Bearer " + m_apiKey).toUtf8());
+
+    // Corps de la requête JSON
+    QJsonObject jsonBody;
+    jsonBody["model"] = m_currentModel;
+    jsonBody["max_tokens"] = m_maxTokens;
+    jsonBody["temperature"] = m_temperature;
+
+    QJsonArray messages;
+    QJsonObject userMessage;
+    userMessage["role"] = "user";
+    userMessage["content"] = prompt;
+    messages.append(userMessage);
+    jsonBody["messages"] = messages;
+
+    // Stocker le JSON dans la requête (via un attribut custom)
+    QJsonDocument doc(jsonBody);
+    request.setAttribute(QNetworkRequest::User, doc.toJson());
+
+    return request;
+}
+
+QNetworkRequest IA::buildCleanTextRequest(const QString& rawText)
+{
+    // Construire le prompt avec les paramètres
+    QString prompt{ getDefaultCleanListPrompt().arg(rawText) };
+
+    // Créer la requête
     QNetworkRequest request(m_url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     request.setRawHeader("Authorization", ("Bearer " + m_apiKey).toUtf8());
@@ -221,7 +345,6 @@ void IA::loadConfigFile(int loadAttempts, QString errorMessage)
     m_maxFallbackAttempts = jsonBody["fallback_max_attempts"].toInt();
     m_currentModel = m_primaryModel;
 }
-
 
 void IA::setCurrentModel(ModelType modelType)
 {

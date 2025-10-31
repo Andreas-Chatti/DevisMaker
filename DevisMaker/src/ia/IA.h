@@ -55,6 +55,7 @@ public:
     void reloadPrompt();
     bool savePrompt(const QString& promptContent);
     QNetworkRequest buildRequest(const QString& inventoryText, const QString& jsonReference);
+    QNetworkRequest buildCleanTextRequest(const QString& rawText);
 
 signals:
 
@@ -77,7 +78,8 @@ private:
 
     void initializePrompt();
     QString loadPrompt();
-    QString getDefaultPrompt();
+    static QString getDefaultPrompt();
+    static QString getDefaultCleanListPrompt();
 
     void createDefaultConfigFile();
     void loadConfigFile(int loadAttempts = 0, QString errorMessage = "");
