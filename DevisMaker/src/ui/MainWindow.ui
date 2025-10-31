@@ -12,8 +12,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>700</width>
-    <height>675</height>
+    <width>950</width>
+    <height>900</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -82,7 +82,7 @@ QGroupBox::title {
 }
 
 QLineEdit {
-    padding: 6px 10px;
+    padding: 5px 10px;
     border: 2px solid #bdc3c7;
     border-radius: 5px;
     background-color: white;
@@ -101,7 +101,7 @@ QLabel {
 }
 
 QDateEdit {
-    padding: 6px 10px;
+    padding: 5px 10px;
     border: 2px solid #bdc3c7;
     border-radius: 5px;
     background-color: white;
@@ -131,7 +131,7 @@ QDateEdit::down-arrow {
 }
 
 QComboBox {
-    padding: 6px 10px;
+    padding: 5px 10px;
     border: 2px solid #bdc3c7;
     border-radius: 5px;
     background-color: white;
@@ -158,7 +158,7 @@ QComboBox::down-arrow {
 }
 
 QSpinBox {
-    padding: 6px 10px;
+    padding: 5px 10px;
     border: 2px solid #bdc3c7;
     border-radius: 5px;
     background-color: white;
@@ -639,16 +639,16 @@ QCheckBox::indicator:checked:after {
            </item>
            <item row="1" column="1">
             <widget class="QComboBox" name="prestationComboBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="minimumSize">
               <size>
                <width>120</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>120</width>
-               <height>16777215</height>
               </size>
              </property>
              <item>
@@ -734,32 +734,32 @@ QCheckBox::indicator:checked:after {
            </item>
            <item row="0" column="1">
             <widget class="QLineEdit" name="distanceLineEdit">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="minimumSize">
               <size>
                <width>100</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>100</width>
-               <height>16777215</height>
               </size>
              </property>
             </widget>
            </item>
            <item row="0" column="3">
             <widget class="QLineEdit" name="volumelineEdit">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="minimumSize">
               <size>
                <width>100</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>100</width>
-               <height>16777215</height>
               </size>
              </property>
             </widget>
@@ -799,16 +799,16 @@ QCheckBox::indicator:checked:after {
            </item>
            <item row="2" column="1">
             <widget class="QComboBox" name="typeAssuranceComboBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="minimumSize">
               <size>
                <width>120</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>120</width>
-               <height>16777215</height>
               </size>
              </property>
              <item>
@@ -825,16 +825,16 @@ QCheckBox::indicator:checked:after {
            </item>
            <item row="1" column="3">
             <widget class="QComboBox" name="natureComboBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="minimumSize">
               <size>
                <width>120</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>120</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="editable">
@@ -898,16 +898,16 @@ QLabel {
            </item>
            <item row="2" column="3">
             <widget class="QLineEdit" name="valeurAssuranceLineEdit">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="minimumSize">
               <size>
                <width>100</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>100</width>
-               <height>16777215</height>
               </size>
              </property>
             </widget>
