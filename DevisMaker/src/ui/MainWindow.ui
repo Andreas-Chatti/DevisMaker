@@ -984,6 +984,84 @@ QLabel {
        <attribute name="title">
         <string>Inventaire</string>
        </attribute>
+       <property name="styleSheet">
+        <string notr="true">
+QTextEdit {
+    border: 2px solid #bdc3c7;
+    border-radius: 5px;
+    background-color: white;
+    font-size: 10pt;
+    padding: 8px;
+}
+
+QTextEdit:focus {
+    border: 2px solid #5dade2;
+    background-color: #eaf6fc;
+}
+
+QPushButton {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #7ec8e3, stop:1 #5dade2);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-size: 10pt;
+    font-weight: bold;
+    min-height: 30px;
+}
+
+QPushButton:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #8fd3ea, stop:1 #6db8e5);
+}
+
+QPushButton:pressed {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #5dade2, stop:1 #4a9fd1);
+}
+
+QPushButton:disabled {
+    background: #bdc3c7;
+    color: #7f8c8d;
+}
+
+QTableWidget {
+    border: 2px solid #5dade2;
+    border-radius: 5px;
+    background-color: white;
+    gridline-color: #e0e0e0;
+    font-size: 10pt;
+}
+
+QTableWidget::item {
+    padding: 5px;
+}
+
+QTableWidget::item:selected {
+    background-color: #eaf6fc;
+    color: #2c3e50;
+}
+
+QHeaderView::section {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #7ec8e3, stop:1 #5dade2);
+    color: white;
+    padding: 8px;
+    border: none;
+    font-weight: bold;
+    font-size: 10pt;
+}
+
+QHeaderView::section:first {
+    border-top-left-radius: 4px;
+}
+
+QHeaderView::section:last {
+    border-top-right-radius: 4px;
+}
+
+QLabel {
+    color: #2c3e50;
+}
+        </string>
+       </property>
        <layout class="QGridLayout" name="gridLayout_4">
         <item row="0" column="0">
          <widget class="QLabel" name="SaisirInventaire">
