@@ -1950,6 +1950,31 @@ QLabel {
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>nomLineEdit</tabstop>
+  <tabstop>prenomLineEdit</tabstop>
+  <tabstop>numTelLineEdit</tabstop>
+  <tabstop>departDateEdit</tabstop>
+  <tabstop>adresseDepartLineEdit</tabstop>
+  <tabstop>etageDepartSpinBox</tabstop>
+  <tabstop>ascDepartCheckBox</tabstop>
+  <tabstop>mmDepartCheckBox</tabstop>
+  <tabstop>asDepartCheckBox</tabstop>
+  <tabstop>livraisonDateEdit</tabstop>
+  <tabstop>adresseLivraisonLineEdit</tabstop>
+  <tabstop>etageLivraisonSpinBox</tabstop>
+  <tabstop>ascLivraisonCheckBox</tabstop>
+  <tabstop>mmLivraisonCheckBox</tabstop>
+  <tabstop>asLivraisonCheckBox</tabstop>
+  <tabstop>distanceLineEdit</tabstop>
+  <tabstop>volumelineEdit</tabstop>
+  <tabstop>prestationComboBox</tabstop>
+  <tabstop>natureComboBox</tabstop>
+  <tabstop>typeAssuranceComboBox</tabstop>
+  <tabstop>valeurAssuranceLineEdit</tabstop>
+  <tabstop>suppAdresseCheckBox</tabstop>
+  <tabstop>suppAdresseSpinBox</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
