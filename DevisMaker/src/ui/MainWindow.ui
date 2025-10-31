@@ -65,7 +65,7 @@
 QGroupBox {
     font-size: 11pt;
     font-weight: bold;
-    border: 2px solid #3498db;
+    border: 2px solid #5dade2;
     border-radius: 8px;
     margin-top: 12px;
     padding-top: 8px;
@@ -76,7 +76,7 @@ QGroupBox::title {
     subcontrol-origin: margin;
     subcontrol-position: top center;
     padding: 4px 20px;
-    background-color: #3498db;
+    background-color: #5dade2;
     color: white;
     border-radius: 4px;
 }
@@ -90,8 +90,8 @@ QLineEdit {
 }
 
 QLineEdit:focus {
-    border: 2px solid #3498db;
-    background-color: #ebf5fb;
+    border: 2px solid #5dade2;
+    background-color: #eaf6fc;
 }
 
 QLabel {
@@ -109,25 +109,30 @@ QDateEdit {
 }
 
 QDateEdit:focus {
-    border: 2px solid #3498db;
-    background-color: #ebf5fb;
+    border: 2px solid #5dade2;
+    background-color: #eaf6fc;
 }
 
 QDateEdit::drop-down {
     border: none;
-    background-color: #3498db;
-    width: 25px;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #7ec8e3, stop:1 #5dade2);
+    width: 22px;
     border-top-right-radius: 3px;
     border-bottom-right-radius: 3px;
 }
 
+QDateEdit::drop-down:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #8fd3ea, stop:1 #6db8e5);
+}
+
 QDateEdit::down-arrow {
     image: none;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 6px solid white;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid white;
     width: 0;
     height: 0;
+    margin-top: 2px;
 }
 
 QComboBox {
@@ -139,22 +144,36 @@ QComboBox {
 }
 
 QComboBox:focus {
-    border: 2px solid #3498db;
+    border: 2px solid #5dade2;
 }
 
 QComboBox::drop-down {
     border: none;
-    background-color: #3498db;
-    width: 25px;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #7ec8e3, stop:1 #5dade2);
+    width: 22px;
     border-top-right-radius: 3px;
     border-bottom-right-radius: 3px;
 }
 
+QComboBox::drop-down:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #8fd3ea, stop:1 #6db8e5);
+}
+
 QComboBox::down-arrow {
     image: none;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 6px solid white;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid white;
+    margin-top: 2px;
+}
+
+QComboBox QAbstractItemView {
+    border: 2px solid #5dade2;
+    border-radius: 4px;
+    background-color: white;
+    selection-background-color: #eaf6fc;
+    selection-color: #2c3e50;
+    padding: 2px;
 }
 
 QSpinBox {
@@ -166,8 +185,48 @@ QSpinBox {
 }
 
 QSpinBox:focus {
-    border: 2px solid #3498db;
-    background-color: #ebf5fb;
+    border: 2px solid #5dade2;
+    background-color: #eaf6fc;
+}
+
+QSpinBox::up-button {
+    border: none;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #7ec8e3, stop:1 #5dade2);
+    border-top-right-radius: 3px;
+    width: 18px;
+}
+
+QSpinBox::up-button:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #8fd3ea, stop:1 #6db8e5);
+}
+
+QSpinBox::down-button {
+    border: none;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #7ec8e3, stop:1 #5dade2);
+    border-bottom-right-radius: 3px;
+    width: 18px;
+}
+
+QSpinBox::down-button:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #8fd3ea, stop:1 #6db8e5);
+}
+
+QSpinBox::up-arrow {
+    image: none;
+    border-left: 3px solid transparent;
+    border-right: 3px solid transparent;
+    border-bottom: 4px solid white;
+    width: 0;
+    height: 0;
+}
+
+QSpinBox::down-arrow {
+    image: none;
+    border-left: 3px solid transparent;
+    border-right: 3px solid transparent;
+    border-top: 4px solid white;
+    width: 0;
+    height: 0;
 }
 
 QCheckBox {
@@ -185,9 +244,13 @@ QCheckBox::indicator {
 }
 
 QCheckBox::indicator:checked {
-    background-color: #3498db;
-    border-color: #3498db;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #7ec8e3, stop:1 #5dade2);
+    border-color: #5dade2;
     image: none;
+}
+
+QCheckBox::indicator:hover {
+    border-color: #5dade2;
 }
 
 QCheckBox::indicator:checked:after {
@@ -882,7 +945,7 @@ QCheckBox::indicator:checked:after {
               <string notr="true">
 QLabel {
     color: white;
-    background-color: #3498db;
+    background-color: #5dade2;
     border-radius: 6px;
     padding: 8px 16px;
 }

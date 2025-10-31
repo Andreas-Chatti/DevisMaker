@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget* parent)
     displaySettings();
     setupPlaceholderText();
     setupDateEdit();
-    setupDevisTable();  // Initialiser le tableau vide dès le démarrage
+    setupDevisTable();
 }
 
 
@@ -655,7 +655,7 @@ void MainWindow::updateSeasonTypeLabel(const QDate& dateLivraison) const
     bool hauteSaison{ isHauteSaison(dateLivraison) };
     ui.typeSaisonLabel->setText(hauteSaison ? "HAUTE SAISON" : "BASSE SAISON");
 
-    // Style moderne avec badge coloré
+    // Style moderne avec badge coloré et bleu plus doux
     QString style = QString(
         "QLabel { "
         "color: white; "
@@ -664,7 +664,7 @@ void MainWindow::updateSeasonTypeLabel(const QDate& dateLivraison) const
         "padding: 8px 16px; "
         "font-weight: bold; "
         "}"
-    ).arg(hauteSaison ? "#e74c3c" : "#3498db");  // Rouge pour haute saison, bleu pour basse saison
+    ).arg(hauteSaison ? "#e74c3c" : "#5dade2");  // Rouge pour haute saison, bleu doux pour basse saison
 
     ui.typeSaisonLabel->setStyleSheet(style);
 }
