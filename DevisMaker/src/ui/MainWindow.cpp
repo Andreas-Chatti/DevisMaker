@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget* parent)
     displaySettings();
     setupPlaceholderText();
     setupDateEdit();
+    setupDevisTable();  // Initialiser le tableau vide dès le démarrage
 }
 
 
