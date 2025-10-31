@@ -1444,6 +1444,112 @@ QComboBox QAbstractItemView {
        <attribute name="title">
         <string>Paramètres</string>
        </attribute>
+       <property name="styleSheet">
+        <string notr="true">
+QGroupBox {
+    font-size: 11pt;
+    font-weight: bold;
+    border: 2px solid #5dade2;
+    border-radius: 8px;
+    margin-top: 12px;
+    padding-top: 8px;
+    background-color: #f8f9fa;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top center;
+    padding: 4px 20px;
+    background-color: #5dade2;
+    color: white;
+    border-radius: 4px;
+}
+
+QLineEdit {
+    padding: 5px 10px;
+    border: 2px solid #bdc3c7;
+    border-radius: 5px;
+    background-color: white;
+    font-size: 10pt;
+}
+
+QLineEdit:focus {
+    border: 2px solid #5dade2;
+    background-color: #eaf6fc;
+}
+
+QLabel {
+    font-size: 10pt;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+QComboBox {
+    padding: 5px 10px;
+    border: 2px solid #bdc3c7;
+    border-radius: 5px;
+    background-color: white;
+    font-size: 10pt;
+}
+
+QComboBox:focus {
+    border: 2px solid #5dade2;
+}
+
+QComboBox::drop-down {
+    border: none;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #7ec8e3, stop:1 #5dade2);
+    width: 22px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+QComboBox::drop-down:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #8fd3ea, stop:1 #6db8e5);
+}
+
+QComboBox::down-arrow {
+    image: none;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid white;
+    margin-top: 2px;
+}
+
+QComboBox QAbstractItemView {
+    border: 2px solid #5dade2;
+    border-radius: 4px;
+    background-color: white;
+    selection-background-color: #eaf6fc;
+    selection-color: #2c3e50;
+    padding: 2px;
+}
+
+QPushButton {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #7ec8e3, stop:1 #5dade2);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-size: 10pt;
+    font-weight: bold;
+    min-height: 30px;
+}
+
+QPushButton:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #8fd3ea, stop:1 #6db8e5);
+}
+
+QPushButton:pressed {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #5dade2, stop:1 #4a9fd1);
+}
+
+QPushButton:disabled {
+    background: #bdc3c7;
+    color: #7f8c8d;
+}
+        </string>
+       </property>
        <layout class="QGridLayout" name="gridLayout_7">
         <item row="0" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout_16">
