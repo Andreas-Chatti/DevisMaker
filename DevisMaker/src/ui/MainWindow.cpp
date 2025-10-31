@@ -654,7 +654,19 @@ void MainWindow::updateSeasonTypeLabel(const QDate& dateLivraison) const
 
     bool hauteSaison{ isHauteSaison(dateLivraison) };
     ui.typeSaisonLabel->setText(hauteSaison ? "HAUTE SAISON" : "BASSE SAISON");
-    ui.typeSaisonLabel->setStyleSheet(hauteSaison ? "color: red; font-weight: bold;" : "color: blue; font-weight: bold;");
+
+    // Style moderne avec badge coloré
+    QString style = QString(
+        "QLabel { "
+        "color: white; "
+        "background-color: %1; "
+        "border-radius: 6px; "
+        "padding: 8px 16px; "
+        "font-weight: bold; "
+        "}"
+    ).arg(hauteSaison ? "#e74c3c" : "#3498db");  // Rouge pour haute saison, bleu pour basse saison
+
+    ui.typeSaisonLabel->setStyleSheet(style);
 }
 
 

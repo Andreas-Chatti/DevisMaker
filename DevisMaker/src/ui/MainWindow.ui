@@ -60,26 +60,162 @@
        <attribute name="title">
         <string>Informations Client</string>
        </attribute>
+       <property name="styleSheet">
+        <string notr="true">
+QGroupBox {
+    font-size: 11pt;
+    font-weight: bold;
+    border: 2px solid #3498db;
+    border-radius: 8px;
+    margin-top: 12px;
+    padding-top: 8px;
+    background-color: #f8f9fa;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top center;
+    padding: 4px 20px;
+    background-color: #3498db;
+    color: white;
+    border-radius: 4px;
+}
+
+QLineEdit {
+    padding: 6px 10px;
+    border: 2px solid #bdc3c7;
+    border-radius: 5px;
+    background-color: white;
+    font-size: 10pt;
+}
+
+QLineEdit:focus {
+    border: 2px solid #3498db;
+    background-color: #ebf5fb;
+}
+
+QLabel {
+    font-size: 10pt;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+QDateEdit {
+    padding: 6px 10px;
+    border: 2px solid #bdc3c7;
+    border-radius: 5px;
+    background-color: white;
+    font-size: 10pt;
+}
+
+QDateEdit:focus {
+    border: 2px solid #3498db;
+    background-color: #ebf5fb;
+}
+
+QDateEdit::drop-down {
+    border: none;
+    background-color: #3498db;
+    width: 25px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+QDateEdit::down-arrow {
+    image: none;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid white;
+    width: 0;
+    height: 0;
+}
+
+QComboBox {
+    padding: 6px 10px;
+    border: 2px solid #bdc3c7;
+    border-radius: 5px;
+    background-color: white;
+    font-size: 10pt;
+}
+
+QComboBox:focus {
+    border: 2px solid #3498db;
+}
+
+QComboBox::drop-down {
+    border: none;
+    background-color: #3498db;
+    width: 25px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+QComboBox::down-arrow {
+    image: none;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid white;
+}
+
+QSpinBox {
+    padding: 6px 10px;
+    border: 2px solid #bdc3c7;
+    border-radius: 5px;
+    background-color: white;
+    font-size: 10pt;
+}
+
+QSpinBox:focus {
+    border: 2px solid #3498db;
+    background-color: #ebf5fb;
+}
+
+QCheckBox {
+    font-size: 10pt;
+    spacing: 8px;
+    color: #2c3e50;
+}
+
+QCheckBox::indicator {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #bdc3c7;
+    border-radius: 4px;
+    background-color: white;
+}
+
+QCheckBox::indicator:checked {
+    background-color: #3498db;
+    border-color: #3498db;
+    image: none;
+}
+
+QCheckBox::indicator:checked:after {
+    content: "✓";
+    color: white;
+}
+        </string>
+       </property>
        <layout class="QVBoxLayout" name="mainLayout">
         <property name="spacing">
-         <number>15</number>
+         <number>20</number>
         </property>
         <property name="leftMargin">
-         <number>15</number>
+         <number>20</number>
         </property>
         <property name="topMargin">
-         <number>15</number>
+         <number>20</number>
         </property>
         <property name="rightMargin">
-         <number>15</number>
+         <number>20</number>
         </property>
         <property name="bottomMargin">
-         <number>15</number>
+         <number>20</number>
         </property>
         <item>
          <widget class="QGroupBox" name="groupBox_3">
           <property name="title">
-           <string>Client</string>
+           <string> Client </string>
           </property>
           <property name="alignment">
            <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -158,7 +294,7 @@
            </font>
           </property>
           <property name="title">
-           <string>Chargement</string>
+           <string> Chargement </string>
           </property>
           <property name="alignment">
            <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -309,7 +445,7 @@
         <item>
          <widget class="QGroupBox" name="groupBox_2">
           <property name="title">
-           <string>Livraison</string>
+           <string> Livraison </string>
           </property>
           <property name="alignment">
            <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -460,7 +596,7 @@
         <item>
          <widget class="QGroupBox" name="gridGroupBox">
           <property name="title">
-           <string>Général</string>
+           <string> Général </string>
           </property>
           <property name="alignment">
            <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -738,18 +874,25 @@
             <widget class="QLabel" name="typeSaisonLabel">
              <property name="font">
               <font>
-               <pointsize>12</pointsize>
+               <pointsize>11</pointsize>
                <bold>true</bold>
               </font>
              </property>
              <property name="styleSheet">
-              <string notr="true">color: blue;</string>
+              <string notr="true">
+QLabel {
+    color: white;
+    background-color: #3498db;
+    border-radius: 6px;
+    padding: 8px 16px;
+}
+              </string>
              </property>
              <property name="text">
               <string>BASSE SAISON</string>
              </property>
              <property name="alignment">
-              <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+              <set>Qt::AlignmentFlag::AlignCenter</set>
              </property>
             </widget>
            </item>
