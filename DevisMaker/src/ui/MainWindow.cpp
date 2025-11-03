@@ -22,6 +22,9 @@ MainWindow::MainWindow(QWidget* parent)
     setupPlaceholderText();
     setupDateEdit();
     setupDevisTable();
+
+    // Initialiser le badge de saison en fonction de la date actuelle
+    updateSeasonTypeLabel(QDate::currentDate());
 }
 
 
@@ -680,8 +683,6 @@ void MainWindow::onCriticalError(const QString& errorMessage)
 
 void MainWindow::setupPlaceholderText() const
 {
-    ui.typeSaisonLabel->setText(""); // Cacher le texte si l'utilisateur n'a pas encore mis de dates
-
     ui.inventaireTextEdit->setPlaceholderText(
         "Saisissez l'inventaire ici.\n\n"
         "Précisez le nombre (chiffre ou lettre) et le type d'objet séparés par des virgules.\n"
