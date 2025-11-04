@@ -1,5 +1,6 @@
 # Fichiers de configuration locaux
 settings.local.json
+ressources/data/ia_config.json
 
 # Fichiers de build Visual Studio
 x64/

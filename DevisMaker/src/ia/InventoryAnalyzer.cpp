@@ -92,7 +92,24 @@ QVector<MovingObject> InventoryAnalyzer::extractReplyInfos(QNetworkReply* reply)
             {
                 QString jsonText{ responseText.mid(jsonStart, jsonEnd - jsonStart) };
 
-                QJsonDocument itemsDoc{ QJsonDocument::fromJson(jsonText.toUtf8()) };
+                // Parser le JSON avec vérification d'erreur
+                QJsonParseError parseError{};
+                QJsonDocument itemsDoc{ QJsonDocument::fromJson(jsonText.toUtf8(), &parseError) };
+
+                // Vérifier si le parsing a réussi
+                if (parseError.error != QJsonParseError::NoError)
+                {
+                    emit error("JSON parsing error: " + parseError.errorString() + " at offset " + QString::number(parseError.offset));
+                    return QVector<MovingObject>{};
+                }
+
+                // Vérifier si le document est valide
+                if (itemsDoc.isNull() || itemsDoc.isEmpty())
+                {
+                    emit error("JSON document is null or empty");
+                    return QVector<MovingObject>{};
+                }
+
                 QJsonObject itemsObj{ itemsDoc.object() };
                 QVector<MovingObject> objectList{};
 
@@ -119,6 +136,16 @@ QVector<MovingObject> InventoryAnalyzer::extractReplyInfos(QNetworkReply* reply)
 
                         objectList.emplace_back(std::move(movingObject));
                     }
+                }
+                else
+                {
+                    // Déboguer : afficher les clés présentes dans l'objet JSON
+                    QStringList keys{};
+                    for (const QString& key : itemsObj.keys())
+                    {
+                        keys.append(key);
+                    }
+                    emit error("JSON object does not contain 'items' key. Available keys: " + keys.join(", "));
                 }
                 return std::move(objectList);
             }

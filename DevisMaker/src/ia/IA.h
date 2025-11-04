@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <QObject>
 #include <QNetworkAccessManager>
@@ -63,11 +63,11 @@ signals:
 
 private:
 
-    QString m_primaryModel{ "llama-3.3-70b-versatile" };
-    QString m_fallbackModel{ "gemma2-9b-it" };
+    QString m_primaryModel{ "llama-3.1-8b-instant" };
+    QString m_fallbackModel{ "openai/gpt-oss-20b" };
     QString m_currentModel{ m_primaryModel };
     int m_maxFallbackAttempts{ 3 };
-    int m_maxTokens{ 4000 };
+    int m_maxTokens{ 16000 };
     double m_temperature{ 0.1 };
     QString m_currentPrompt;
     QUrl m_url{ "https://api.groq.com/openai/v1/chat/completions" };

@@ -1,9 +1,0 @@
-{
-    "api_key": "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",
-    "fallback_max_attempts": 3,
-    "fallback_model": "gemma2-9b-it",
-    "max_tokens": 4000,
-    "primary_model": "llama-3.3-70b-versatile",
-    "temperature": 0.1,
-    "url": "https://api.groq.com/openai/v1/chat/completions"
-}
