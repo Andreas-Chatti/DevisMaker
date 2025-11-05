@@ -1,6 +1,6 @@
-﻿#include "IA.h"
+﻿#include "AIService.h"
 
-void IA::initializePrompt() 
+void AIService::initializePrompt() 
 {
     QFile promptFile(PROMPT_FILE_PATH);
 
@@ -13,7 +13,7 @@ void IA::initializePrompt()
     m_currentPrompt = loadPrompt();
 }
 
-QString IA::loadPrompt() 
+QString AIService::loadPrompt()
 {
     QFile promptFile(PROMPT_FILE_PATH);
 
@@ -31,7 +31,7 @@ QString IA::loadPrompt()
     return content;
 }
 
-bool IA::savePrompt(const QString& promptContent) 
+bool AIService::savePrompt(const QString& promptContent)
 {
     QFile promptFile(PROMPT_FILE_PATH);
 
@@ -49,7 +49,7 @@ bool IA::savePrompt(const QString& promptContent)
     return true;
 }
 
-QString IA::getDefaultPrompt()
+QString AIService::getDefaultPrompt()
 {
     return R"(Tu dois analyser cet inventaire de déménagement et calculer les volumes avec cette référence : %1
 
@@ -103,7 +103,7 @@ INVENTAIRE A ANALYSER:
 %2)";
 }
 
-QString IA::getDefaultCleanListPrompt()
+QString AIService::getDefaultCleanListPrompt()
 {
     return R"(
 
@@ -198,7 +198,7 @@ EXEMPLES :
 )";
 }
 
-void IA::reloadPrompt() 
+void AIService::reloadPrompt()
 {
     QFile promptFile(PROMPT_FILE_PATH);
 
@@ -216,111 +216,79 @@ void IA::reloadPrompt()
 }
 
 
-QNetworkRequest IA::buildRequest(const QString& inventoryText, const QString& jsonReference) 
+QNetworkRequest AIService::buildRequest(const QString& inventoryText, RequestType requestType, const QString* jsonReference)
 {
-    // Construire le prompt avec les param�tres
-    QString prompt{ m_currentPrompt.arg(jsonReference, inventoryText) };
-
-    // Cr�er la requête
-    QNetworkRequest request(m_url);
+    // Build request
+    QNetworkRequest request(m_currentAIModel->getUrl());
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     request.setRawHeader("Authorization", ("Bearer " + m_apiKey).toUtf8());
 
     // Corps de la requête JSON
     QJsonObject jsonBody;
-    jsonBody["model"] = m_currentModel;
-    jsonBody["max_tokens"] = m_maxTokens;
-    jsonBody["temperature"] = m_temperature;
+    jsonBody["model"] = m_currentAIModel->getModelName();
+    jsonBody["max_tokens"] = m_currentAIModel->getMaxOutputTokens();
+    jsonBody["temperature"] = m_currentAIModel->getTemperature();
 
     QJsonArray messages;
     QJsonObject userMessage;
     userMessage["role"] = "user";
-    userMessage["content"] = prompt;
-    messages.append(userMessage);
-    jsonBody["messages"] = messages;
 
-    // Stocker le JSON dans la requête (via un attribut custom)
-    QJsonDocument doc(jsonBody);
-    request.setAttribute(QNetworkRequest::User, doc.toJson());
-
-    return request;
-}
-
-QNetworkRequest IA::buildCleanTextRequest(const QString& rawText)
-{
-    // Construire le prompt avec les paramètres
-    QString prompt{ getDefaultCleanListPrompt().arg(rawText) };
-
-    // Créer la requête
-    QNetworkRequest request(m_url);
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-    request.setRawHeader("Authorization", ("Bearer " + m_apiKey).toUtf8());
-
-    // Corps de la requête JSON
-    QJsonObject jsonBody;
-    jsonBody["model"] = m_currentModel;
-    jsonBody["max_tokens"] = m_maxTokens;
-    jsonBody["temperature"] = m_temperature;
-
-    QJsonArray messages;
-    QJsonObject userMessage;
-    userMessage["role"] = "user";
-    userMessage["content"] = prompt;
-    messages.append(userMessage);
-    jsonBody["messages"] = messages;
-
-    // Stocker le JSON dans la requête (via un attribut custom)
-    QJsonDocument doc(jsonBody);
-    request.setAttribute(QNetworkRequest::User, doc.toJson());
-
-    return request;
-}
-
-
-void IA::createDefaultConfigFile()
-{
-    QJsonObject jsonBody;
- 
-    jsonBody["primary_model"] = m_primaryModel;
-    jsonBody["fallback_model"] = m_fallbackModel;
-    jsonBody["url"] = m_url.toString();
-    jsonBody["max_tokens"] = m_maxTokens;
-    jsonBody["temperature"] = m_temperature;
-    jsonBody["api_key"] = "";
-    jsonBody["fallback_max_attempts"] = m_maxFallbackAttempts;
-
-    QJsonDocument jsonDocument{ jsonBody };
-
-    QFile jsonFile{ IA_CONFIG_FILE_PATH };
-
-    if (!jsonFile.open(QIODevice::WriteOnly))
+    QString prompt;
+    switch (requestType)
     {
-        QTimer::singleShot(500, this, [this]() { emit error("Cannot create ia_config.json");});
-        return;
-    }
+    case AIService::RequestType::CleanName: prompt = getDefaultCleanListPrompt().arg(inventoryText);
+        break;
+    case AIService::RequestType::AnalyseInventory: 
+        if (!jsonReference)
+        {
+            emit error("Error: jsonReference is null.");
+            return;
+        }
 
-    jsonFile.write(jsonDocument.toJson(QJsonDocument::Indented));
+        prompt = m_currentPrompt.arg(*jsonReference, inventoryText);
+        break;
+    }
+    userMessage["content"] = prompt;
+    messages.append(userMessage);
+    jsonBody["messages"] = messages;
+
+    // Stocker le JSON dans la requête (via un attribut custom)
+    QJsonDocument doc(jsonBody);
+    request.setAttribute(QNetworkRequest::User, doc.toJson());
+
+    return request;
 }
 
-
-void IA::loadConfigFile(int loadAttempts, QString errorMessage)
+AIModel AIService::loadModelParametersFromConfig(QJsonObject& jsonBody)
 {
-    if (loadAttempts >= 3)
+    QString modelName{ jsonBody["modelName"].toString() };
+    int maxOutputTokens{ jsonBody["maxOutputTokens"].toInt() };
+    QUrl url{ jsonBody["url"].toString() };
+    double temperature{ jsonBody["temperature"].toDouble() };
+
+    return AIModel{ modelName, maxOutputTokens, temperature, url, this };
+}
+
+bool AIService::loadModelConfigFile(int loadAttempts, QString errorMessage)
+{
+
+    if (loadAttempts >= MAX_FALLBACK_ATTEMPTS)
     {
         QTimer::singleShot(500, this, [this, errorMessage]() { emit error("Config file not loaded. Logs:\n\n" + errorMessage);});
-        return;
+        return false;
     }
 
-    QFile jsonFile{ IA_CONFIG_FILE_PATH };
+    AIModel aiModel{ "llama-3.1-8b-instant", 16000, 0.1, QUrl{"https://api.groq.com/openai/v1/chat/completions"}, this }; // Default model
+    QFile jsonFile{ IA_MODEL_CONFIG_FILE_PATH + aiModel.getModelName() + ".json" };
 
     if (!jsonFile.exists())
-        createDefaultConfigFile();
+        createModelConfigFile(&aiModel);
 
     if (!jsonFile.open(QIODevice::ReadOnly))
     {
-        createDefaultConfigFile();
-        loadConfigFile(++loadAttempts, errorMessage += QString{ "Attempt #%1: Cannot open or access ia_config.json.\n" }.arg(loadAttempts));
-        return;
+        createModelConfigFile(&aiModel);
+        loadModelConfigFile(++loadAttempts, errorMessage += QString{ "Attempt #%1: Cannot open or access ia_config.json.\n" }.arg(loadAttempts));
+        return false;
     }
 
     QByteArray fileRawData{ jsonFile.readAll() };
@@ -329,29 +297,47 @@ void IA::loadConfigFile(int loadAttempts, QString errorMessage)
 
     if (error.error != QJsonParseError::NoError)
     {
-        createDefaultConfigFile();
-        loadConfigFile(++loadAttempts, errorMessage += ("Attempt #%1: Error parsing ia_config.json: " + error.errorString() + "\n"));
-        return;
+        createModelConfigFile(&aiModel);
+        loadModelConfigFile(++loadAttempts, errorMessage += ("Attempt #%1: Error parsing ia_config.json: " + error.errorString() + "\n"));
+        return false;
     }
 
     QJsonObject jsonBody{ jsonDocument.object() };
-
-    m_primaryModel = jsonBody["primary_model"].toString();
-    m_fallbackModel = jsonBody["fallback_model"].toString();
-    m_url = jsonBody["url"].toString();
-    m_maxTokens = jsonBody["max_tokens"].toInt();
-    m_temperature = jsonBody["temperature"].toDouble();
-    m_apiKey = jsonBody["api_key"].toString();
-    m_maxFallbackAttempts = jsonBody["fallback_max_attempts"].toInt();
-    m_currentModel = m_primaryModel;
+    aiModel = loadModelParametersFromConfig(jsonBody);
+    m_AIModelList->emplaceBack(std::move(aiModel));
 }
 
-void IA::setCurrentModel(ModelType modelType)
+void AIService::saveModelToConfig(QJsonObject& jsonBody, const AIModel* aiModel)
 {
-    switch (modelType)
+    if (!aiModel)
+        return;
+
+    jsonBody["modelName"] = aiModel->getModelName();
+    jsonBody["maxOutputTokens"] = aiModel->getMaxOutputTokens();
+    jsonBody["url"] = aiModel->getUrl().toString();
+    jsonBody["temperature"] = aiModel->getTemperature();
+}
+
+bool AIService::createModelConfigFile(const AIModel* aiModel)
+{
+    if (!aiModel)
     {
-    case IA::primary: m_currentModel = m_primaryModel;
-        break;
-    case IA::fallback: m_currentModel = m_fallbackModel;
+        emit error("aiModel is null or invalid");
+        return false;
     }
+
+    QJsonObject jsonBody;
+    saveModelToConfig(jsonBody, aiModel);
+
+    QJsonDocument jsonDocument{ jsonBody };
+
+    QFile jsonFile{ IA_MODEL_CONFIG_FILE_PATH + aiModel->getModelName() + ".json" };
+
+    if (!jsonFile.open(QIODevice::WriteOnly))
+    {
+        emit error("Cannot create model config file");
+        return false;
+    }
+
+    jsonFile.write(jsonDocument.toJson(QJsonDocument::Indented));
 }

@@ -3,7 +3,7 @@
 InventoryAnalyzer::InventoryAnalyzer(QObject* parent)
     : QObject(parent)
 {
-    connect(m_ia, &IA::error, this, &InventoryAnalyzer::error);
+    connect(m_aiService, &AIService::error, this, &InventoryAnalyzer::error);
 
     loadVolumeReference();
 }
@@ -11,14 +11,14 @@ InventoryAnalyzer::InventoryAnalyzer(QObject* parent)
 
 void InventoryAnalyzer::cleanList(QString rawText)
 {
-    if (m_ia->getAPI_Key().isEmpty())
+    if (m_aiService->getAPI_Key().isEmpty())
     {
         emit analysisError("API key not found in ia_config.json");
         return;
     }
 
     // Utiliser la classe IA pour construire la requête
-    QNetworkRequest request{ m_ia->buildCleanTextRequest(rawText) };
+    QNetworkRequest request{ m_aiService->buildRequest(rawText, AIService::RequestType::CleanName) };
     QByteArray jsonData{ request.attribute(QNetworkRequest::User).toByteArray() };
 
     // Supprimer l'attribut temporaire
@@ -33,7 +33,7 @@ void InventoryAnalyzer::cleanList(QString rawText)
 void InventoryAnalyzer::analyzeInventory(const QString& inventoryText)
 {
 
-    if (m_ia->getAPI_Key().isEmpty())
+    if (m_aiService->getAPI_Key().isEmpty())
     {
         emit analysisError("API key not found in ia_config.json");
         return;
@@ -58,7 +58,7 @@ InventoryAnalyzer::Request InventoryAnalyzer::createRequest(const QString& inven
     QString jsonReference = refDoc.toJson(QJsonDocument::Compact);
 
     // Utiliser la classe IA pour construire la requête
-    QNetworkRequest request{ m_ia->buildRequest(inventoryText, jsonReference) };
+    QNetworkRequest request{ m_aiService->buildRequest(inventoryText, AIService::RequestType::AnalyseInventory, &jsonReference) };
     QByteArray jsonData{ request.attribute(QNetworkRequest::User).toByteArray() };
 
     // Supprimer l'attribut temporaire
@@ -169,7 +169,7 @@ void InventoryAnalyzer::handleGrokResponse(QNetworkReply* reply)
    {
        emit analysisError("Format de reponse Grok inattendu");
 
-       m_ia->setCurrentModel(IA::fallback);
+       m_aiService->setCurrentModel(AIService::fallback);
        analyzeInventory(m_userInventoryInput);
    }
 
@@ -182,14 +182,14 @@ void InventoryAnalyzer::handleGrokResponse(QNetworkReply* reply)
        addFallbackResult(listTotalVolume);
        addFallbackAttempt();
 
-       bool hasReachedMaxAttempts{ getFallbackAttempts() >= m_ia->getMaxFallbackAttempts() };
+       bool hasReachedMaxAttempts{ getFallbackAttempts() >= m_aiService->getMaxFallbackAttempts() };
        if (hasReachedMaxAttempts)
        {
            double averageVolume{ calculateAverageVolume(getFallbackResults()) };
            emit analysisComplete(averageVolume, objectList);
            
-           if (m_ia->getCurrentModelString() == m_ia->getFallbackModel())
-               m_ia->setCurrentModel(IA::primary);
+           if (m_aiService->getCurrentModelString() == m_aiService->getFallbackModel())
+               m_aiService->setCurrentModel(AIService::primary);
 
            clearFallbackAttempts();
            clearFallbackResults();

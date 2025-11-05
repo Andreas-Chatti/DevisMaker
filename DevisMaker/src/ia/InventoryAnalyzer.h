@@ -10,7 +10,7 @@
 #include <QDebug>
 #include <qtimer.h>
 #include <optional>
-#include "ia/IA.h"
+#include "ia/AIService.h"
 #include "utils/constants.h"
 #include "inventory/movingObject.h"
 
@@ -71,7 +71,7 @@ private:
 
     QNetworkAccessManager* m_networkManager{ new QNetworkAccessManager{this} };
     QJsonObject m_volumeReference{};
-    IA* m_ia{ new IA{this} };
+    AIService* m_aiService{ new AIService{this} };
     Request m_request{};
     QString m_userInventoryInput{""};
 };
