@@ -19,6 +19,16 @@ public:
 		, m_temperature{ temperature }
 		, m_url{ std::move(url) }
 	{
+		try
+		{
+			initializationCheck();
+		}
+
+		catch (std::invalid_argument ex)
+		{
+			m_modelName = DEFAULT_MODEL_NAME;
+			m_url = DEFAULT_URL;
+		}
 	}
 
 	~AIModel() = default;
@@ -66,10 +76,21 @@ public:
 	double getTemperature() const { return m_temperature; }
 	const QUrl& getUrl() const { return m_url; }
 
+	static constexpr int MIN_OUTPUT_TOKENS{ 2000 };
+	static constexpr int MAX_OUTPUT_TOKENS{ 16000 };
+	static constexpr double MIN_TEMPERATURE{ 0.1 };
+	static constexpr double MAX_TEMPERATURE{ 3.0 };
+	static inline const QString DEFAULT_MODEL_NAME{ "llama-3.1-8b-instant" };
+	static inline const QUrl DEFAULT_URL{ "https://api.groq.com/openai/v1/chat/completions" };
+
+	static AIModel makeDefaultModel(QObject* parent);
+
 private:
 
 	QString m_modelName;
 	int m_maxOutputTokens;
 	double m_temperature;
 	QUrl m_url;
+
+	void initializationCheck();
 };

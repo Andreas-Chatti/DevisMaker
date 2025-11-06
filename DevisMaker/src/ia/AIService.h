@@ -10,6 +10,7 @@
 #include <QFile>
 #include <QDebug>
 #include <qtimer.h>
+#include <QDir>
 #include "utils/constants.h"
 #include "AIModel.h"
 
@@ -73,8 +74,7 @@ private:
     static QString getAnalyseDefaultPrompt();
     static QString getCleanListDefaultPrompt();
 
-    AIModel loadModelParametersFromConfig(QJsonObject& jsonBody);
-    bool loadModelConfigFile(int loadAttempts = 0, QString errorMessage = "");
+    bool loadAllModels(int loadAttempts = 0, QString errorMessage = "");
     void saveModelToConfig(QJsonObject& jsonBody, const AIModel* aiModel);
     bool createModelConfigFile(const AIModel* aiModel);
 };

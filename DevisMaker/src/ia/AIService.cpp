@@ -297,52 +297,36 @@ QNetworkRequest AIService::buildRequest(const QString& inventoryText, RequestTyp
     return request;
 }
 
-AIModel AIService::loadModelParametersFromConfig(QJsonObject& jsonBody)
+bool AIService::loadAllModels(int loadAttempts, QString errorMessage)
 {
-    QString modelName{ jsonBody["modelName"].toString() };
-    int maxOutputTokens{ jsonBody["maxOutputTokens"].toInt() };
-    QUrl url{ jsonBody["url"].toString() };
-    double temperature{ jsonBody["temperature"].toDouble() };
+    QDir configDir(SettingsConstants::FileSettings::DATA_FILE_PATH);
 
-    return AIModel{ modelName, maxOutputTokens, temperature, url, this };
-}
+    // Filtrer les fichiers qui correspondent au pattern
+    QStringList filters;
+    filters << "config_model_*.json";
+    configDir.setNameFilters(filters);
 
-bool AIService::loadModelConfigFile(int loadAttempts, QString errorMessage)
-{
+    QFileInfoList configFiles{ configDir.entryInfoList(QDir::Files) };
 
-    if (loadAttempts >= MAX_FALLBACK_ATTEMPTS)
+    // Si aucun fichier trouvé, créer un fichier par défaut
+    if (configFiles.isEmpty())
     {
-        QTimer::singleShot(500, this, [this, errorMessage]() { emit error("Config file not loaded. Logs:\n\n" + errorMessage);});
-        return false;
+        AIModel defaultModel{ AIModel::makeDefaultModel(this) };
+        createModelConfigFile(&defaultModel);
+        return loadAllModels(++loadAttempts, errorMessage);
     }
 
-    AIModel aiModel{ "llama-3.1-8b-instant", 16000, 0.1, QUrl{"https://api.groq.com/openai/v1/chat/completions"}, this }; // Default model
-    QFile jsonFile{ IA_MODEL_CONFIG_FILE_PATH + aiModel.getModelName() + ".json" };
-
-    if (!jsonFile.exists())
-        createModelConfigFile(&aiModel);
-
-    if (!jsonFile.open(QIODevice::ReadOnly))
+    // Charger chaque fichier de configuration trouvé
+    for (const QFileInfo& fileInfo : configFiles)
     {
-        createModelConfigFile(&aiModel);
-        loadModelConfigFile(++loadAttempts, errorMessage += QString{ "Attempt #%1: Cannot open or access ia_config.json.\n" }.arg(loadAttempts));
-        return false;
+        QString filePath{ fileInfo.absoluteFilePath() };
+        AIModel model{ loadSingleModelConfig(filePath) };
+
+        if (model.isValid()) // Tu devras ajouter une méthode isValid() dans AIModel
+            m_AIModelList->emplace_back(model);
     }
 
-    QByteArray fileRawData{ jsonFile.readAll() };
-    QJsonParseError error;
-    QJsonDocument jsonDocument{ QJsonDocument::fromJson(fileRawData, &error) };
-
-    if (error.error != QJsonParseError::NoError)
-    {
-        createModelConfigFile(&aiModel);
-        loadModelConfigFile(++loadAttempts, errorMessage += ("Attempt #%1: Error parsing ia_config.json: " + error.errorString() + "\n"));
-        return false;
-    }
-
-    QJsonObject jsonBody{ jsonDocument.object() };
-    aiModel = loadModelParametersFromConfig(jsonBody);
-    m_AIModelList->emplaceBack(std::move(aiModel));
+    return true;
 }
 
 void AIService::saveModelToConfig(QJsonObject& jsonBody, const AIModel* aiModel)
