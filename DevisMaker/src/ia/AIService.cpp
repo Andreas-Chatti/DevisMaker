@@ -1,39 +1,69 @@
 ﻿#include "AIService.h"
 
-void AIService::initializePrompt() 
+void AIService::initializePrompts() 
 {
-    QFile promptFile(PROMPT_FILE_PATH);
+    QVector<RequestType> requestTypeList{ RequestType::AnalyseInventory, RequestType::CleanName };
 
-    if (!promptFile.exists()) 
+    for (auto requestType : requestTypeList)
     {
-        if (!savePrompt(getDefaultPrompt()))
-            m_currentPrompt = getDefaultPrompt();
-    }
+        QString path;
+        QString defaultPrompt;
+        switch (requestType)
+        {
+        case AIService::RequestType::CleanName: 
+            path = CLEAN_LIST_PROMPT_FILE_PATH;
+            defaultPrompt = getCleanListDefaultPrompt();
+            break;
+        case AIService::RequestType::AnalyseInventory: 
+            path = ANALYSE_PROMPT_FILE_PATH;
+            defaultPrompt = getAnalyseDefaultPrompt();
+            break;
+        }
 
-    m_currentPrompt = loadPrompt();
+        QFile promptFile(path);
+        if (!promptFile.exists() && !savePrompt(defaultPrompt, path))
+        {
+            switch (requestType)
+            {
+            case AIService::RequestType::CleanName: m_cleanListPrompt = getCleanListDefaultPrompt();
+                break;
+            case AIService::RequestType::AnalyseInventory: m_analysePrompt = getAnalyseDefaultPrompt();
+            }
+        }
+
+        else
+        { 
+            switch (requestType)
+            {
+            case AIService::RequestType::CleanName: m_cleanListPrompt = loadPrompt(path, requestType);
+                break;
+            case AIService::RequestType::AnalyseInventory: m_analysePrompt = loadPrompt(path, requestType);
+            }
+        }
+    }
 }
 
-QString AIService::loadPrompt()
+QString AIService::loadPrompt(const QString& path, RequestType requestType)
 {
-    QFile promptFile(PROMPT_FILE_PATH);
+    QFile promptFile(path);
 
     if (!promptFile.open(QIODevice::ReadOnly | QIODevice::Text)) 
     {
         QTimer::singleShot(500, this, [this]() { emit error("Can't open prompt file.\n Loading default prompt.");});
-        return getDefaultPrompt();
+        return requestType == RequestType::CleanName ? getCleanListDefaultPrompt() : getAnalyseDefaultPrompt();
     }
 
     QTextStream in(&promptFile);
     in.setEncoding(QStringConverter::Utf8);
-    QString content = in.readAll();
+    QString prompt = in.readAll();
     promptFile.close();
 
-    return content;
+    return prompt;
 }
 
-bool AIService::savePrompt(const QString& promptContent)
+bool AIService::savePrompt(const QString& promptContent, const QString& path)
 {
-    QFile promptFile(PROMPT_FILE_PATH);
+    QFile promptFile(path);
 
     if (!promptFile.open(QIODevice::WriteOnly | QIODevice::Text)) 
     {
@@ -49,7 +79,7 @@ bool AIService::savePrompt(const QString& promptContent)
     return true;
 }
 
-QString AIService::getDefaultPrompt()
+QString AIService::getAnalyseDefaultPrompt()
 {
     return R"(Tu dois analyser cet inventaire de déménagement et calculer les volumes avec cette référence : %1
 
@@ -103,7 +133,7 @@ INVENTAIRE A ANALYSER:
 %2)";
 }
 
-QString AIService::getDefaultCleanListPrompt()
+QString AIService::getCleanListDefaultPrompt()
 {
     return R"(
 
@@ -198,32 +228,40 @@ EXEMPLES :
 )";
 }
 
-void AIService::reloadPrompt()
+bool AIService::reloadPrompt(const QString& path, RequestType type)
 {
-    QFile promptFile(PROMPT_FILE_PATH);
+    QFile promptFile(path);
 
     if (!promptFile.exists()) 
     {
         QTimer::singleShot(500, this, [this]() { emit error("Couldn't reload prompt.\n Cannot find prompt file's path !");});
-        return;
+        return false;
     }
 
-    QString oldPrompt{ m_currentPrompt };
-    QString newPrompt{ loadPrompt() };
+    QString newPrompt{ loadPrompt(path, type) };
+    QString currentPrompt{ type == RequestType::AnalyseInventory ? m_analysePrompt : m_cleanListPrompt };
 
-    if (newPrompt != oldPrompt) 
-        m_currentPrompt = newPrompt;
+    if (newPrompt != currentPrompt)
+    {
+        switch (type)
+        {
+        case AIService::RequestType::CleanName: m_cleanListPrompt = std::move(newPrompt);
+            break;
+        case AIService::RequestType::AnalyseInventory: m_analysePrompt = std::move(newPrompt);
+        }
+    }
+
+    else
+        return false;
 }
 
 
 QNetworkRequest AIService::buildRequest(const QString& inventoryText, RequestType requestType, const QString* jsonReference)
 {
-    // Build request
     QNetworkRequest request(m_currentAIModel->getUrl());
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     request.setRawHeader("Authorization", ("Bearer " + m_apiKey).toUtf8());
 
-    // Corps de la requête JSON
     QJsonObject jsonBody;
     jsonBody["model"] = m_currentAIModel->getModelName();
     jsonBody["max_tokens"] = m_currentAIModel->getMaxOutputTokens();
@@ -236,23 +274,23 @@ QNetworkRequest AIService::buildRequest(const QString& inventoryText, RequestTyp
     QString prompt;
     switch (requestType)
     {
-    case AIService::RequestType::CleanName: prompt = getDefaultCleanListPrompt().arg(inventoryText);
+    case AIService::RequestType::CleanName: prompt = m_cleanListPrompt.arg(inventoryText);
         break;
     case AIService::RequestType::AnalyseInventory: 
         if (!jsonReference)
         {
             emit error("Error: jsonReference is null.");
             return;
+            // throw ?
         }
 
-        prompt = m_currentPrompt.arg(*jsonReference, inventoryText);
+        prompt = m_analysePrompt.arg(*jsonReference, inventoryText);
         break;
     }
     userMessage["content"] = prompt;
     messages.append(userMessage);
     jsonBody["messages"] = messages;
 
-    // Stocker le JSON dans la requête (via un attribut custom)
     QJsonDocument doc(jsonBody);
     request.setAttribute(QNetworkRequest::User, doc.toJson());
 

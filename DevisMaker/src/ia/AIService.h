@@ -13,6 +13,7 @@
 #include "utils/constants.h"
 #include "AIModel.h"
 
+using AIModelList = std::unique_ptr <QVector<AIModel>>;
 
 class AIService : public QObject
 {
@@ -24,12 +25,13 @@ public:
     {
         CleanName,
         AnalyseInventory,
+        max_type,
     };
 
     explicit AIService(QObject* parent = nullptr)
         : QObject(parent)
     {
-        initializePrompt();
+        initializePrompts();
         loadModelConfigFile();
     }
 
@@ -40,12 +42,13 @@ public:
     AIService& operator=(AIService&& aiService) = delete;
 
     const AIModel* getCurrentAIModel() { return m_currentAIModel; }
-    const QString& getPrompt() { return m_currentPrompt; }
+    const 
     const QString& getAPI_Key() { return m_apiKey; }
-    const QString& getCurrentPrompt() const { return m_currentPrompt; }
+    const QString& getCleanListPrompt() const { return m_cleanListPrompt; }
+    const QString& getAnalysePrompt() const { return m_analysePrompt; }
 
-    void reloadPrompt();
-    bool savePrompt(const QString& promptContent);
+    bool reloadPrompt(const QString& path, RequestType type);
+    bool savePrompt(const QString& promptContent, const QString& path);
     QNetworkRequest buildRequest(const QString& inventoryText, RequestType requestType, const QString* jsonReference = nullptr);
 
 signals:
@@ -55,18 +58,20 @@ signals:
 private:
 
     AIModel* m_currentAIModel;
-    std::unique_ptr <QVector<AIModel>> m_AIModelList{ std::make_unique<QVector<AIModel>>() };
-    QString m_currentPrompt;
+    AIModelList m_AIModelList{ std::make_unique<QVector<AIModel>>() };
+    QString m_analysePrompt;
+    QString m_cleanListPrompt;
     QString m_apiKey{""};
     static constexpr int MAX_FALLBACK_ATTEMPTS{ 3 };
-    static inline const QString PROMPT_FILE_PATH{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/prompt_template.txt" };
+    static inline const QString ANALYSE_PROMPT_FILE_PATH{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/analyse_prompt.txt" };
+    static inline const QString CLEAN_LIST_PROMPT_FILE_PATH{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/cleanList_prompt.txt" };
     static inline const QString IA_MODEL_CONFIG_FILE_PATH{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/config_model_" };
 
 
-    void initializePrompt();
-    QString loadPrompt();
-    static QString getDefaultPrompt();
-    static QString getDefaultCleanListPrompt();
+    void initializePrompts();
+    QString loadPrompt(const QString& path, RequestType requestType);
+    static QString getAnalyseDefaultPrompt();
+    static QString getCleanListDefaultPrompt();
 
     AIModel loadModelParametersFromConfig(QJsonObject& jsonBody);
     bool loadModelConfigFile(int loadAttempts = 0, QString errorMessage = "");
