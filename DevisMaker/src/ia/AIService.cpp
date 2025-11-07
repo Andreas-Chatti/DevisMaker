@@ -278,11 +278,7 @@ QNetworkRequest AIService::buildRequest(const QString& inventoryText, RequestTyp
         break;
     case AIService::RequestType::AnalyseInventory: 
         if (!jsonReference)
-        {
-            emit error("Error: jsonReference is null.");
-            return;
-            // throw ?
-        }
+            throw std::invalid_argument("jsonReference is null. Analyse aborted.");
 
         prompt = m_analysePrompt.arg(*jsonReference, inventoryText);
         break;
@@ -297,7 +293,7 @@ QNetworkRequest AIService::buildRequest(const QString& inventoryText, RequestTyp
     return request;
 }
 
-bool AIService::loadAllModels(int loadAttempts, QString errorMessage)
+bool AIService::loadAllAIModels(int loadAttempts, QString errorMessage)
 {
     QDir configDir(SettingsConstants::FileSettings::DATA_FILE_PATH);
 
@@ -313,20 +309,46 @@ bool AIService::loadAllModels(int loadAttempts, QString errorMessage)
     {
         AIModel defaultModel{ AIModel::makeDefaultModel(this) };
         createModelConfigFile(&defaultModel);
-        return loadAllModels(++loadAttempts, errorMessage);
+        return loadAllAIModels(++loadAttempts, errorMessage);
     }
 
     // Charger chaque fichier de configuration trouvé
     for (const QFileInfo& fileInfo : configFiles)
     {
         QString filePath{ fileInfo.absoluteFilePath() };
-        AIModel model{ loadSingleModelConfig(filePath) };
+        std::optional<AIModel> model{ loadAIModelConfig(filePath) };
 
-        if (model.isValid()) // Tu devras ajouter une méthode isValid() dans AIModel
-            m_AIModelList->emplace_back(model);
+        if (!model)
+            continue;
+
+        addModelToList(std::move(*model));
     }
 
-    return true;
+    return m_AIModelList.get()->count() > 0;
+}
+
+std::optional<AIModel> AIService::loadAIModelConfig(const QString& path)
+{
+    QFile config{ path };
+    if (!config.exists() || !config.open(QIODevice::ReadOnly | QIODevice::Text))
+        return std::nullopt;
+
+    QByteArray data{ config.readAll() };
+    config.close();
+
+    QJsonParseError parseError;
+    QJsonDocument doc{ QJsonDocument::fromJson(data, &parseError) };
+    if (doc.isNull() || !doc.isObject())
+        return std::nullopt;
+
+    QJsonObject jsonObject{ doc.object() };
+
+    QString modelName{ jsonObject["modelName"].toString() };
+    int maxOutputTokens{ jsonObject["maxOutputTokens"].toInt() };
+    double temperature{ jsonObject["temperature"].toDouble() };
+    QUrl url{ jsonObject["url"].toString() };
+
+    return AIModel{ std::move(modelName), maxOutputTokens, temperature, std::move(url), this };
 }
 
 void AIService::saveModelToConfig(QJsonObject& jsonBody, const AIModel* aiModel)
@@ -362,4 +384,19 @@ bool AIService::createModelConfigFile(const AIModel* aiModel)
     }
 
     jsonFile.write(jsonDocument.toJson(QJsonDocument::Indented));
+}
+
+bool AIService::addModelToList(AIModel modelToAdd)
+{
+    auto isSameModel{ [modelToAdd](const AIModel& aiModel) { return aiModel.getModelName() == modelToAdd.getModelName(); } };
+    auto it{ std::find_if(m_AIModelList.get()->begin(), m_AIModelList.get()->end(), isSameModel) };
+        
+    if (it != m_AIModelList.get()->end())
+    {
+        qDebug("Model already exist in the list ! Aborted.");
+        return false;
+    }
+
+    m_AIModelList.get()->emplace_back(std::move(modelToAdd));
+    return true;
 }

@@ -17,11 +17,19 @@ void InventoryAnalyzer::cleanList(QString rawText)
         return;
     }
 
-    // Utiliser la classe IA pour construire la requête
-    QNetworkRequest request{ m_aiService->buildRequest(rawText, AIService::RequestType::CleanName) };
+    QNetworkRequest request;
+    try
+    {
+        request = m_aiService->buildRequest(rawText, AIService::RequestType::CleanName);
+    }
+    catch(std::invalid_argument ex)
+    {
+        emit error(ex.what());
+        return;
+    }
+
     QByteArray jsonData{ request.attribute(QNetworkRequest::User).toByteArray() };
 
-    // Supprimer l'attribut temporaire
     request.setAttribute(QNetworkRequest::User, QVariant());
 
     QNetworkReply* reply{ m_networkManager->post(request, jsonData) };

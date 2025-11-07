@@ -33,7 +33,7 @@ public:
         : QObject(parent)
     {
         initializePrompts();
-        loadModelConfigFile();
+        loadAllAIModels();
     }
 
     ~AIService() = default;
@@ -74,7 +74,9 @@ private:
     static QString getAnalyseDefaultPrompt();
     static QString getCleanListDefaultPrompt();
 
-    bool loadAllModels(int loadAttempts = 0, QString errorMessage = "");
+    bool loadAllAIModels(int loadAttempts = 0, QString errorMessage = "");
+    std::optional<AIModel> loadAIModelConfig(const QString& path);
     void saveModelToConfig(QJsonObject& jsonBody, const AIModel* aiModel);
     bool createModelConfigFile(const AIModel* aiModel);
+    bool addModelToList(AIModel model);
 };
