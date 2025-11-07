@@ -42,9 +42,9 @@ public:
     AIService(AIService&& aiService) = delete;
     AIService& operator=(AIService&& aiService) = delete;
 
-    const AIModel* getCurrentAIModel() { return m_currentAIModel; }
-    const 
-    const QString& getAPI_Key() { return m_apiKey; }
+    const AIModel* getCurrentAIModel() const { return m_currentAIModel; }
+    const QVector<AIModel>* getAIModelList() const { return m_AIModelList.get(); }
+    const QString& getAPI_Key() const { return m_apiKey; }
     const QString& getCleanListPrompt() const { return m_cleanListPrompt; }
     const QString& getAnalysePrompt() const { return m_analysePrompt; }
 

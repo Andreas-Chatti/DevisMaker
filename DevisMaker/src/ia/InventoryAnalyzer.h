@@ -45,7 +45,7 @@ signals:
 
 private slots:
 
-    void handleGrokResponse(QNetworkReply* reply);
+    void handleAnalyseInventoryResponse(QNetworkReply* reply);
     void handleCleanNameResponse(QNetworkReply* reply);
     double calculateAverageVolume(const QVector<double>& results);
 
@@ -57,15 +57,6 @@ private:
 
     QVector<MovingObject> extractReplyInfos(QNetworkReply* reply);
 
-    void addFallbackResult(double result) { m_fallbackResults.emplace_back(result); }
-    void addFallbackAttempt() { m_fallbackAttempts++; }
-    void clearFallbackAttempts() { m_fallbackAttempts = 0; }
-    void clearFallbackResults() { m_fallbackResults.clear(); };
-    const QVector<double>& getFallbackResults() { return m_fallbackResults; }
-    int getFallbackAttempts() { return m_fallbackAttempts; }
-
-    QVector<double> m_fallbackResults;
-    int m_fallbackAttempts;
     static constexpr int NETWORK_REQUEST_DELAY{ 1500 };
     const QString REFERENCE_FILE_NAME{ "/volumes_reference.json" };
 
@@ -74,4 +65,7 @@ private:
     AIService* m_aiService{ new AIService{this} };
     Request m_request{};
     QString m_userInventoryInput{""};
+
+    QVector<AIModel> m_aiModelBuffer{};
+    void removeModelFromBuffer(const AIModel& aiModel);
 };

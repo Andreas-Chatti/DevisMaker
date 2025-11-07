@@ -297,14 +297,12 @@ bool AIService::loadAllAIModels(int loadAttempts, QString errorMessage)
 {
     QDir configDir(SettingsConstants::FileSettings::DATA_FILE_PATH);
 
-    // Filtrer les fichiers qui correspondent au pattern
     QStringList filters;
     filters << "config_model_*.json";
     configDir.setNameFilters(filters);
 
     QFileInfoList configFiles{ configDir.entryInfoList(QDir::Files) };
 
-    // Si aucun fichier trouvé, créer un fichier par défaut
     if (configFiles.isEmpty())
     {
         AIModel defaultModel{ AIModel::makeDefaultModel(this) };
@@ -312,7 +310,6 @@ bool AIService::loadAllAIModels(int loadAttempts, QString errorMessage)
         return loadAllAIModels(++loadAttempts, errorMessage);
     }
 
-    // Charger chaque fichier de configuration trouvé
     for (const QFileInfo& fileInfo : configFiles)
     {
         QString filePath{ fileInfo.absoluteFilePath() };

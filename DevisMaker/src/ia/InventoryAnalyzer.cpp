@@ -8,9 +8,32 @@ InventoryAnalyzer::InventoryAnalyzer(QObject* parent)
     loadVolumeReference();
 }
 
+void InventoryAnalyzer::loadVolumeReference()
+{
+    QFile file(SettingsConstants::FileSettings::DATA_FILE_PATH + REFERENCE_FILE_NAME);
+
+    if (!file.open(QIODevice::ReadOnly))
+        return;
+
+    QByteArray data = file.readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(data);
+    m_volumeReference = doc.object();
+    file.close();
+}
+
+void InventoryAnalyzer::removeModelFromBuffer(const AIModel& aiModelToRemove)
+{
+    auto isSameModel{ [this, aiModelToRemove](const AIModel& model) { return model.getModelName() == aiModelToRemove.getModelName(); } };
+    auto it{ std::find_if(m_aiModelBuffer.begin(), m_aiModelBuffer.end(), isSameModel) };
+    if (it != m_aiModelBuffer.end())
+        m_aiModelBuffer.erase(it);
+}
 
 void InventoryAnalyzer::cleanList(QString rawText)
 {
+    m_aiModelBuffer = *m_aiService->getAIModelList();
+    removeModelFromBuffer()
+
     if (m_aiService->getAPI_Key().isEmpty())
     {
         emit analysisError("API key not found in ia_config.json");
@@ -33,9 +56,36 @@ void InventoryAnalyzer::cleanList(QString rawText)
     request.setAttribute(QNetworkRequest::User, QVariant());
 
     QNetworkReply* reply{ m_networkManager->post(request, jsonData) };
-    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
-        handleCleanNameResponse(reply);
-        });
+    connect(reply, &QNetworkReply::finished, this, [this, reply]() { handleCleanNameResponse(reply); });
+}
+
+void InventoryAnalyzer::handleCleanNameResponse(QNetworkReply* reply)
+{
+    if (reply->error() != QNetworkReply::NoError)
+    {
+        emit analysisError("Erreur API Grok: " + reply->errorString());
+        reply->deleteLater();
+        return;
+    }
+
+    QByteArray data{ reply->readAll() };
+
+    QJsonDocument doc{ QJsonDocument::fromJson(data) };
+    QJsonObject response{ doc.object() };
+
+    if (response.contains("choices") && response["choices"].isArray())
+    {
+        QJsonArray choices{ response["choices"].toArray() };
+
+        if (!choices.isEmpty())
+        {
+            QJsonObject firstChoice{ choices[0].toObject() };
+            QString cleanInventoryList{ firstChoice["message"].toObject()["content"].toString() };
+            analyzeInventory(cleanInventoryList);
+        }
+    }
+
+    reply->deleteLater();
 }
 
 void InventoryAnalyzer::analyzeInventory(const QString& inventoryText)
@@ -54,8 +104,7 @@ void InventoryAnalyzer::analyzeInventory(const QString& inventoryText)
     m_request = createRequest(inventoryText);
 
     QNetworkReply* reply{ m_networkManager->post(m_request.request, m_request.jsonData) };
-    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
-        handleGrokResponse(reply); });
+    connect(reply, &QNetworkReply::finished, this, [this, reply]() { handleAnalyseInventoryResponse(reply); });
 }
 
 
@@ -75,6 +124,38 @@ InventoryAnalyzer::Request InventoryAnalyzer::createRequest(const QString& inven
     return { request, jsonData };
 }
 
+
+void InventoryAnalyzer::handleAnalyseInventoryResponse(QNetworkReply* reply)
+{
+   if (reply->error() != QNetworkReply::NoError)
+   {
+       emit analysisError("API Grok error: " + reply->errorString());
+       reply->deleteLater();
+       return;
+   }
+
+   QVector<MovingObject> objectList{ extractReplyInfos(reply) };
+   if (objectList.isEmpty())
+   {
+       emit analysisError("Error: AI has returned an empty list !");
+
+        
+
+       m_aiService->setCurrentModel(AIService::fallback);
+       analyzeInventory(m_userInventoryInput);
+   }
+
+   else
+   {
+       double listTotalVolume{};
+       for (const MovingObject& object : objectList)
+           listTotalVolume += object.getTotalVolume();
+
+       emit analysisComplete(listTotalVolume, objectList);
+   }
+
+    reply->deleteLater();
+}
 
 QVector<MovingObject> InventoryAnalyzer::extractReplyInfos(QNetworkReply* reply)
 {
@@ -160,114 +241,4 @@ QVector<MovingObject> InventoryAnalyzer::extractReplyInfos(QNetworkReply* reply)
         }
     }
     return QVector<MovingObject>{};
-}
-
-
-void InventoryAnalyzer::handleGrokResponse(QNetworkReply* reply)
-{
-   if (reply->error() != QNetworkReply::NoError)
-   {
-       emit analysisError("Erreur API Grok: " + reply->errorString());
-       reply->deleteLater();
-       return;
-   }
-
-   QVector<MovingObject> objectList{ extractReplyInfos(reply) };
-   if (objectList.isEmpty())
-   {
-       emit analysisError("Format de reponse Grok inattendu");
-
-       m_aiService->setCurrentModel(AIService::fallback);
-       analyzeInventory(m_userInventoryInput);
-   }
-
-   else
-   {
-       double listTotalVolume{};
-       for (const MovingObject& object : objectList)
-           listTotalVolume += object.getTotalVolume();
-
-       addFallbackResult(listTotalVolume);
-       addFallbackAttempt();
-
-       bool hasReachedMaxAttempts{ getFallbackAttempts() >= m_aiService->getMaxFallbackAttempts() };
-       if (hasReachedMaxAttempts)
-       {
-           double averageVolume{ calculateAverageVolume(getFallbackResults()) };
-           emit analysisComplete(averageVolume, objectList);
-           
-           if (m_aiService->getCurrentModelString() == m_aiService->getFallbackModel())
-               m_aiService->setCurrentModel(AIService::primary);
-
-           clearFallbackAttempts();
-           clearFallbackResults();
-       }
-
-       else
-       {
-           std::function<void()> sendRequest{ [this]() {
-               QNetworkReply* reply{m_networkManager->post(m_request.request, m_request.jsonData)};
-               connect(reply, &QNetworkReply::finished, this, [this, reply]() { handleGrokResponse(reply); });
-           } };
-
-           QTimer::singleShot(NETWORK_REQUEST_DELAY, this, sendRequest);
-       }
-   }
-
-    reply->deleteLater();
-}
-
-
-void InventoryAnalyzer::handleCleanNameResponse(QNetworkReply* reply)
-{
-    if (reply->error() != QNetworkReply::NoError)
-    {
-        emit analysisError("Erreur API Grok: " + reply->errorString());
-        reply->deleteLater();
-        return;
-    }
-
-    QByteArray data{ reply->readAll() };
-
-    QJsonDocument doc{ QJsonDocument::fromJson(data) };
-    QJsonObject response{ doc.object() };
-
-    if (response.contains("choices") && response["choices"].isArray())
-    {
-        QJsonArray choices{ response["choices"].toArray() };
-
-        if (!choices.isEmpty())
-        {
-            QJsonObject firstChoice{ choices[0].toObject() };
-            QString responseText{ firstChoice["message"].toObject()["content"].toString() };
-            analyzeInventory(responseText);
-        }
-    }
-
-    reply->deleteLater();
-}
-
-double InventoryAnalyzer::calculateAverageVolume(const QVector<double>& results)
-{
-    double averageVolume{};
-    double resultsNumber{ static_cast<double>(results.size()) };
-
-    for (double volume : results)
-        averageVolume += volume;
-
-    return averageVolume /= resultsNumber;
-}
-
-
-void InventoryAnalyzer::loadVolumeReference() 
-{
-    QFile file(SettingsConstants::FileSettings::DATA_FILE_PATH + REFERENCE_FILE_NAME);
-
-    if (!file.open(QIODevice::ReadOnly)) 
-        return;
-
-    QByteArray data = file.readAll();
-    QJsonDocument doc = QJsonDocument::fromJson(data);
-    m_volumeReference = doc.object();
-    file.close();
 }
