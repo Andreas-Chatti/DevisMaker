@@ -67,4 +67,5 @@ private:
 
     QVector<AIModel> m_aiModelBuffer{};
     void removeModelFromBuffer(const AIModel* aiModel);
+    void resetAIModelBuffer();
 };

@@ -1,4 +1,4 @@
-#include "ui/MainWindow.h"
+﻿#include "ui/MainWindow.h"
 #include <QApplication>
 
 int main(int argc, char* argv[])
@@ -9,7 +9,7 @@ int main(int argc, char* argv[])
 
     MainWindow w;
     w.setWindowTitle("DevisMaker - Generateur de Devis");
-    w.resize(800, 600);
+    w.resize(MainWindow::WINDOW_WIDTH, MainWindow::WINDOW_HEIGHT);
     w.show();
 
     return app.exec();

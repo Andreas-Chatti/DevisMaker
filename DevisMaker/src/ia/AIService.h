@@ -35,6 +35,9 @@ public:
         initializePrompts();
         loadAllAIModels();
         loadAIMainConfig();
+
+        if (!m_AIModelList.get()->isEmpty())
+            m_currentAIModel = new AIModel{ m_AIModelList.get()->back() };
     }
 
     ~AIService() = default;
@@ -49,7 +52,7 @@ public:
     const QString& getCleanListPrompt() const { return m_cleanListPrompt; }
     const QString& getAnalysePrompt() const { return m_analysePrompt; }
 
-    void setCurrentAIModel(AIModel model) { *m_currentAIModel = std::move(model); } // WIP
+    void setCurrentAIModel(AIModel model);
 
     bool reloadPrompt(const QString& path, RequestType type);
     bool savePrompt(const QString& promptContent, const QString& path);

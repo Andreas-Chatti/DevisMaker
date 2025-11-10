@@ -29,9 +29,22 @@ void InventoryAnalyzer::removeModelFromBuffer(const AIModel* aiModelToRemove)
         m_aiModelBuffer.erase(it); 
 }
 
+void InventoryAnalyzer::resetAIModelBuffer()
+{
+    const QVector<AIModel>* aiModelList{ m_aiService->getAIModelList() };
+    if (aiModelList && !aiModelList->isEmpty())
+        m_aiModelBuffer = *aiModelList;
+
+    else
+    {
+        m_aiModelBuffer.clear();
+        m_aiModelBuffer.emplaceBack(AIModel::makeDefaultModel(this));
+    }
+}
+
 void InventoryAnalyzer::cleanList(QString rawText)
 {
-    m_aiModelBuffer = *m_aiService->getAIModelList(); // Set all models to buffer
+    resetAIModelBuffer();
     m_aiService->setCurrentAIModel(m_aiModelBuffer.back());
     removeModelFromBuffer(&m_aiModelBuffer.back());
 
@@ -132,6 +145,10 @@ void InventoryAnalyzer::handleAnalyseInventoryResponse(QNetworkReply* reply)
    {
        emit analysisError("API Grok error: " + reply->errorString());
        reply->deleteLater();
+
+       m_aiService->setCurrentAIModel(m_aiModelBuffer.back());
+       removeModelFromBuffer(&m_aiModelBuffer.back());
+       analyzeInventory(m_userInventoryInput);
        return;
    }
 
@@ -139,13 +156,12 @@ void InventoryAnalyzer::handleAnalyseInventoryResponse(QNetworkReply* reply)
    if (objectList.isEmpty())
    {
        emit analysisError("Error: AI has returned an empty list !");
-
-        
+       reply->deleteLater();
 
        m_aiService->setCurrentAIModel(m_aiModelBuffer.back());
        removeModelFromBuffer(&m_aiModelBuffer.back());
-
        analyzeInventory(m_userInventoryInput);
+       return;
    }
 
    else

@@ -226,6 +226,15 @@ EXEMPLES :
 )";
 }
 
+void AIService::setCurrentAIModel(AIModel model)
+{
+    if (m_currentAIModel)
+        *m_currentAIModel = std::move(model);
+
+    else
+        m_currentAIModel = new AIModel{ std::move(model) };
+}
+
 bool AIService::reloadPrompt(const QString& path, RequestType type)
 {
     QFile promptFile(path);
