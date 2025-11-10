@@ -6,8 +6,6 @@ InventoryAnalyzer::InventoryAnalyzer(QObject* parent)
     connect(m_aiService, &AIService::error, this, &InventoryAnalyzer::error);
 
     loadVolumeReference();
-    resetAIModelBuffer();
-    switchToNextAIModel();
 }
 
 void InventoryAnalyzer::loadVolumeReference()
@@ -23,27 +21,6 @@ void InventoryAnalyzer::loadVolumeReference()
     file.close();
 }
 
-void InventoryAnalyzer::removeModelFromBuffer(const AIModel* aiModelToRemove)
-{
-    auto isSameModel{ [this, aiModelToRemove](const AIModel& model) { return model.getModelName() == aiModelToRemove->getModelName(); } };
-    auto it{ std::find_if(m_aiModelBuffer.begin(), m_aiModelBuffer.end(), isSameModel) };
-    if (it != m_aiModelBuffer.end())
-        m_aiModelBuffer.erase(it); 
-}
-
-void InventoryAnalyzer::resetAIModelBuffer()
-{
-    const QVector<AIModel>* aiModelList{ m_aiService->getAIModelList() };
-    if (aiModelList && !aiModelList->isEmpty())
-        m_aiModelBuffer = *aiModelList;
-
-    else
-    {
-        m_aiModelBuffer.clear();
-        m_aiModelBuffer.emplaceBack(AIModel::makeDefaultModel(this));
-    }
-}
-
 void InventoryAnalyzer::cleanList(QString rawInventory)
 {
     if (m_aiService->getAPI_Key().isEmpty())
@@ -54,9 +31,6 @@ void InventoryAnalyzer::cleanList(QString rawInventory)
 
     if (m_rawInventory != rawInventory)
         m_rawInventory = rawInventory;
-
-    resetAIModelBuffer();
-    switchToNextAIModel();
 
     QNetworkRequest request;
     try
@@ -84,11 +58,14 @@ void InventoryAnalyzer::handleCleanNameResponse(QNetworkReply* reply)
         emit analysisError("Erreur API Grok: " + reply->errorString());
         reply->deleteLater();
 
-        if (switchToNextAIModel())
-            cleanList(m_rawInventory);
+        if (m_aiService->advanceToNextModel() >= m_aiService->getAIModelList()->size())
+        {
+            emit error("All ai models resulted in errors. Analyse aborted.");
+            m_aiService->resetModelIndex();
+        }
 
         else
-            emit error("All ai models resulted in errors. Analyse aborted.");
+            cleanList(m_rawInventory);
 
         return;
     }
@@ -104,11 +81,14 @@ void InventoryAnalyzer::handleCleanNameResponse(QNetworkReply* reply)
 
         if (choices.isEmpty())
         {
-            if (switchToNextAIModel())
-                cleanList(m_rawInventory);
+            if (m_aiService->advanceToNextModel() >= m_aiService->getAIModelList()->size())
+            {
+                emit error("All ai models resulted in errors. Analyse aborted.");
+                m_aiService->resetModelIndex();
+            }
 
             else
-                emit error("All ai models resulted in errors. Analyse aborted.");
+                cleanList(m_rawInventory);
 
             reply->deleteLater();
             return;
@@ -116,6 +96,7 @@ void InventoryAnalyzer::handleCleanNameResponse(QNetworkReply* reply)
 
         QJsonObject firstChoice{ choices[0].toObject() };
         QString cleanInventoryList{ firstChoice["message"].toObject()["content"].toString() };
+        m_aiService->resetModelIndex();
         analyzeInventory(cleanInventoryList);
     }
 
@@ -158,11 +139,14 @@ void InventoryAnalyzer::handleAnalyseInventoryResponse(QNetworkReply* reply)
        emit analysisError("API Grok error: " + reply->errorString());
        reply->deleteLater();
 
-       if (switchToNextAIModel())
-           analyzeInventory(m_cleanInventory);
+       if (m_aiService->advanceToNextModel() >= m_aiService->getAIModelList()->size())
+       {
+           emit error("All ai models resulted in errors. Analyse aborted.");
+           m_aiService->resetModelIndex();
+       }
 
        else
-           emit error("All ai models resulted in errors. Analyse aborted.");
+           analyzeInventory(m_cleanInventory);
 
        return;
    }
@@ -173,11 +157,14 @@ void InventoryAnalyzer::handleAnalyseInventoryResponse(QNetworkReply* reply)
        emit analysisError("Error: AI has returned an empty list !");
        reply->deleteLater();
 
-       if (switchToNextAIModel())
-           analyzeInventory(m_cleanInventory);
+       if (m_aiService->advanceToNextModel() >= m_aiService->getAIModelList()->size())
+       {
+           emit error("All ai models resulted in errors. Analyse aborted.");
+           m_aiService->resetModelIndex();
+       }
 
        else
-           emit error("All ai models resulted in errors. Analyse aborted.");
+           analyzeInventory(m_cleanInventory);
 
        return;
    }
@@ -188,6 +175,7 @@ void InventoryAnalyzer::handleAnalyseInventoryResponse(QNetworkReply* reply)
        for (const MovingObject& object : objectList)
            listTotalVolume += object.getTotalVolume();
 
+       m_aiService->resetModelIndex();
        emit analysisComplete(listTotalVolume, objectList);
    }
 
@@ -278,16 +266,4 @@ QVector<MovingObject> InventoryAnalyzer::extractReplyInfos(QNetworkReply* reply)
         }
     }
     return QVector<MovingObject>{};
-}
-
-bool InventoryAnalyzer::switchToNextAIModel()
-{
-    if (!m_aiModelBuffer.isEmpty())
-    {
-        m_aiService->setCurrentAIModel(m_aiModelBuffer.back());
-        removeModelFromBuffer(&m_aiModelBuffer.back());
-        return true;
-    }
-
-    return false;
 }

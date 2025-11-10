@@ -226,15 +226,6 @@ EXEMPLES :
 )";
 }
 
-void AIService::setCurrentAIModel(AIModel model)
-{
-    if (m_currentAIModel)
-        *m_currentAIModel = std::move(model);
-
-    else
-        m_currentAIModel = new AIModel{ std::move(model) };
-}
-
 bool AIService::reloadPrompt(const QString& path, RequestType type)
 {
     QFile promptFile(path);
@@ -260,19 +251,25 @@ bool AIService::reloadPrompt(const QString& path, RequestType type)
 
     else
         return false;
+
+    return true;
 }
 
 
 QNetworkRequest AIService::buildRequest(const QString& inventoryText, RequestType requestType, const QString* jsonReference)
 {
-    QNetworkRequest request(m_currentAIModel->getUrl());
+    const AIModel* aiModel{ &(*m_AIModelList)[m_currentAiModelIndex] };
+    if(!aiModel)
+        throw std::invalid_argument("aiModel is null. Analyse aborted.");
+
+    QNetworkRequest request(aiModel->getUrl());
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     request.setRawHeader("Authorization", ("Bearer " + m_apiKey).toUtf8());
 
     QJsonObject jsonBody;
-    jsonBody["model"] = m_currentAIModel->getModelName();
-    jsonBody["max_tokens"] = m_currentAIModel->getMaxOutputTokens();
-    jsonBody["temperature"] = m_currentAIModel->getTemperature();
+    jsonBody["model"] = aiModel->getModelName();
+    jsonBody["max_tokens"] = aiModel->getMaxOutputTokens();
+    jsonBody["temperature"] = aiModel->getTemperature();
 
     QJsonArray messages;
     QJsonObject userMessage;

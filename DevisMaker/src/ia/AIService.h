@@ -35,9 +35,6 @@ public:
         initializePrompts();
         loadAllAIModels();
         loadAIMainConfig();
-
-        if (!m_AIModelList.get()->isEmpty())
-            m_currentAIModel = new AIModel{ m_AIModelList.get()->back() };
     }
 
     ~AIService() = default;
@@ -46,17 +43,17 @@ public:
     AIService(AIService&& aiService) = delete;
     AIService& operator=(AIService&& aiService) = delete;
 
-    const AIModel* getCurrentAIModel() const { return m_currentAIModel; }
     const QVector<AIModel>* getAIModelList() const { return m_AIModelList.get(); }
     const QString& getAPI_Key() const { return m_apiKey; }
     const QString& getCleanListPrompt() const { return m_cleanListPrompt; }
     const QString& getAnalysePrompt() const { return m_analysePrompt; }
 
-    void setCurrentAIModel(AIModel model);
-
     bool reloadPrompt(const QString& path, RequestType type);
     bool savePrompt(const QString& promptContent, const QString& path);
     QNetworkRequest buildRequest(const QString& inventoryText, RequestType requestType, const QString* jsonReference = nullptr);
+
+    qsizetype advanceToNextModel() { return ++m_currentAiModelIndex; }
+    qsizetype resetModelIndex() { return m_currentAiModelIndex = 0; }
 
 signals:
 
@@ -64,8 +61,8 @@ signals:
 
 private:
 
-    AIModel* m_currentAIModel;
     AIModelList m_AIModelList{ std::make_unique<QVector<AIModel>>() };
+    qsizetype m_currentAiModelIndex{ 0 };
     QString m_analysePrompt;
     QString m_cleanListPrompt;
     QString m_apiKey{""};

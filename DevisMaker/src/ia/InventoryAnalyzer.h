@@ -65,9 +65,4 @@ private:
     Request m_request{};
     QString m_cleanInventory{""};
     QString m_rawInventory{ "" };
-
-    QVector<AIModel> m_aiModelBuffer{};
-    void removeModelFromBuffer(const AIModel* aiModel);
-    void resetAIModelBuffer();
-    bool switchToNextAIModel();
 };
