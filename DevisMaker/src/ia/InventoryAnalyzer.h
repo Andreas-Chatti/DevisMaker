@@ -63,9 +63,11 @@ private:
     QJsonObject m_volumeReference{};
     AIService* m_aiService{ new AIService{this} };
     Request m_request{};
-    QString m_userInventoryInput{""};
+    QString m_cleanInventory{""};
+    QString m_rawInventory{ "" };
 
     QVector<AIModel> m_aiModelBuffer{};
     void removeModelFromBuffer(const AIModel* aiModel);
     void resetAIModelBuffer();
+    bool switchToNextAIModel();
 };

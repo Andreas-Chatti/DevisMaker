@@ -6,6 +6,8 @@ InventoryAnalyzer::InventoryAnalyzer(QObject* parent)
     connect(m_aiService, &AIService::error, this, &InventoryAnalyzer::error);
 
     loadVolumeReference();
+    resetAIModelBuffer();
+    switchToNextAIModel();
 }
 
 void InventoryAnalyzer::loadVolumeReference()
@@ -42,22 +44,24 @@ void InventoryAnalyzer::resetAIModelBuffer()
     }
 }
 
-void InventoryAnalyzer::cleanList(QString rawText)
+void InventoryAnalyzer::cleanList(QString rawInventory)
 {
-    resetAIModelBuffer();
-    m_aiService->setCurrentAIModel(m_aiModelBuffer.back());
-    removeModelFromBuffer(&m_aiModelBuffer.back());
-
     if (m_aiService->getAPI_Key().isEmpty())
     {
-        emit analysisError("API key not found. Analyse aborted.");
+        emit analysisError("API key not found or invalid.\n Check your config file.");
         return;
     }
+
+    if (m_rawInventory != rawInventory)
+        m_rawInventory = rawInventory;
+
+    resetAIModelBuffer();
+    switchToNextAIModel();
 
     QNetworkRequest request;
     try
     {
-        request = m_aiService->buildRequest(rawText, AIService::RequestType::CleanName);
+        request = m_aiService->buildRequest(rawInventory, AIService::RequestType::CleanName);
     }
     catch(std::invalid_argument ex)
     {
@@ -79,6 +83,13 @@ void InventoryAnalyzer::handleCleanNameResponse(QNetworkReply* reply)
     {
         emit analysisError("Erreur API Grok: " + reply->errorString());
         reply->deleteLater();
+
+        if (switchToNextAIModel())
+            cleanList(m_rawInventory);
+
+        else
+            emit error("All ai models resulted in errors. Analyse aborted.");
+
         return;
     }
 
@@ -91,31 +102,32 @@ void InventoryAnalyzer::handleCleanNameResponse(QNetworkReply* reply)
     {
         QJsonArray choices{ response["choices"].toArray() };
 
-        if (!choices.isEmpty())
+        if (choices.isEmpty())
         {
-            QJsonObject firstChoice{ choices[0].toObject() };
-            QString cleanInventoryList{ firstChoice["message"].toObject()["content"].toString() };
-            analyzeInventory(cleanInventoryList);
+            if (switchToNextAIModel())
+                cleanList(m_rawInventory);
+
+            else
+                emit error("All ai models resulted in errors. Analyse aborted.");
+
+            reply->deleteLater();
+            return;
         }
+
+        QJsonObject firstChoice{ choices[0].toObject() };
+        QString cleanInventoryList{ firstChoice["message"].toObject()["content"].toString() };
+        analyzeInventory(cleanInventoryList);
     }
 
     reply->deleteLater();
 }
 
-void InventoryAnalyzer::analyzeInventory(const QString& inventoryText)
+void InventoryAnalyzer::analyzeInventory(const QString& cleanInventory)
 {
+    if (m_cleanInventory != cleanInventory)
+        m_cleanInventory = cleanInventory;
 
-    if (m_aiService->getAPI_Key().isEmpty())
-    {
-        emit analysisError("API key not found in ia_config.json");
-        return;
-    }
-
-    bool isNewInventoryText{ inventoryText != m_userInventoryInput };
-    if (isNewInventoryText)
-        m_userInventoryInput = inventoryText;
-
-    m_request = createRequest(inventoryText);
+    m_request = createRequest(cleanInventory);
 
     QNetworkReply* reply{ m_networkManager->post(m_request.request, m_request.jsonData) };
     connect(reply, &QNetworkReply::finished, this, [this, reply]() { handleAnalyseInventoryResponse(reply); });
@@ -146,9 +158,12 @@ void InventoryAnalyzer::handleAnalyseInventoryResponse(QNetworkReply* reply)
        emit analysisError("API Grok error: " + reply->errorString());
        reply->deleteLater();
 
-       m_aiService->setCurrentAIModel(m_aiModelBuffer.back());
-       removeModelFromBuffer(&m_aiModelBuffer.back());
-       analyzeInventory(m_userInventoryInput);
+       if (switchToNextAIModel())
+           analyzeInventory(m_cleanInventory);
+
+       else
+           emit error("All ai models resulted in errors. Analyse aborted.");
+
        return;
    }
 
@@ -158,9 +173,12 @@ void InventoryAnalyzer::handleAnalyseInventoryResponse(QNetworkReply* reply)
        emit analysisError("Error: AI has returned an empty list !");
        reply->deleteLater();
 
-       m_aiService->setCurrentAIModel(m_aiModelBuffer.back());
-       removeModelFromBuffer(&m_aiModelBuffer.back());
-       analyzeInventory(m_userInventoryInput);
+       if (switchToNextAIModel())
+           analyzeInventory(m_cleanInventory);
+
+       else
+           emit error("All ai models resulted in errors. Analyse aborted.");
+
        return;
    }
 
@@ -260,4 +278,16 @@ QVector<MovingObject> InventoryAnalyzer::extractReplyInfos(QNetworkReply* reply)
         }
     }
     return QVector<MovingObject>{};
+}
+
+bool InventoryAnalyzer::switchToNextAIModel()
+{
+    if (!m_aiModelBuffer.isEmpty())
+    {
+        m_aiService->setCurrentAIModel(m_aiModelBuffer.back());
+        removeModelFromBuffer(&m_aiModelBuffer.back());
+        return true;
+    }
+
+    return false;
 }
