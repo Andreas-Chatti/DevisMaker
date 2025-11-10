@@ -21,22 +21,23 @@ void InventoryAnalyzer::loadVolumeReference()
     file.close();
 }
 
-void InventoryAnalyzer::removeModelFromBuffer(const AIModel& aiModelToRemove)
+void InventoryAnalyzer::removeModelFromBuffer(const AIModel* aiModelToRemove)
 {
-    auto isSameModel{ [this, aiModelToRemove](const AIModel& model) { return model.getModelName() == aiModelToRemove.getModelName(); } };
+    auto isSameModel{ [this, aiModelToRemove](const AIModel& model) { return model.getModelName() == aiModelToRemove->getModelName(); } };
     auto it{ std::find_if(m_aiModelBuffer.begin(), m_aiModelBuffer.end(), isSameModel) };
     if (it != m_aiModelBuffer.end())
-        m_aiModelBuffer.erase(it);
+        m_aiModelBuffer.erase(it); 
 }
 
 void InventoryAnalyzer::cleanList(QString rawText)
 {
-    m_aiModelBuffer = *m_aiService->getAIModelList();
-    removeModelFromBuffer()
+    m_aiModelBuffer = *m_aiService->getAIModelList(); // Set all models to buffer
+    m_aiService->setCurrentAIModel(m_aiModelBuffer.back());
+    removeModelFromBuffer(&m_aiModelBuffer.back());
 
     if (m_aiService->getAPI_Key().isEmpty())
     {
-        emit analysisError("API key not found in ia_config.json");
+        emit analysisError("API key not found. Analyse aborted.");
         return;
     }
 
@@ -141,7 +142,9 @@ void InventoryAnalyzer::handleAnalyseInventoryResponse(QNetworkReply* reply)
 
         
 
-       m_aiService->setCurrentModel(AIService::fallback);
+       m_aiService->setCurrentAIModel(m_aiModelBuffer.back());
+       removeModelFromBuffer(&m_aiModelBuffer.back());
+
        analyzeInventory(m_userInventoryInput);
    }
 

@@ -135,9 +135,7 @@ INVENTAIRE A ANALYSER:
 
 QString AIService::getCleanListDefaultPrompt()
 {
-    return R"(
-
-Voici une liste d'inventaire : %1
+    return R"(Voici une liste d'inventaire : %1
 
 Trie et formate cette liste d'inventaire de déménagement selon les règles ci-dessous.
 
@@ -293,8 +291,67 @@ QNetworkRequest AIService::buildRequest(const QString& inventoryText, RequestTyp
     return request;
 }
 
+bool AIService::loadAIMainConfig()
+{
+    QFile configFile{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/ai_service_config.json"};
+
+    if (!configFile.exists() || !configFile.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        if (!createAIMainConfigFile())
+        {
+            emit error("Error loading main ai config file. Aborted.");
+            return false;
+        }
+    }
+
+    QByteArray data{ configFile.readAll() };
+    configFile.close();
+
+    QJsonParseError parseError;
+    QJsonDocument doc{ QJsonDocument::fromJson(data, &parseError) };
+    if (doc.isNull() || !doc.isObject())
+        return false;
+
+    QJsonObject jsonObject{ doc.object() };
+
+    m_apiKey = jsonObject["apiKey"].toString();
+
+    return true;
+}
+
+bool AIService::createAIMainConfigFile()
+{
+    QJsonObject jsonBody;
+    saveAIMainConfigFile(jsonBody);
+
+    QJsonDocument jsonDocument{ jsonBody };
+
+    QFile jsonFile{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/ai_service_config.json" };
+
+    if (!jsonFile.open(QIODevice::WriteOnly))
+    {
+        emit error("Cannot create model config file");
+        return false;
+    }
+
+    jsonFile.write(jsonDocument.toJson(QJsonDocument::Indented));
+
+    return true;
+}
+
+void AIService::saveAIMainConfigFile(QJsonObject& jsonBody)
+{
+    jsonBody["apiKey"] = m_apiKey;
+}
+
 bool AIService::loadAllAIModels(int loadAttempts, QString errorMessage)
 {
+    if (loadAttempts >= 3 && m_AIModelList->isEmpty())
+    {
+        emit error("There was an error loading AI models.");
+        return false;
+    }
+
     QDir configDir(SettingsConstants::FileSettings::DATA_FILE_PATH);
 
     QStringList filters;
@@ -381,6 +438,8 @@ bool AIService::createModelConfigFile(const AIModel* aiModel)
     }
 
     jsonFile.write(jsonDocument.toJson(QJsonDocument::Indented));
+
+    return true;
 }
 
 bool AIService::addModelToList(AIModel modelToAdd)

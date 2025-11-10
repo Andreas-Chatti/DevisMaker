@@ -47,7 +47,6 @@ private slots:
 
     void handleAnalyseInventoryResponse(QNetworkReply* reply);
     void handleCleanNameResponse(QNetworkReply* reply);
-    double calculateAverageVolume(const QVector<double>& results);
 
 private:
 
@@ -67,5 +66,5 @@ private:
     QString m_userInventoryInput{""};
 
     QVector<AIModel> m_aiModelBuffer{};
-    void removeModelFromBuffer(const AIModel& aiModel);
+    void removeModelFromBuffer(const AIModel* aiModel);
 };

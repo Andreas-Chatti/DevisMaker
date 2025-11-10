@@ -1,6 +1,10 @@
 # Fichiers de configuration locaux
 settings.local.json
 ressources/data/ia_config.json
+ressources/data/ai_service_config.json
+ressources/data/analyse_prompt.txt
+ressources/data/cleanList_prompt.txt
+ressources/data/config_model_*.json
 
 # Fichiers de build Visual Studio
 x64/

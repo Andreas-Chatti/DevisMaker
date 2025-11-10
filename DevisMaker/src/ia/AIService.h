@@ -34,6 +34,7 @@ public:
     {
         initializePrompts();
         loadAllAIModels();
+        loadAIMainConfig();
     }
 
     ~AIService() = default;
@@ -47,6 +48,8 @@ public:
     const QString& getAPI_Key() const { return m_apiKey; }
     const QString& getCleanListPrompt() const { return m_cleanListPrompt; }
     const QString& getAnalysePrompt() const { return m_analysePrompt; }
+
+    void setCurrentAIModel(AIModel model) { *m_currentAIModel = std::move(model); } // WIP
 
     bool reloadPrompt(const QString& path, RequestType type);
     bool savePrompt(const QString& promptContent, const QString& path);
@@ -74,6 +77,9 @@ private:
     static QString getAnalyseDefaultPrompt();
     static QString getCleanListDefaultPrompt();
 
+    bool loadAIMainConfig();
+    bool createAIMainConfigFile();
+    void saveAIMainConfigFile(QJsonObject& jsonBody);
     bool loadAllAIModels(int loadAttempts = 0, QString errorMessage = "");
     std::optional<AIModel> loadAIModelConfig(const QString& path);
     void saveModelToConfig(QJsonObject& jsonBody, const AIModel* aiModel);
