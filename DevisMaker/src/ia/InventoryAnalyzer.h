@@ -13,6 +13,7 @@
 #include "ia/AIService.h"
 #include "utils/constants.h"
 #include "inventory/movingObject.h"
+#include "utils/FileManager.h"
 
 class InventoryAnalyzer : public QObject
 {
@@ -48,8 +49,7 @@ private:
 
     QVector<MovingObject> extractReplyInfos(QNetworkReply* reply);
 
-    static constexpr int NETWORK_REQUEST_DELAY{ 1500 };
-    const QString REFERENCE_FILE_NAME{ "/volumes_reference.json" };
+    const QString VOLUME_REFERENCE_FILE_PATH{ FileManager::getDataPath() + "/volumes_reference.json" };
 
     QNetworkAccessManager* m_networkManager{ new QNetworkAccessManager{this} };
     QJsonObject m_volumeReference{};

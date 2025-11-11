@@ -119,6 +119,7 @@
     <ClCompile Include="src\ui\MainWindow.cpp" />
     <ClCompile Include="src\generators\pdfGenerator.cpp" />
     <ClCompile Include="src\streetmap\streetMap.cpp" />
+    <ClCompile Include="src\utils\FileManager.cpp" />
     <ClCompile Include="src\utils\tarification.cpp" />
     <ClCompile Include="src\user\user.cpp" />
     <QtRcc Include="DevisMaker.qrc" />
@@ -144,6 +145,7 @@
     <QtMoc Include="src\ia\InventoryAnalyzer.h" />
     <QtMoc Include="src\streetmap\streetMap.h" />
     <QtMoc Include="src\generators\pdfGenerator.h" />
+    <ClInclude Include="src\utils\FileManager.h" />
     <ClInclude Include="src\utils\resultatDevis.h" />
     <QtMoc Include="src\utils\tarification.h" />
   </ItemGroup>

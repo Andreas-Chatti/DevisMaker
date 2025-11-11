@@ -1,9 +1,42 @@
 ﻿#include "ui/MainWindow.h"
+#include "utils/FileManager.h"
 #include <QApplication>
+
+void customMessageHandler(QtMsgType type, const QMessageLogContext&, const QString& msg)
+{
+    QString level;
+    switch (type)
+    {
+    case QtDebugMsg:    level = "DEBUG"; break;
+    case QtInfoMsg:     level = "INFO"; break;
+    case QtWarningMsg:  level = "WARN"; break;
+    case QtCriticalMsg: level = "ERROR"; break;
+    default: return;
+    }
+
+    QString timestamp{ QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss") };
+    QString logMessage{ QString("%1 [%2] %3\n").arg(timestamp, level, msg) };
+
+    static QString logPath = []() {
+        QString timestampPath{ QDateTime::currentDateTime().toString("yyyy-MM-dd_HH-mm-ss") };
+        return FileManager::getLogsPath() + "/devisMaker_" + timestampPath + ".log";
+    }();
+
+    QFile logFile(logPath);
+    if (logFile.open(QIODevice::WriteOnly | QIODevice::Append))
+    {
+        logFile.write(logMessage.toUtf8());
+        logFile.close();
+    }
+}
 
 int main(int argc, char* argv[])
 {
     QApplication app(argc, argv);
+
+    qInstallMessageHandler(customMessageHandler);
+
+    FileManager::ensureDirectoryStructure();
 
     app.setWindowIcon(QIcon(":/DevisMaker/logo.ico"));
 

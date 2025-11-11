@@ -7,6 +7,7 @@
 #include <QJsonDocument>
 #include <QFileInfo>
 #include "utils/constants.h"
+#include "utils/FileManager.h"
 
 class User : public QObject
 {
@@ -55,7 +56,7 @@ private:
     QString userPhoneNumber{};
     QString userMail{};
 
-    static inline const QString USER_FILE_PATH{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/userConfig.json" };
+    const QString USER_FILE_PATH{ FileManager::getDataPath() + "/userConfig.json"};
 
     void createUserFile();
     bool loadUserFile();

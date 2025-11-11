@@ -4,20 +4,20 @@ void Tarification::loadSettings(PricePreset preset)
 {
     QFileInfo configFileInfos(CONFIG_FILE_PATH);
 
-    QDir dataFile{ SettingsConstants::FileSettings::DATA_FILE_PATH };
+    QDir dataFile{ FileManager::getDataPath() };
     if (!dataFile.exists())
-        QDir().mkpath(SettingsConstants::FileSettings::DATA_FILE_PATH);
-
-    QSettings settings(CONFIG_FILE_PATH, QSettings::IniFormat);
+        FileManager::createDataDirectory();
 
     if (configFileInfos.exists() && configFileInfos.isFile())
     {
+       QSettings settings(CONFIG_FILE_PATH, QSettings::IniFormat);
        loadSettings_5Postes(settings, preset);
        loadSettings_M3(settings, preset, Nature::urbain);
        loadSettings_M3(settings, preset, Nature::special);
     }
 
     else
+    {
         for (const auto& pricePreset : QVector<PricePreset>{ PricePreset::BasseSaison, PricePreset::HauteSaison })
         {
             for (const auto& priceCalculationMethod : QVector<PriceCalculation>{ PriceCalculation::m3, PriceCalculation::postes })
@@ -26,15 +26,14 @@ void Tarification::loadSettings(PricePreset preset)
                 saveSettings(pricePreset, priceCalculationMethod);
             }
         }
+    }
 }
 
 
 void Tarification::saveSettings(PricePreset preset, PriceCalculation priceCalculation) const
 {
     QSettings settings{ CONFIG_FILE_PATH, QSettings::IniFormat };
-
     QString sectionNameSuffix{ preset == PricePreset::BasseSaison ? CONFIG_SECTION_BASSE_SAISON_SUFFIX : CONFIG_SECTION_HAUTE_SAISON_SUFFIX };
-
     switch (priceCalculation)
     {
     case Tarification::PriceCalculation::postes:

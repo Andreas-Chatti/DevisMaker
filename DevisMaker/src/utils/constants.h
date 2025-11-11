@@ -1,5 +1,4 @@
 #pragma once
-#include <QString>
 
 namespace SettingsConstants
 {
@@ -43,10 +42,4 @@ namespace SettingsConstants
     // Facteurs calculés (évite la duplication)
     constexpr double TVA_MULTIPLIER{ 1.0 + TVA_RATE };
     constexpr double EMISSION_CO2_PER_KM{ 0.42 };  // kg CO2/km
-
-    namespace FileSettings
-    {
-        inline const QString TEMPLATE_FILE_PATH{ "ressources/templates" };
-        inline const QString DATA_FILE_PATH{ "ressources/data" };
-    }
 }
