@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <QMainWindow>
 #include <qvalidator.h>
 #include <memory>
@@ -35,6 +35,9 @@ public:
     MainWindow(QWidget* parent = nullptr);
 
     ~MainWindow() = default;
+
+    static constexpr int WINDOW_WIDTH{ 800 };
+    static constexpr int WINDOW_HEIGHT{ 600 };
 
 private slots:
 
