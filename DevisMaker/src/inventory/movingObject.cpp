@@ -1,41 +1,26 @@
 ﻿#include "movingObject.h"
 
-MovingObject::MovingObject()
-    : m_name{"UNDEFINED"}
-    , m_unitaryVolume{0.0}
-    , m_areaKey{ "default" }
-    , m_quantity{0}
-    , m_totalVolume{0.0}
-    , m_disassembly{false}
-    , m_assembly{false}
-    , m_heavy{false}
-    , m_note{"UNDEFINED"}
-{
-}
-
 MovingObject::MovingObject(QString objectName, double unitaryVolume, QString areaKey, int quantity, bool disassembly, bool assembly, bool heavy, QString notes)
-    : m_name{ objectName }
+    : m_name{ std::move(objectName) }
     , m_unitaryVolume{ unitaryVolume }
-    , m_areaKey{ areaKey }
+    , m_areaKey{ std::move(areaKey) }
     , m_quantity{ quantity }
     , m_totalVolume{ m_unitaryVolume * m_quantity }
     , m_disassembly{ disassembly }
     , m_assembly{ assembly }
     , m_heavy{ heavy }
-    , m_note{ notes }
+    , m_note{ std::move(notes) }
+{
+}
+
+MovingObject::MovingObject()
+    : MovingObject("UNDEFINED", 0.0, "default", 0, false, false, false, "UNDEFINED")
 {
 }
 
 MovingObject::MovingObject(const MovingObject& object)
-    : m_name{ object.m_name }
-    , m_unitaryVolume{ object.m_unitaryVolume }
-    , m_areaKey{ object.m_areaKey }
-    , m_quantity{ object.m_quantity }
-    , m_totalVolume{ object.m_unitaryVolume * object.m_quantity }
-    , m_disassembly{ object.m_disassembly }
-    , m_assembly{ object.m_assembly }
-    , m_heavy{ object.m_heavy }
-    , m_note{ object.m_note }
+    : MovingObject(object.m_name, object.m_unitaryVolume, object.m_areaKey, object.m_quantity, object.m_disassembly, object.m_assembly,
+        object.m_heavy, object.m_note)
 {
 }
 
@@ -58,15 +43,8 @@ MovingObject& MovingObject::operator=(const MovingObject& object)
 }
 
 MovingObject::MovingObject(MovingObject&& object) noexcept
-    : m_name{ std::move(object.m_name) }
-    , m_unitaryVolume{ object.m_unitaryVolume }
-    , m_areaKey{ std::move(object.m_areaKey) }
-    , m_quantity{ object.m_quantity }
-    , m_totalVolume{ object.m_unitaryVolume * object.m_quantity }
-    , m_disassembly{ object.m_disassembly }
-    , m_assembly{ object.m_assembly }
-    , m_heavy{ object.m_heavy }
-    , m_note{ std::move(object.m_note) }
+    : MovingObject(std::move(object.m_name), object.m_unitaryVolume, std::move(object.m_areaKey), object.m_quantity, object.m_disassembly, object.m_assembly,
+        object.m_heavy, std::move(object.m_note))
 {
 }
 
@@ -77,7 +55,7 @@ MovingObject& MovingObject::operator=(MovingObject&& object) noexcept
 
     m_name = std::move(object.m_name);
     m_unitaryVolume = object.m_unitaryVolume;
-    m_areaKey = object.m_areaKey;
+    m_areaKey = std::move(object.m_areaKey);
     m_quantity = object.m_quantity;
     m_totalVolume = object.m_unitaryVolume * object.m_quantity;
     m_disassembly = object.m_disassembly;
@@ -116,10 +94,10 @@ int MovingObject::remove()
 
 int MovingObject::remove(int quantity)
 {
-    if (quantity > m_quantity)
+    if (quantity >= m_quantity)
     {
-        m_totalVolume -= m_unitaryVolume * m_quantity;
-        return 0;
+        m_totalVolume = 0;
+        return m_quantity = 0;
     }
 
     m_totalVolume -= m_unitaryVolume * quantity;

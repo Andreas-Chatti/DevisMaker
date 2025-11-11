@@ -237,7 +237,7 @@ QVector<MovingObject> InventoryAnalyzer::extractReplyInfos(QNetworkReply* reply)
                     }
                     emit error("JSON object does not contain 'items' key. Available keys: " + keys.join(", "));
                 }
-                return std::move(objectList);
+                return objectList;
             }
         }
     }
