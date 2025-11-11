@@ -53,7 +53,7 @@ public:
 	}
 
 	AIModel(AIModel&& aiModel) noexcept
-		: AIModel(aiModel.m_modelName, aiModel.m_maxOutputTokens, aiModel.m_temperature, aiModel.m_url, aiModel.parent())
+		: AIModel(std::move(aiModel.m_modelName), aiModel.m_maxOutputTokens, aiModel.m_temperature, std::move(aiModel.m_url), aiModel.parent())
 	{
 	}
 

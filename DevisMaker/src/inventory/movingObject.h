@@ -5,9 +5,8 @@ class MovingObject
 {
 public:
 
-	MovingObject();
-
 	explicit MovingObject(QString objectName, double unitaryVolume, QString areaKey = "divers", int quantity = 1, bool disassembly = false, bool assembly = false, bool heavy = false, QString notes = "");
+	MovingObject();
 	MovingObject(const MovingObject& object);
 	MovingObject& operator=(const MovingObject& object);
 	MovingObject(MovingObject&& object) noexcept;
@@ -56,6 +55,5 @@ private:
 	bool m_assembly;
 	bool m_heavy;
 	QString m_note;
-
 	QString m_areaKey{"divers"};
 };

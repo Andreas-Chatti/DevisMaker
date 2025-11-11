@@ -56,12 +56,12 @@ void InventoryAnalyzer::handleCleanNameResponse(QNetworkReply* reply)
 {
     if (reply->error() != QNetworkReply::NoError)
     {
-        emit analysisError("Erreur API Grok: " + reply->errorString());
+        emit analysisError("API Grok error: " + reply->errorString());
+        reply->deleteLater();
 
         if (tryNextModelOrAbort())
             cleanList(m_rawInventory);
 
-        reply->deleteLater();
         return;
     }
 
@@ -71,6 +71,8 @@ void InventoryAnalyzer::handleCleanNameResponse(QNetworkReply* reply)
 
     if (!response.contains("choices") || !response["choices"].isArray())
     {
+        reply->deleteLater();
+
         if (tryNextModelOrAbort())
             cleanList(m_rawInventory);
 
@@ -81,10 +83,11 @@ void InventoryAnalyzer::handleCleanNameResponse(QNetworkReply* reply)
     QJsonArray choices{ response["choices"].toArray() };
     if (choices.isEmpty())
     {
+        reply->deleteLater();
+
         if (tryNextModelOrAbort())
             cleanList(m_rawInventory);
 
-        reply->deleteLater();
         return;
     }
 
@@ -165,7 +168,6 @@ QVector<MovingObject> InventoryAnalyzer::extractReplyInfos(QNetworkReply* reply)
     QJsonDocument doc{ QJsonDocument::fromJson(data) };
     QJsonObject response{ doc.object() };
 
-    // Extraire la réponse de Grok
     if (!response.contains("choices") || !response["choices"].isArray())
         return QVector<MovingObject>{};
 

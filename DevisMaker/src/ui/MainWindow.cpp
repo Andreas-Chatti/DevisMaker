@@ -23,7 +23,6 @@ MainWindow::MainWindow(QWidget* parent)
     setupDateEdit();
     setupDevisTable();
 
-    // Initialiser le badge de saison en fonction de la date actuelle
     updateSeasonTypeLabel(QDate::currentDate());
 }
 
@@ -169,7 +168,7 @@ void MainWindow::on_distanceLineEdit_textChanged(const QString& text)
 
 bool MainWindow::areAllFieldCompleted()
 {
-    std::vector<QLineEdit*> champs{
+    std::vector<QLineEdit*> fields{
   ui.distanceLineEdit,
   ui.volumelineEdit,
   ui.valeurAssuranceLineEdit,
@@ -182,8 +181,8 @@ bool MainWindow::areAllFieldCompleted()
   ui.fraisStatLineEdit,
     };
 
-    for (const auto& e : champs)
-        if (e->text().isEmpty())
+    for (const auto& field : fields)
+        if (field->text().isEmpty())
             return false;
 
     return true;

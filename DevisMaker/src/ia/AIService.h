@@ -66,7 +66,6 @@ private:
     QString m_analysePrompt;
     QString m_cleanListPrompt;
     QString m_apiKey{""};
-    static constexpr int MAX_FALLBACK_ATTEMPTS{ 3 };
     static inline const QString ANALYSE_PROMPT_FILE_PATH{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/analyse_prompt.txt" };
     static inline const QString CLEAN_LIST_PROMPT_FILE_PATH{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/cleanList_prompt.txt" };
     static inline const QString IA_MODEL_CONFIG_FILE_PATH{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/config_model_" };
