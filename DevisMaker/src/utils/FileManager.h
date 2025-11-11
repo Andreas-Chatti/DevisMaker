@@ -19,6 +19,7 @@ public:
     static bool createTemplatesDirectory();
     static bool createPromptsDirectory();
     static bool createModelsDirectory();
+    static bool createLogsDirectory();
 
     // Convenience method to create all directories at once
     static bool createAllDirectories();
@@ -32,6 +33,7 @@ public:
     static QString getTemplatesPath();
     static QString getPromptsPath();
     static QString getModelsPath();
+    static QString getLogsPath();
 
     // File/Directory existence checks
     static bool fileExists(const QString& filePath);
@@ -39,11 +41,12 @@ public:
 
 private:
 
-    static constexpr const char* RESSOURCES_DIR = "ressources";
-    static constexpr const char* DATA_DIR = "data";
-    static constexpr const char* TEMPLATES_DIR = "templates";
-    static constexpr const char* PROMPTS_DIR = "prompts";
-    static constexpr const char* MODELS_DIR = "models";
+    static constexpr const char* RESSOURCES_DIR{ "ressources" };
+    static constexpr const char* DATA_DIR{ "data" };
+    static constexpr const char* TEMPLATES_DIR{ "templates" };
+    static constexpr const char* PROMPTS_DIR{ "prompts" };
+    static constexpr const char* MODELS_DIR{ "models" };
+    static constexpr const char* LOGS_DIR{ "logs" };
 
     static bool createDirectory(const QString& path);
 };

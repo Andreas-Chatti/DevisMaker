@@ -38,6 +38,11 @@ bool FileManager::createModelsDirectory()
     return createDirectory(getModelsPath());
 }
 
+bool FileManager::createLogsDirectory()
+{
+    return createDirectory(getLogsPath());
+}
+
 bool FileManager::createAllDirectories()
 {
     bool success{ true };
@@ -55,10 +60,11 @@ bool FileManager::ensureDirectoryStructure()
 {
     bool success{ true };
 
+    if (!directoryExists(getLogsPath()))
+        success &= createLogsDirectory();
+
     if (!directoryExists(getRessourcesPath()))
-    {
         return createAllDirectories();
-    }
 
     if (!directoryExists(getDataPath()))
     {
@@ -104,6 +110,11 @@ QString FileManager::getPromptsPath()
 QString FileManager::getModelsPath()
 {
     return getDataPath() + "/" + MODELS_DIR;
+}
+
+QString FileManager::getLogsPath()
+{
+    return QCoreApplication::applicationDirPath() + "/" + LOGS_DIR;
 }
 
 bool FileManager::fileExists(const QString& filePath)

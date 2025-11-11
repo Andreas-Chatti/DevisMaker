@@ -5,7 +5,7 @@
 void customMessageHandler(QtMsgType type, const QMessageLogContext&, const QString& msg)
 {
     QString level;
-    switch (type) 
+    switch (type)
     {
     case QtDebugMsg:    level = "DEBUG"; break;
     case QtInfoMsg:     level = "INFO"; break;
@@ -17,10 +17,17 @@ void customMessageHandler(QtMsgType type, const QMessageLogContext&, const QStri
     QString timestamp{ QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss") };
     QString logMessage{ QString("%1 [%2] %3\n").arg(timestamp, level, msg) };
 
-    QString logPath{ QCoreApplication::applicationDirPath() + "/app.log" };
+    static QString logPath = []() {
+        QString timestampPath{ QDateTime::currentDateTime().toString("yyyy-MM-dd_HH-mm-ss") };
+        return FileManager::getLogsPath() + "/devisMaker_" + timestampPath + ".log";
+    }();
+
     QFile logFile(logPath);
-    logFile.open(QIODevice::WriteOnly | QIODevice::Append);
-    logFile.write(logMessage.toUtf8());
+    if (logFile.open(QIODevice::WriteOnly | QIODevice::Append))
+    {
+        logFile.write(logMessage.toUtf8());
+        logFile.close();
+    }
 }
 
 int main(int argc, char* argv[])
