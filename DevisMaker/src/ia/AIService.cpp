@@ -49,13 +49,13 @@ QString AIService::loadPrompt(const QString& path, RequestType requestType)
 
     if (!promptFile.open(QIODevice::ReadOnly | QIODevice::Text)) 
     {
-        QTimer::singleShot(500, this, [this]() { emit error("Can't open prompt file.\n Loading default prompt.");});
+        emit error("Can't open prompt file.\n Loading default prompt.");
         return requestType == RequestType::CleanName ? getCleanListDefaultPrompt() : getAnalyseDefaultPrompt();
     }
 
     QTextStream in(&promptFile);
     in.setEncoding(QStringConverter::Utf8);
-    QString prompt = in.readAll();
+    QString prompt{ in.readAll() };
     promptFile.close();
 
     return prompt;
@@ -67,7 +67,7 @@ bool AIService::savePrompt(const QString& promptContent, const QString& path)
 
     if (!promptFile.open(QIODevice::WriteOnly | QIODevice::Text)) 
     {
-        QTimer::singleShot(500, this, [this]() { emit error("Couldn't create prompt_template.txt !");});
+        emit error("Couldn't create prompt_template.txt !");
         return false;
     }
 
@@ -302,8 +302,7 @@ QNetworkRequest AIService::buildRequest(const QString& inventoryText, RequestTyp
 
 bool AIService::loadAIMainConfig()
 {
-    QFile configFile{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/ai_service_config.json"};
-
+    QFile configFile{ FileManager::getDataPath() + "/ai_service_config.json"};
     if (!configFile.exists() || !configFile.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         if (!createAIMainConfigFile())
@@ -335,8 +334,7 @@ bool AIService::createAIMainConfigFile()
 
     QJsonDocument jsonDocument{ jsonBody };
 
-    QFile jsonFile{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/ai_service_config.json" };
-
+    QFile jsonFile{ GLOBAL_AI_CONFIG_FILE_PATH };
     if (!jsonFile.open(QIODevice::WriteOnly))
     {
         emit error("Cannot create model config file");
@@ -361,7 +359,7 @@ bool AIService::loadAllAIModels(int loadAttempts, QString errorMessage)
         return false;
     }
 
-    QDir configDir(SettingsConstants::FileSettings::DATA_FILE_PATH);
+    QDir configDir{ FileManager::getModelsPath() };
 
     QStringList filters;
     filters << "config_model_*.json";

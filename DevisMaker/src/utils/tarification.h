@@ -8,6 +8,7 @@
 #include <QMetaEnum>
 #include "utils/common.h"
 #include "utils/constants.h"
+#include "utils/FileManager.h"
 
 namespace Postes_DefaultPrices
 {
@@ -191,7 +192,7 @@ private:
     double m_prixM3_standard{ M3_DefaultPrices::Urbain::BasseSaison::STANDARD };
     double m_prixM3_luxe{ M3_DefaultPrices::Urbain::BasseSaison::LUXE };
 
-    const QString CONFIG_FILE_PATH{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/PricePresets_config.ini" };
+    const QString CONFIG_FILE_PATH{ FileManager::getDataPath() + "/PricePresets_config.ini"};
     const QString CONFIG_SECTION_M3_PREFIX{ "m3" };
     const QString CONFIG_SECTION_POSTES_PREFIX{ "POSTES" };
     const QString CONFIG_SECTION_BASSE_SAISON_SUFFIX{ "Basse_Saison" };

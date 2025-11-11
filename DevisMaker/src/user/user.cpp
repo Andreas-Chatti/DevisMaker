@@ -72,10 +72,9 @@ bool User::saveUserFile()
 void User::createUserFile()
 {
     QFileInfo fileInfo(USER_FILE_PATH);
-    QDir parentDir{ SettingsConstants::FileSettings::DATA_FILE_PATH };
-
-    if (!parentDir.exists())
-        parentDir.mkpath(".");
+    QDir dataDir{ FileManager::getDataPath() };
+    if (!dataDir.exists())
+        FileManager::createDataDirectory();
 
     QFile userFile{ USER_FILE_PATH };
 

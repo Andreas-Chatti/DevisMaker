@@ -10,7 +10,7 @@ InventoryAnalyzer::InventoryAnalyzer(QObject* parent)
 
 void InventoryAnalyzer::loadVolumeReference()
 {
-    QFile file(SettingsConstants::FileSettings::DATA_FILE_PATH + REFERENCE_FILE_NAME);
+    QFile file(VOLUME_REFERENCE_FILE_PATH);
     if (!file.open(QIODevice::ReadOnly))
     {
         emit error("Error loading volume reference file.");

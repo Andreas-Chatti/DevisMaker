@@ -209,10 +209,10 @@ QString PDFGenerator::load_HTML_Template(const TypeDevis& typeDevis)
 
     QFile templateFile{ HTML_TEMPLATE_LOCATION };
     QFileInfo templateFileInfos{ templateFile };
-    QDir templateDir{ templateFileInfos.absoluteDir() };
+    QDir templateDir{ FileManager::getTemplatesPath() };
 
     if (!templateDir.exists())
-        createTemplateDir();
+        FileManager::createTemplatesDirectory();
 
     if (!templateFile.exists())
         createTemplateFile(typeDevis);
@@ -235,10 +235,10 @@ QString PDFGenerator::loadInventoryTemplate()
 {
     QFile templateFile{ HTML_TEMPLATE_LOCATION_INVENTORY };
     QFileInfo templateFileInfos{ templateFile };
-    QDir templateDir{ templateFileInfos.absoluteDir() };
+    QDir templateDir{ FileManager::getTemplatesPath() };
 
     if (!templateDir.exists())
-        createTemplateDir();
+        FileManager::createTemplatesDirectory();
 
     if (!templateFile.exists())
         createInventoryTemplateFile();
@@ -313,24 +313,6 @@ bool PDFGenerator::createTemplateFile(const TypeDevis& typeDevis)
     }
 
     qDebug() << "Creation du fichier devis_template.html avec succes !";
-    return true;
-}
-
-
-bool PDFGenerator::createTemplateDir()
-{
-    qDebug() << "Creation du dossier 'templates' ...";
-
-    QDir templateDir{ SettingsConstants::FileSettings::TEMPLATE_FILE_PATH };
-
-    if (!templateDir.mkpath("."))
-    {
-        emit pdfGenerationStatusReport(PdfGenerationState::errorCreatingTemplateDir);
-        qDebug() << "Impossible de creer le dossier templates";
-        return false;
-    }
-
-    qDebug() << "Dossier templates creer avec succes !";
     return true;
 }
 

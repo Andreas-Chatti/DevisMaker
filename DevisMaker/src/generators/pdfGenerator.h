@@ -14,6 +14,7 @@
 #include "utils/resultatDevis.h"
 #include "models/Client.h"
 #include "utils/constants.h"
+#include "utils/FileManager.h"
 #include "user/user.h"
 
 class PDFGenerator : public QObject
@@ -73,11 +74,10 @@ private:
     QString generateInventoryRow(const Inventory* const inventory) const;
     bool createTemplateFile(const TypeDevis& typeDevis);
     bool createInventoryTemplateFile();
-    bool createTemplateDir();
 
-    const QString HTML_TEMPLATE_LOCATION_M3{ SettingsConstants::FileSettings::TEMPLATE_FILE_PATH + "/devis_template_m3.html" };
-    const QString HTML_TEMPLATE_LOCATION_POSTES{ SettingsConstants::FileSettings::TEMPLATE_FILE_PATH + "/devis_template_postes.html" };
-    const QString HTML_TEMPLATE_LOCATION_INVENTORY{ SettingsConstants::FileSettings::TEMPLATE_FILE_PATH + "/inventory_template.html" };
+    const QString HTML_TEMPLATE_LOCATION_M3{ FileManager::getTemplatesPath() + "/devis_template_m3.html"};
+    const QString HTML_TEMPLATE_LOCATION_POSTES{ FileManager::getTemplatesPath() + "/devis_template_postes.html" };
+    const QString HTML_TEMPLATE_LOCATION_INVENTORY{ FileManager::getTemplatesPath() + "/inventory_template.html" };
     QString m_htmlTemplate_m3{""};
     QString m_htmlTemplate_Postes{""};
     QString m_htmlTemplate_Inventory{""};

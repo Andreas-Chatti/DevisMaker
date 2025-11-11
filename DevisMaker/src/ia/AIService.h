@@ -12,6 +12,7 @@
 #include <qtimer.h>
 #include <QDir>
 #include "utils/constants.h"
+#include "utils/FileManager.h"
 #include "AIModel.h"
 
 using AIModelList = std::unique_ptr <QVector<AIModel>>;
@@ -66,10 +67,10 @@ private:
     QString m_analysePrompt;
     QString m_cleanListPrompt;
     QString m_apiKey{""};
-    static inline const QString ANALYSE_PROMPT_FILE_PATH{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/analyse_prompt.txt" };
-    static inline const QString CLEAN_LIST_PROMPT_FILE_PATH{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/cleanList_prompt.txt" };
-    static inline const QString IA_MODEL_CONFIG_FILE_PATH{ SettingsConstants::FileSettings::DATA_FILE_PATH + "/config_model_" };
-
+    const QString ANALYSE_PROMPT_FILE_PATH{ FileManager::getPromptsPath() + "/analyse_prompt.txt"};
+    const QString CLEAN_LIST_PROMPT_FILE_PATH{ FileManager::getPromptsPath() + "/cleanList_prompt.txt"};
+    const QString IA_MODEL_CONFIG_FILE_PATH{ FileManager::getModelsPath() + "/config_model_"};
+    const QString GLOBAL_AI_CONFIG_FILE_PATH{ FileManager::getDataPath() + "/ai_service_config.json" };
 
     void initializePrompts();
     QString loadPrompt(const QString& path, RequestType requestType);
