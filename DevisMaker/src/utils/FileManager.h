@@ -1,6 +1,7 @@
 #pragma once
 #include <QString>
 #include <QDir>
+#include <QCoreApplication>
 
 class FileManager
 {
@@ -21,6 +22,9 @@ public:
 
     // Convenience method to create all directories at once
     static bool createAllDirectories();
+
+    // Ensure directory structure exists (call at program startup)
+    static bool ensureDirectoryStructure();
 
     // Path getters
     static QString getRessourcesPath();

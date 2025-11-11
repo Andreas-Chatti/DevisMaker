@@ -1,5 +1,5 @@
 #include "FileManager.h"
-#include <QCoreApplication>
+
 
 bool FileManager::createRessourcesDirectory()
 {
@@ -47,6 +47,36 @@ bool FileManager::createAllDirectories()
     success &= createTemplatesDirectory();
     success &= createPromptsDirectory();
     success &= createModelsDirectory();
+
+    return success;
+}
+
+bool FileManager::ensureDirectoryStructure()
+{
+    bool success{ true };
+
+    if (!directoryExists(getRessourcesPath()))
+    {
+        return createAllDirectories();
+    }
+
+    if (!directoryExists(getDataPath()))
+    {
+        success &= createDataDirectory();
+        success &= createPromptsDirectory();
+        success &= createModelsDirectory();
+    }
+    else
+    {
+        if (!directoryExists(getPromptsPath()))
+            success &= createPromptsDirectory();
+
+        if (!directoryExists(getModelsPath()))
+            success &= createModelsDirectory();
+    }
+
+    if (!directoryExists(getTemplatesPath()))
+        success &= createTemplatesDirectory();
 
     return success;
 }

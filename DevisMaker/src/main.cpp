@@ -1,9 +1,12 @@
 ﻿#include "ui/MainWindow.h"
+#include "utils/FileManager.h"
 #include <QApplication>
 
 int main(int argc, char* argv[])
 {
     QApplication app(argc, argv);
+
+    FileManager::ensureDirectoryStructure();
 
     app.setWindowIcon(QIcon(":/DevisMaker/logo.ico"));
 
