@@ -232,7 +232,7 @@ bool AIService::reloadPrompt(const QString& path, RequestType type)
 
     if (!promptFile.exists()) 
     {
-        QTimer::singleShot(500, this, [this]() { emit error("Couldn't reload prompt.\n Cannot find prompt file's path !");});
+        emit error("Couldn't reload prompt.\n Cannot find prompt file's path !");
         return false;
     }
 
