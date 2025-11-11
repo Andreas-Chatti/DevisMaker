@@ -13,7 +13,10 @@ void InventoryAnalyzer::loadVolumeReference()
     QFile file(SettingsConstants::FileSettings::DATA_FILE_PATH + REFERENCE_FILE_NAME);
 
     if (!file.open(QIODevice::ReadOnly))
+    {
+        emit error("Error loading volume reference file.");
         return;
+    }
 
     QByteArray data = file.readAll();
     QJsonDocument doc = QJsonDocument::fromJson(data);
@@ -166,82 +169,47 @@ QVector<MovingObject> InventoryAnalyzer::extractReplyInfos(QNetworkReply* reply)
     QJsonObject response{ doc.object() };
 
     // Extraire la réponse de Grok
-    if (response.contains("choices") && response["choices"].isArray())
+    if (!response.contains("choices") || !response["choices"].isArray())
+        return QVector<MovingObject>{};
+
+    QJsonArray choices{ response["choices"].toArray() };
+
+    if (choices.isEmpty())
+        return QVector<MovingObject>{};
+
+    QJsonObject firstChoice{ choices[0].toObject() };
+    QString responseText{ firstChoice["message"].toObject()["content"].toString() };
+
+    std::optional<QString> jsonText{ textToJsonFormat(std::move(responseText)) };
+    if(!jsonText)
+        return QVector<MovingObject>{};
+
+    QJsonParseError parseError{};
+    QJsonDocument itemsDoc{ QJsonDocument::fromJson(jsonText.value().toUtf8(), &parseError) };
+    if (parseError.error != QJsonParseError::NoError)
     {
-        QJsonArray choices{ response["choices"].toArray() };
-
-        if (!choices.isEmpty())
-        {
-            QJsonObject firstChoice{ choices[0].toObject() };
-            QString responseText{ firstChoice["message"].toObject()["content"].toString() };
-
-            int jsonStart{ static_cast<int>(responseText.indexOf("{")) };
-            int jsonEnd{ static_cast<int>(responseText.lastIndexOf("}") + 1) };
-
-            if (jsonStart >= 0 && jsonEnd > jsonStart)
-            {
-                QString jsonText{ responseText.mid(jsonStart, jsonEnd - jsonStart) };
-
-                // Parser le JSON avec vérification d'erreur
-                QJsonParseError parseError{};
-                QJsonDocument itemsDoc{ QJsonDocument::fromJson(jsonText.toUtf8(), &parseError) };
-
-                // Vérifier si le parsing a réussi
-                if (parseError.error != QJsonParseError::NoError)
-                {
-                    emit error("JSON parsing error: " + parseError.errorString() + " at offset " + QString::number(parseError.offset));
-                    return QVector<MovingObject>{};
-                }
-
-                // Vérifier si le document est valide
-                if (itemsDoc.isNull() || itemsDoc.isEmpty())
-                {
-                    emit error("JSON document is null or empty");
-                    return QVector<MovingObject>{};
-                }
-
-                QJsonObject itemsObj{ itemsDoc.object() };
-                QVector<MovingObject> objectList{};
-
-                if (itemsObj.contains("items"))
-                {
-                    QJsonArray items{ itemsObj["items"].toArray() };
-                    for (const QJsonValue& item : items)
-                    {
-                        QJsonObject itemObj{ item.toObject() };
-                        QString name{ itemObj["name"].toString() };
-                        if (name.contains('_'))
-                            name.replace('_', ' ');
-                        int quantity{ itemObj["quantity"].toInt() };
-                        double unitaryVolume{ itemObj["unitaryVolume"].toDouble() };
-                        bool disassembly{ itemObj["disassembly"].toBool() };
-                        bool assembly{ itemObj["assembly"].toBool() };
-                        bool heavy{ itemObj["heavy"].toBool() };
-                        QString areaKey{ itemObj["areaKey"].toString() };
-                        if (areaKey.contains('_'))
-                            areaKey.replace('_', ' ');
-
-                        MovingObject movingObject{ std::move(name), unitaryVolume, std::move(areaKey), quantity, disassembly,
-                            assembly, heavy };
-
-                        objectList.emplace_back(std::move(movingObject));
-                    }
-                }
-                else
-                {
-                    // Déboguer : afficher les clés présentes dans l'objet JSON
-                    QStringList keys{};
-                    for (const QString& key : itemsObj.keys())
-                    {
-                        keys.append(key);
-                    }
-                    emit error("JSON object does not contain 'items' key. Available keys: " + keys.join(", "));
-                }
-                return objectList;
-            }
-        }
+        emit error("JSON parsing error: " + parseError.errorString() + " at offset " + QString::number(parseError.offset));
+        return QVector<MovingObject>{};
     }
-    return QVector<MovingObject>{};
+    else if (itemsDoc.isNull() || itemsDoc.isEmpty())
+    {
+        emit error("JSON document is null or empty");
+        return QVector<MovingObject>{};
+    }
+
+    QJsonObject itemsObj{ itemsDoc.object() };
+    if (!itemsObj.contains("items"))
+    {
+        QStringList keys{};
+        for (const QString& key : itemsObj.keys())
+            keys.append(key);
+
+        emit error("JSON object does not contain 'items' key. Available keys: " + keys.join(", "));
+        return QVector<MovingObject>{};
+    }
+
+    QJsonArray items{ itemsObj["items"].toArray() };
+    return getObjectListFromReply(items);
 }
 
 bool InventoryAnalyzer::tryNextModelOrAbort()
@@ -253,4 +221,49 @@ bool InventoryAnalyzer::tryNextModelOrAbort()
         return false;
     }
     return true;
+}
+
+bool InventoryAnalyzer::isJSONFormatValid(const QString& jsonText)
+{
+    int jsonStart{ static_cast<int>(jsonText.indexOf("{")) };
+    int jsonEnd{ static_cast<int>(jsonText.lastIndexOf("}") + 1) };
+
+    return jsonStart >= 0 && jsonEnd > jsonStart;
+}
+
+std::optional<QString> InventoryAnalyzer::textToJsonFormat(QString text)
+{
+    if (!isJSONFormatValid(text))
+        return std::nullopt;
+
+    int jsonStart{ static_cast<int>(text.indexOf("{")) };
+    int jsonEnd{ static_cast<int>(text.lastIndexOf("}") + 1) };
+
+    return QString{ text.mid(jsonStart, jsonEnd - jsonStart) };
+}
+
+QVector<MovingObject> InventoryAnalyzer::getObjectListFromReply(QJsonArray items)
+{
+    QVector<MovingObject> objectList{};
+    for (const QJsonValue& item : items)
+    {
+        QJsonObject itemObj{ item.toObject() };
+        QString name{ itemObj["name"].toString() };
+        if (name.contains('_'))
+            name.replace('_', ' ');
+        int quantity{ itemObj["quantity"].toInt() };
+        double unitaryVolume{ itemObj["unitaryVolume"].toDouble() };
+        bool disassembly{ itemObj["disassembly"].toBool() };
+        bool assembly{ itemObj["assembly"].toBool() };
+        bool heavy{ itemObj["heavy"].toBool() };
+        QString areaKey{ itemObj["areaKey"].toString() };
+        if (areaKey.contains('_'))
+            areaKey.replace('_', ' ');
+
+        MovingObject movingObject{ std::move(name), unitaryVolume, std::move(areaKey), quantity, disassembly,
+            assembly, heavy };
+
+        objectList.emplace_back(std::move(movingObject));
+    }
+    return objectList;
 }

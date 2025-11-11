@@ -26,12 +26,6 @@ public:
         QByteArray jsonData;
     };
 
-    struct ReplyInfos
-    {
-        double volume;
-        QStringList structuredItems;
-    };
-
     InventoryAnalyzer(QObject* parent = nullptr);
 
     void cleanList(QString text);
@@ -52,6 +46,9 @@ private:
 
     void loadVolumeReference();
     bool tryNextModelOrAbort();
+    bool isJSONFormatValid(const QString& jsonText);
+    std::optional<QString> textToJsonFormat(QString text);
+    QVector<MovingObject> getObjectListFromReply(QJsonArray items);
 
     Request createRequest(const QString& inventoryText);
 
