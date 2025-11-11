@@ -11,15 +11,14 @@ InventoryAnalyzer::InventoryAnalyzer(QObject* parent)
 void InventoryAnalyzer::loadVolumeReference()
 {
     QFile file(SettingsConstants::FileSettings::DATA_FILE_PATH + REFERENCE_FILE_NAME);
-
     if (!file.open(QIODevice::ReadOnly))
     {
         emit error("Error loading volume reference file.");
         return;
     }
 
-    QByteArray data = file.readAll();
-    QJsonDocument doc = QJsonDocument::fromJson(data);
+    QByteArray data{ file.readAll() };
+    QJsonDocument doc{ QJsonDocument::fromJson(data) };
     m_volumeReference = doc.object();
     file.close();
 }
@@ -47,7 +46,6 @@ void InventoryAnalyzer::cleanList(QString rawInventory)
     }
 
     QByteArray jsonData{ request.attribute(QNetworkRequest::User).toByteArray() };
-
     request.setAttribute(QNetworkRequest::User, QVariant());
 
     QNetworkReply* reply{ m_networkManager->post(request, jsonData) };
@@ -59,37 +57,41 @@ void InventoryAnalyzer::handleCleanNameResponse(QNetworkReply* reply)
     if (reply->error() != QNetworkReply::NoError)
     {
         emit analysisError("Erreur API Grok: " + reply->errorString());
-        reply->deleteLater();
 
         if (tryNextModelOrAbort())
             cleanList(m_rawInventory);
 
+        reply->deleteLater();
         return;
     }
 
     QByteArray data{ reply->readAll() };
-
     QJsonDocument doc{ QJsonDocument::fromJson(data) };
     QJsonObject response{ doc.object() };
 
-    if (response.contains("choices") && response["choices"].isArray())
+    if (!response.contains("choices") || !response["choices"].isArray())
     {
-        QJsonArray choices{ response["choices"].toArray() };
+        if (tryNextModelOrAbort())
+            cleanList(m_rawInventory);
 
-        if (choices.isEmpty())
-        {
-            if (tryNextModelOrAbort())
-                cleanList(m_rawInventory);
-
-            reply->deleteLater();
-            return;
-        }
-
-        QJsonObject firstChoice{ choices[0].toObject() };
-        QString cleanInventoryList{ firstChoice["message"].toObject()["content"].toString() };
-        m_aiService->resetModelIndex();
-        analyzeInventory(cleanInventoryList);
+        reply->deleteLater();
+        return;
     }
+
+    QJsonArray choices{ response["choices"].toArray() };
+    if (choices.isEmpty())
+    {
+        if (tryNextModelOrAbort())
+            cleanList(m_rawInventory);
+
+        reply->deleteLater();
+        return;
+    }
+
+    QJsonObject firstChoice{ choices[0].toObject() };
+    QString cleanInventoryList{ firstChoice["message"].toObject()["content"].toString() };
+    m_aiService->resetModelIndex();
+    analyzeInventory(cleanInventoryList);
 
     reply->deleteLater();
 }
@@ -99,24 +101,20 @@ void InventoryAnalyzer::analyzeInventory(const QString& cleanInventory)
     if (m_cleanInventory != cleanInventory)
         m_cleanInventory = cleanInventory;
 
-    m_request = createRequest(cleanInventory);
-
-    QNetworkReply* reply{ m_networkManager->post(m_request.request, m_request.jsonData) };
+    auto [networkRequest, jsonData]{ createRequest(cleanInventory) };
+    QNetworkReply* reply{ m_networkManager->post(networkRequest, jsonData) };
     connect(reply, &QNetworkReply::finished, this, [this, reply]() { handleAnalyseInventoryResponse(reply); });
 }
 
 
-InventoryAnalyzer::Request InventoryAnalyzer::createRequest(const QString& inventoryText)
+std::pair<QNetworkRequest, QByteArray> InventoryAnalyzer::createRequest(const QString& inventoryText)
 {
-    // Convertir la référence JSON en string
     QJsonDocument refDoc(m_volumeReference);
-    QString jsonReference = refDoc.toJson(QJsonDocument::Compact);
+    QString jsonReference{ refDoc.toJson(QJsonDocument::Compact) };
 
-    // Utiliser la classe IA pour construire la requête
     QNetworkRequest request{ m_aiService->buildRequest(inventoryText, AIService::RequestType::AnalyseInventory, &jsonReference) };
     QByteArray jsonData{ request.attribute(QNetworkRequest::User).toByteArray() };
 
-    // Supprimer l'attribut temporaire
     request.setAttribute(QNetworkRequest::User, QVariant());
  
     return { request, jsonData };
@@ -157,7 +155,6 @@ void InventoryAnalyzer::handleAnalyseInventoryResponse(QNetworkReply* reply)
        m_aiService->resetModelIndex();
        emit analysisComplete(listTotalVolume, objectList);
    }
-
     reply->deleteLater();
 }
 
@@ -239,7 +236,7 @@ std::optional<QString> InventoryAnalyzer::textToJsonFormat(QString text)
     int jsonStart{ static_cast<int>(text.indexOf("{")) };
     int jsonEnd{ static_cast<int>(text.lastIndexOf("}") + 1) };
 
-    return QString{ text.mid(jsonStart, jsonEnd - jsonStart) };
+    return std::make_optional<QString>( text.mid(jsonStart, jsonEnd - jsonStart) );
 }
 
 QVector<MovingObject> InventoryAnalyzer::getObjectListFromReply(QJsonArray items)

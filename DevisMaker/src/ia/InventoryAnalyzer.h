@@ -20,12 +20,6 @@ class InventoryAnalyzer : public QObject
 
 public:
 
-    struct Request
-    {
-        QNetworkRequest request;
-        QByteArray jsonData;
-    };
-
     InventoryAnalyzer(QObject* parent = nullptr);
 
     void cleanList(QString text);
@@ -50,7 +44,7 @@ private:
     std::optional<QString> textToJsonFormat(QString text);
     QVector<MovingObject> getObjectListFromReply(QJsonArray items);
 
-    Request createRequest(const QString& inventoryText);
+    std::pair<QNetworkRequest, QByteArray> createRequest(const QString& inventoryText);
 
     QVector<MovingObject> extractReplyInfos(QNetworkReply* reply);
 
@@ -60,7 +54,6 @@ private:
     QNetworkAccessManager* m_networkManager{ new QNetworkAccessManager{this} };
     QJsonObject m_volumeReference{};
     AIService* m_aiService{ new AIService{this} };
-    Request m_request{};
     QString m_cleanInventory{""};
     QString m_rawInventory{ "" };
 };
