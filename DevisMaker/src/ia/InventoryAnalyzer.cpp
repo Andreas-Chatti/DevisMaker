@@ -58,13 +58,7 @@ void InventoryAnalyzer::handleCleanNameResponse(QNetworkReply* reply)
         emit analysisError("Erreur API Grok: " + reply->errorString());
         reply->deleteLater();
 
-        if (m_aiService->advanceToNextModel() >= m_aiService->getAIModelList()->size())
-        {
-            emit error("All ai models resulted in errors. Analyse aborted.");
-            m_aiService->resetModelIndex();
-        }
-
-        else
+        if (tryNextModelOrAbort())
             cleanList(m_rawInventory);
 
         return;
@@ -81,13 +75,7 @@ void InventoryAnalyzer::handleCleanNameResponse(QNetworkReply* reply)
 
         if (choices.isEmpty())
         {
-            if (m_aiService->advanceToNextModel() >= m_aiService->getAIModelList()->size())
-            {
-                emit error("All ai models resulted in errors. Analyse aborted.");
-                m_aiService->resetModelIndex();
-            }
-
-            else
+            if (tryNextModelOrAbort())
                 cleanList(m_rawInventory);
 
             reply->deleteLater();
@@ -139,13 +127,7 @@ void InventoryAnalyzer::handleAnalyseInventoryResponse(QNetworkReply* reply)
        emit analysisError("API Grok error: " + reply->errorString());
        reply->deleteLater();
 
-       if (m_aiService->advanceToNextModel() >= m_aiService->getAIModelList()->size())
-       {
-           emit error("All ai models resulted in errors. Analyse aborted.");
-           m_aiService->resetModelIndex();
-       }
-
-       else
+       if (tryNextModelOrAbort())
            analyzeInventory(m_cleanInventory);
 
        return;
@@ -157,13 +139,7 @@ void InventoryAnalyzer::handleAnalyseInventoryResponse(QNetworkReply* reply)
        emit analysisError("Error: AI has returned an empty list !");
        reply->deleteLater();
 
-       if (m_aiService->advanceToNextModel() >= m_aiService->getAIModelList()->size())
-       {
-           emit error("All ai models resulted in errors. Analyse aborted.");
-           m_aiService->resetModelIndex();
-       }
-
-       else
+       if (tryNextModelOrAbort())
            analyzeInventory(m_cleanInventory);
 
        return;
@@ -266,4 +242,15 @@ QVector<MovingObject> InventoryAnalyzer::extractReplyInfos(QNetworkReply* reply)
         }
     }
     return QVector<MovingObject>{};
+}
+
+bool InventoryAnalyzer::tryNextModelOrAbort()
+{
+    if (m_aiService->advanceToNextModel() >= m_aiService->getAIModelList()->size())
+    {
+        emit error("All AI models failed. Analysis aborted.");
+        m_aiService->resetModelIndex();
+        return false;
+    }
+    return true;
 }

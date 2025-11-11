@@ -51,6 +51,7 @@ private slots:
 private:
 
     void loadVolumeReference();
+    bool tryNextModelOrAbort();
 
     Request createRequest(const QString& inventoryText);
 

@@ -258,6 +258,9 @@ bool AIService::reloadPrompt(const QString& path, RequestType type)
 
 QNetworkRequest AIService::buildRequest(const QString& inventoryText, RequestType requestType, const QString* jsonReference)
 {
+    if (m_AIModelList->isEmpty() || m_currentAiModelIndex >= m_AIModelList->size())
+        throw std::out_of_range("No valid AI model available at current index");
+
     const AIModel* aiModel{ &(*m_AIModelList)[m_currentAiModelIndex] };
     if(!aiModel)
         throw std::invalid_argument("aiModel is null. Analyse aborted.");

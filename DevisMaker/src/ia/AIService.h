@@ -52,7 +52,7 @@ public:
     bool savePrompt(const QString& promptContent, const QString& path);
     QNetworkRequest buildRequest(const QString& inventoryText, RequestType requestType, const QString* jsonReference = nullptr);
 
-    qsizetype advanceToNextModel() { return ++m_currentAiModelIndex; }
+    qsizetype advanceToNextModel() { return m_currentAiModelIndex >= m_AIModelList->size() ? m_currentAiModelIndex : ++m_currentAiModelIndex; }
     qsizetype resetModelIndex() { return m_currentAiModelIndex = 0; }
 
 signals:
