@@ -92,9 +92,11 @@ void MainWindow::displaySettings()
 
 void MainWindow::on_generateDevisButton_clicked()
 {
-    // 0. Vérifier si tous les champs importants sont remplis avant de continuer
+    qInfo() << "[MainWindow::on_generateDevisButton_clicked] Generate Devis button clicked";
+
     if (!areAllFieldCompleted())
     {
+        qWarning() << "[MainWindow::on_generateDevisButton_clicked] Incomplete fields. Aborted";
         QMessageBox::warning(this, "Champs manquants ou invalides", QString::fromUtf8("Veuillez remplir correctement les champs avant de générer le devis"));
         return;
     }
@@ -107,11 +109,10 @@ void MainWindow::on_generateDevisButton_clicked()
     m_tarification->setPrixMetreCube(prixM3);
 
     /* 
-        * 2. Sélection du preset de tarifs HAUTE ou BASSE saison en fonction de la date
+        * Sélection du preset de tarifs HAUTE ou BASSE saison en fonction de la date
         * Les variables sont mises à jour correctement dans m_tarification
         * Puis ensuite mise à jour de l'affichage des valeurs dans les champs des PARAMETRES
     */
-
     const Tarification::PriceCalculation calculationMethod{ ui.priceCalculationComboBox->currentIndex() };
     m_tarification->loadSettings(presetToUse);
     displaySettings();
@@ -121,9 +122,10 @@ void MainWindow::on_generateDevisButton_clicked()
     // 3. Afficher les résultats dans l'onglet "Résultats et Devis"
     displayingResults();
 
-
     if (!ui.generatePdfButton->isEnabled())
         ui.generatePdfButton->setEnabled(true);
+
+    qInfo() << "[MainWindow::on_generateDevisButton_clicked] Devis generation complete";
 }
 
 
@@ -133,7 +135,6 @@ void MainWindow::on_volumelineEdit_textChanged(const QString& text)
 
     // Vérifier si le texte est un nombre valide
     const double volume{ text.toDouble() };
-
     if (volume >= 0) 
     {
         // Calculer la valeur d'assurance
@@ -255,9 +256,12 @@ void MainWindow::displayingResults()
 
 void MainWindow::on_AnalyseInventoryPushButton_clicked()
 {
+    qInfo() << "[MainWindow::on_AnalyseInventoryPushButton_clicked] Analyse Inventory button clicked";
+
     QString inventoryText{ ui.inventaireTextEdit->toPlainText() };
     if (inventoryText.isEmpty()) 
     {
+        qWarning() << "[MainWindow::on_AnalyseInventoryPushButton_clicked] Inventory text is empty. Analyse aborted.";
         QMessageBox::warning(this, "Inventaire vide", "Veuillez saisir une liste d'objets avant d'analyser.");
         return;
     }
@@ -280,7 +284,6 @@ void MainWindow::on_AnalyseInventoryPushButton_clicked()
             return;
     }
 
-    // Changer le texte du bouton pour indiquer le chargement
     ui.AnalyseInventoryPushButton->setText("Analyse en cours...");
     ui.AnalyseInventoryPushButton->setEnabled(false);
     ui.modifyInventoryPushButton->setEnabled(false);

@@ -48,6 +48,7 @@ public:
     const QString& getAPI_Key() const { return m_apiKey; }
     const QString& getCleanListPrompt() const { return m_cleanListPrompt; }
     const QString& getAnalysePrompt() const { return m_analysePrompt; }
+    qsizetype getCurrentAiModelIndex() const { return m_currentAiModelIndex; }
 
     bool reloadPrompt(const QString& path, RequestType type);
     bool savePrompt(const QString& promptContent, const QString& path);

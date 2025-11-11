@@ -23,6 +23,8 @@ void AIService::initializePrompts()
         QFile promptFile(path);
         if (!promptFile.exists() && !savePrompt(defaultPrompt, path))
         {
+            qWarning() << "[AIService::initializePrompts] Cannot access to prompt file.";
+
             switch (requestType)
             {
             case AIService::RequestType::CleanName: m_cleanListPrompt = getCleanListDefaultPrompt();
@@ -63,10 +65,12 @@ QString AIService::loadPrompt(const QString& path, RequestType requestType)
 
 bool AIService::savePrompt(const QString& promptContent, const QString& path)
 {
-    QFile promptFile(path);
+    qInfo() << "[AIService::savePrompt] Saving prompt to " << path;
 
+    QFile promptFile(path);
     if (!promptFile.open(QIODevice::WriteOnly | QIODevice::Text)) 
     {
+        qCritical() << "[AIService::savePrompt] Cannot save " << path;
         emit error("Couldn't create prompt_template.txt !");
         return false;
     }
@@ -76,6 +80,7 @@ bool AIService::savePrompt(const QString& promptContent, const QString& path)
     out << promptContent;
     promptFile.close();
 
+    qInfo() << "[AIService::savePrompt] File successfuly saved to " << path;
     return true;
 }
 
@@ -258,21 +263,26 @@ bool AIService::reloadPrompt(const QString& path, RequestType type)
 
 QNetworkRequest AIService::buildRequest(const QString& inventoryText, RequestType requestType, const QString* jsonReference)
 {
+    qInfo() << "[AIService::buildRequest] Building request of type: "
+        << (requestType == RequestType::AnalyseInventory ? "Analyse Inventory" : "Clean list");
+
+    Q_ASSERT(!m_AIModelList->isEmpty() && m_currentAiModelIndex < m_AIModelList->size());
     if (m_AIModelList->isEmpty() || m_currentAiModelIndex >= m_AIModelList->size())
+    {
+        qCritical() << "[AIService::buildRequest] AiModelList empty or invalidAiModelIndex. Failed building request";
         throw std::out_of_range("No valid AI model available at current index");
+    }
 
-    const AIModel* aiModel{ &(*m_AIModelList)[m_currentAiModelIndex] };
-    if(!aiModel)
-        throw std::invalid_argument("aiModel is null. Analyse aborted.");
+    const AIModel& aiModel{ (*m_AIModelList)[m_currentAiModelIndex] };
 
-    QNetworkRequest request(aiModel->getUrl());
+    QNetworkRequest request(aiModel.getUrl());
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     request.setRawHeader("Authorization", ("Bearer " + m_apiKey).toUtf8());
 
     QJsonObject jsonBody;
-    jsonBody["model"] = aiModel->getModelName();
-    jsonBody["max_tokens"] = aiModel->getMaxOutputTokens();
-    jsonBody["temperature"] = aiModel->getTemperature();
+    jsonBody["model"] = aiModel.getModelName();
+    jsonBody["max_tokens"] = aiModel.getMaxOutputTokens();
+    jsonBody["temperature"] = aiModel.getTemperature();
 
     QJsonArray messages;
     QJsonObject userMessage;
@@ -283,9 +293,13 @@ QNetworkRequest AIService::buildRequest(const QString& inventoryText, RequestTyp
     {
     case AIService::RequestType::CleanName: prompt = m_cleanListPrompt.arg(inventoryText);
         break;
-    case AIService::RequestType::AnalyseInventory: 
+    case AIService::RequestType::AnalyseInventory:
+        Q_ASSERT(jsonReference);
         if (!jsonReference)
+        {
+            qCritical() << "[AIService::buildRequest] null json reference. Failed building request.";
             throw std::invalid_argument("jsonReference is null. Analyse aborted.");
+        }
 
         prompt = m_analysePrompt.arg(*jsonReference, inventoryText);
         break;
@@ -297,6 +311,7 @@ QNetworkRequest AIService::buildRequest(const QString& inventoryText, RequestTyp
     QJsonDocument doc(jsonBody);
     request.setAttribute(QNetworkRequest::User, doc.toJson());
 
+    qInfo() << "[AIService::buildRequest] AI Request created";
     return request;
 }
 
