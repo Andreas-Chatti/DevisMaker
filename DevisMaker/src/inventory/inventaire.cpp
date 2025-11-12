@@ -48,44 +48,47 @@ void Inventory::modifyObject(const MovingObject* objectToModify, MovingObject ne
     const QString& newAreaKey{ newObject.getAreaKey() };
 
     auto areaIt{ m_areas.find(oldAreaKey) };
-    if (areaIt != m_areas.end())
+    Q_ASSERT(areaIt != m_areas.end());
+    if (areaIt == m_areas.end())
     {
-        m_totalVolume -= objectToModify->getTotalVolume();
-        m_totalVolume += newObject.getTotalVolume();
-
-        bool isSameArea{ oldAreaKey == newAreaKey };
-        if (isSameArea)
-            areaIt->modifyObject(objectToModify, std::move(newObject));
-
-        else
-        {
-            areaIt->removeObject(objectToModify->getName()); // Remove object from current Area
-            if (areaIt->getObjectsList().isEmpty())
-                m_areas.erase(areaIt); // Erase area if empty
-
-            areaIt = m_areas.find(newAreaKey);
-            if (areaIt != m_areas.end())
-            {
-                objectToModify = areaIt->findObject(newObject.getName()); // Checking if there's another object of the same name in new Area
-                if (objectToModify)
-                {
-                    if (objectToModify->getUnitaryVolume() == newObject.getUnitaryVolume())
-                        newObject.add(objectToModify->getQuantity());
-
-                    areaIt->modifyObject(objectToModify, std::move(newObject)); // REMPLACE L'OBJET PAR LE NOUVEAU
-                }
-
-                else
-                    areaIt->addObject(std::move(newObject));
-            }
-
-            else
-            {
-                addArea(newAreaKey);
-                addObject(std::move(newObject), newAreaKey);
-            }
-        }
+        qCritical() << "[Inventory::modifyObject] MODIFIED OBJECT SHOULD HAVE AN AREA BUT IT'S EMPTY !";
+        return;
     }
+
+    m_totalVolume -= objectToModify->getTotalVolume();
+    m_totalVolume += newObject.getTotalVolume();
+    
+    bool isSameArea{ oldAreaKey == newAreaKey };
+    if (isSameArea)
+    {
+        areaIt->modifyObject(objectToModify, std::move(newObject));
+        return;
+    }
+
+    areaIt->removeObject(objectToModify->getName()); // Remove object from current Area
+    if (areaIt->getObjectsList().isEmpty())
+        m_areas.erase(areaIt); // Erase area if empty
+    
+    areaIt = m_areas.find(newAreaKey);
+    if (areaIt == m_areas.end())
+    {
+        addArea(newAreaKey);
+        addObject(std::move(newObject), newAreaKey);
+        return;
+    }
+
+    const MovingObject* existingObject{ areaIt->findObject(newObject.getName()) }; // Checking if there's another object of the same name in new Area
+    if (existingObject)
+    {
+        if (existingObject->getUnitaryVolume() == newObject.getUnitaryVolume())
+            newObject.add(existingObject->getQuantity());
+    
+        else
+        areaIt->modifyObject(existingObject, std::move(newObject)); // REMPLACE L'OBJET PAR LE NOUVEAU
+    }
+    
+    else
+        areaIt->addObject(std::move(newObject));
 }
 
 void Inventory::addArea(QString areaName)

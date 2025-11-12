@@ -67,19 +67,15 @@ void ItemModifyierDialog::on_buttonBox_accepted()
 
 		if (existingObject && existingObject->getUnitaryVolume() != newObject.getUnitaryVolume())
 		{
-			QMessageBox msgBox;
-			msgBox.setWindowTitle("Objet existant détecté");
-			msgBox.setText("Un objet portant le même nom avec des données différentes existe déjà dans la pièce sélectionnée.\n"
-				"Continuer va écraser l'objet existant par le nouveau.\nVoulez-vous continuer ?");
-			msgBox.setIcon(QMessageBox::Warning);
-			QAbstractButton* continueButton = msgBox.addButton("Continuer", QMessageBox::AcceptRole);
-			QAbstractButton* cancelButton = msgBox.addButton("Annuler", QMessageBox::RejectRole);
-			msgBox.setDefaultButton(static_cast<QPushButton*>(continueButton));
-			msgBox.exec();
-
-			if (msgBox.clickedButton() == cancelButton)
+			QMessageBox* msgBox{ makeObjectOverrideConfirmationDialog() };
+			if (msgBox->exec() == QMessageBox::RejectRole)
+			{
+				delete msgBox;
 				return;
+			}
+			delete msgBox;
 		}
+
 		connect(this, &ItemModifyierDialog::editObjectFromInventory, m_inventory, &Inventory::modifyObject);
 		emit editObjectFromInventory(m_modifiedObject, newObject);
 		break;
@@ -146,4 +142,18 @@ QInputDialog* ItemModifyierDialog::makeAddAreaDialog()
     }
 
     return dialog;
+}
+
+QMessageBox* ItemModifyierDialog::makeObjectOverrideConfirmationDialog()
+{
+	QMessageBox* msgBox{ new QMessageBox{this} };
+	msgBox->setWindowTitle("Objet existant détecté");
+	msgBox->setText("Un objet portant le même nom avec des données différentes existe déjà dans la pièce sélectionnée.\n"
+		"Continuer va écraser l'objet existant par le nouveau.\nVoulez-vous continuer ?");
+	msgBox->setIcon(QMessageBox::Warning);
+	QAbstractButton* continueButton{ msgBox->addButton("Continuer", QMessageBox::AcceptRole) };
+	QAbstractButton* cancelButton{ msgBox->addButton("Annuler", QMessageBox::RejectRole) };
+	msgBox->setDefaultButton(static_cast<QPushButton*>(continueButton));
+
+	return msgBox;
 }

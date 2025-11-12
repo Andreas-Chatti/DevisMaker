@@ -40,4 +40,5 @@ private:
     const EditState m_state;
 
     QInputDialog* makeAddAreaDialog();
+    QMessageBox* makeObjectOverrideConfirmationDialog();
 };
