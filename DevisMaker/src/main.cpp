@@ -30,14 +30,10 @@ void customMessageHandler(QtMsgType type, const QMessageLogContext&, const QStri
     }
 }
 
-int main(int argc, char* argv[])
+void setupApplicationStyle(QApplication& app)
 {
-    QApplication app(argc, argv);
-
-    // Force Fusion style for consistent appearance across all Windows themes
     app.setStyle("Fusion");
 
-    // Set light color palette to ensure readability
     QPalette palette;
     palette.setColor(QPalette::Window, QColor(240, 240, 240));
     palette.setColor(QPalette::WindowText, Qt::black);
@@ -50,6 +46,13 @@ int main(int argc, char* argv[])
     palette.setColor(QPalette::Highlight, QColor(0, 120, 215));
     palette.setColor(QPalette::HighlightedText, Qt::white);
     app.setPalette(palette);
+}
+
+int main(int argc, char* argv[])
+{
+    QApplication app(argc, argv);
+
+    setupApplicationStyle(app);
 
     qInstallMessageHandler(customMessageHandler);
 
