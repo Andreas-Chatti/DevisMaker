@@ -41,4 +41,6 @@ private:
 
     QInputDialog* makeAddAreaDialog();
     QMessageBox* makeObjectOverrideConfirmationDialog();
+
+    static constexpr int OBJECT_NAME_MINIMUM_LENGHT{ 2 };
 };

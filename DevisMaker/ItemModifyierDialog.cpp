@@ -6,6 +6,16 @@ ItemModifyierDialog::ItemModifyierDialog(EditState state, const Inventory* inven
 	, m_modifiedObject{ movingObject }
 	, m_state{ state }
 {
+	Q_ASSERT(m_inventory);
+	if (!m_inventory)
+		qCritical() << "[ItemModifyierDialog::ItemModifyierDialog] INVENTORY IS NULL";
+
+	if (m_state == EditState::MODIFY)
+	{
+		Q_ASSERT(m_modifiedObject);
+		qCritical() << "[ItemModifyierDialog::ItemModifyierDialog] MODIFIED OBJECT IS NULL IN MODIFY WINDOW STATE";
+	}
+
 	ui.setupUi(this);
 
 	const auto& areas{ m_inventory->getAreas() };
@@ -33,7 +43,7 @@ ItemModifyierDialog::ItemModifyierDialog(EditState state, const Inventory* inven
 
 void ItemModifyierDialog::on_buttonBox_accepted()
 {
-	if (ui.nameLineEdit->text().isEmpty() || ui.nameLineEdit->text().length() <= 2)
+	if (ui.nameLineEdit->text().isEmpty() || ui.nameLineEdit->text().length() <= OBJECT_NAME_MINIMUM_LENGHT)
 	{
 		QMessageBox::warning(this, "Erreur", "Veuillez entrer un nom de plus de 2 caractères pour cet élément.");
 		return;

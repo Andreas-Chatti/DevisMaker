@@ -61,7 +61,7 @@ void Inventory::modifyObject(const MovingObject* objectToModify, MovingObject ne
     bool isSameArea{ oldAreaKey == newAreaKey };
     if (isSameArea)
     {
-        areaIt->modifyObject(objectToModify, std::move(newObject));
+        areaIt->replaceObjectWithNew(objectToModify, std::move(newObject));
         return;
     }
 
@@ -84,7 +84,7 @@ void Inventory::modifyObject(const MovingObject* objectToModify, MovingObject ne
             newObject.add(existingObject->getQuantity());
     
         else
-        areaIt->modifyObject(existingObject, std::move(newObject)); // REMPLACE L'OBJET PAR LE NOUVEAU
+        areaIt->replaceObjectWithNew(existingObject, std::move(newObject)); // REMPLACE L'OBJET PAR LE NOUVEAU
     }
     
     else
@@ -149,19 +149,25 @@ const Area* Inventory::findArea(const QString& areaKey) const
 
 void Inventory::modifyAreaName(const QString& currentName, const QString& newName)
 {
-    auto areaIt = m_areas.find(currentName);
-    if (areaIt != m_areas.end())
+    auto areaIt{ m_areas.find(currentName) };
+    if (areaIt == m_areas.end())
     {
-        if (m_areas.find(newName) != m_areas.end())
-            return;
-
-        areaIt->updateObjectsAreaKey(newName);
-        areaIt->setName(newName);
-
-        Area areaCopy{ *areaIt };
-        m_areas.erase(areaIt);
-        m_areas.insert(newName, std::move(areaCopy));
+        qWarning() << "[Inventory::modifyAreaName] AREA '" << currentName << "' DOESN'T EXIST";
+        return;
     }
+
+    else if (m_areas.find(newName) != m_areas.end())
+    {
+        qWarning() << "[Inventory::modifyAreaName] AREA '" << newName << "' ALREADY EXIST";
+        return;
+    }
+    
+    areaIt->updateObjectsAreaKey(newName);
+    areaIt->setName(newName);
+    
+    Area areaCopy{ *areaIt };
+    m_areas.erase(areaIt);
+    m_areas.insert(newName, std::move(areaCopy));
 }
 
 

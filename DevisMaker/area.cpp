@@ -58,18 +58,25 @@ void Area::removeObject(const QString& objectName, int quantity)
 	}
 }
 
-void Area::modifyObject(const MovingObject* objectToModify, MovingObject newObject)
+void Area::replaceObjectWithNew(const MovingObject* objectToReplace, MovingObject newObject)
 {
-	if (!objectToModify)
-		return;
-
-	auto object{ m_objects.find(objectToModify->getName()) };
-	if (object != m_objects.end())
+	Q_ASSERT(objectToReplace);
+	if (!objectToReplace) 
 	{
-		m_totalVolume -= object->getTotalVolume();
-		*object = std::move(newObject);
-		m_totalVolume += object->getTotalVolume();
+		qCritical() << "[Area::modifyObject] ObjectToReplace IS NULL";
+		return;
 	}
+
+	auto object{ m_objects.find(objectToReplace->getName()) };
+	if (object == m_objects.end())
+	{
+		qWarning() << "[Area::modifyObject] No matching objectToReplace found in " << m_name;
+		return;
+	}
+
+	m_totalVolume -= object->getTotalVolume();
+	m_totalVolume += newObject.getTotalVolume();
+	*object = std::move(newObject);
 }
 
 const MovingObject* Area::findObject(const QString& objectKey) const
@@ -81,10 +88,10 @@ const MovingObject* Area::findObject(const QString& objectKey) const
 	return &(*objectIt);
 }
 
-void Area::updateObjectsAreaKey(const QString& newKey)
+void Area::updateObjectsAreaKey(const QString& newAreaKey)
 {
 	for (auto& object : m_objects)
-		object.setAreaKey(newKey);
+		object.setAreaKey(newAreaKey);
 }
 
 
