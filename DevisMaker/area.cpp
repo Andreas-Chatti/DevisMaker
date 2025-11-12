@@ -40,21 +40,31 @@ void Area::removeObject(const QString& objectName)
 
 void Area::removeObject(const QString& objectName, int quantity)
 {
-	auto it{ m_objects.find(objectName) };
-	if (it != m_objects.end())
+	Q_ASSERT(quantity > 0 && !objectName.isEmpty());
+	if (quantity <= 0)
 	{
-		if (it->getQuantity() <= quantity)
-		{
-			m_totalVolume -= it->getTotalVolume();
-			m_objects.erase(it);
-		}
+		qWarning() << "[Area::removeObject] Quantity arg was <= 0";
+		return;
+	}
 
-		else
-		{
-			double volumeRemoved{ it->getUnitaryVolume() * quantity };
-			it->remove(quantity);
-			m_totalVolume -= volumeRemoved;
-		}
+	auto it{ m_objects.find(objectName) };
+	if (it == m_objects.end())
+	{
+		qWarning() << "Object '" << objectName << "' doesn't exist in Area '" << m_name << "'";
+		return;
+	}
+
+	else if (it->getQuantity() <= quantity)
+	{
+		m_totalVolume -= it->getTotalVolume();
+		m_objects.erase(it);
+	}
+
+	else
+	{
+		double removedVolume{ it->getUnitaryVolume() * quantity };
+		it->remove(quantity);
+		m_totalVolume -= removedVolume;
 	}
 }
 

@@ -49,7 +49,7 @@ public slots:
 
     void removeArea(const QString& areaName);
 
-    int objectsQuantity() const;
+    int getTotalObjectsQuantity() const;
 
     const Area* findArea(const QString& areaKey) const;
 

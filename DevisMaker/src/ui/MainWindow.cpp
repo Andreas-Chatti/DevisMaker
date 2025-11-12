@@ -266,7 +266,7 @@ void MainWindow::on_AnalyseInventoryPushButton_clicked()
         return;
     }
 
-    else if (m_client->getInventory()->objectsQuantity() > 0)
+    else if (m_client->getInventory()->getTotalObjectsQuantity() > 0)
     {
         QMessageBox msgBox(this);
         msgBox.setIcon(QMessageBox::Warning);
@@ -324,8 +324,8 @@ void MainWindow::handleInventoryAnalysis(const Inventory& inventory)
     displayInventory(inventory);
 
     QString titre{ "Analyse terminée" };
-    QString msg1{ QString{"Volume total: %1 m3, %2 "}.arg(QString::number(inventory.getTotalVolume(), 'f', 2)).arg(inventory.objectsQuantity()) };
-    QString msg2{ inventory.objectsQuantity() >= 2 ? "objets détectés" : "objet détecté"};
+    QString msg1{ QString{"Volume total: %1 m3, %2 "}.arg(QString::number(inventory.getTotalVolume(), 'f', 2)).arg(inventory.getTotalObjectsQuantity()) };
+    QString msg2{ inventory.getTotalObjectsQuantity() >= 2 ? "objets détectés" : "objet détecté"};
     QMessageBox::information(this, titre, msg1 + msg2);
 
     ui.AnalyseInventoryPushButton->setText("Analyser inventaire");

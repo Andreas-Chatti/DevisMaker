@@ -1,0 +1,27 @@
+# Build artifacts
+bin/
+obj/
+moc/
+rcc/
+Makefile
+Makefile.*
+
+# Test executables
+*.exe
+tests
+tests.exe
+
+# Qt generated files
+*.pro.user
+*.pro.user.*
+
+# Debug files
+*.pdb
+*.ilk
+
+# Coverage files
+*.gcda
+*.gcno
+*.gcov
+coverage.info
+coverage_html/

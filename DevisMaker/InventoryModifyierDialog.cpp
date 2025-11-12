@@ -149,7 +149,7 @@ void InventoryModifyierDialog::displayInventory()
 {
     ui.inventoryTableWidget->setRowCount(0);
 
-    int objectsQuantity{ m_inventory.objectsQuantity() };
+    int objectsQuantity{ m_inventory.getTotalObjectsQuantity() };
     if (objectsQuantity <= 0)
     {
         ui.titleLabel->setText("Inventaire vide");

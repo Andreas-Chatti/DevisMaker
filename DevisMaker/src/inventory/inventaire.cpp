@@ -127,13 +127,11 @@ void Inventory::removeArea(const QString& areaName)
     }
 }
 
-int Inventory::objectsQuantity() const
+int Inventory::getTotalObjectsQuantity() const
 {
     int size{};
     for (const auto& area : m_areas)
-    {
         size += static_cast<int>(area.getObjectsList().size());
-    }
 
     return size;
 }
