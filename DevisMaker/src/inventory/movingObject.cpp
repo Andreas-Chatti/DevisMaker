@@ -11,6 +11,7 @@ MovingObject::MovingObject(QString objectName, double unitaryVolume, QString are
     , m_heavy{ heavy }
     , m_note{ std::move(notes) }
 {
+    Q_ASSERT(!m_name.isEmpty());
 }
 
 MovingObject::MovingObject()

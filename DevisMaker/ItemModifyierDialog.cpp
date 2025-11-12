@@ -28,12 +28,6 @@ ItemModifyierDialog::ItemModifyierDialog(EditState state, const Inventory* inven
 			ui.areaComboBox->setCurrentIndex(areaIndex);
 	}
 
-	if (m_state == EditState::ADD)
-		connect(this, &ItemModifyierDialog::addObjectToInventory, m_inventory, &Inventory::addObject);
-	else
-		connect(this, &ItemModifyierDialog::editObjectFromInventory, m_inventory, &Inventory::modifyObject);
-
-	connect(this, &ItemModifyierDialog::addAreaToInventory, m_inventory, &Inventory::addArea);
 	disconnect(ui.buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
 }
 
@@ -86,66 +80,70 @@ void ItemModifyierDialog::on_buttonBox_accepted()
 			if (msgBox.clickedButton() == cancelButton)
 				return;
 		}
-
+		connect(this, &ItemModifyierDialog::editObjectFromInventory, m_inventory, &Inventory::modifyObject);
 		emit editObjectFromInventory(m_modifiedObject, newObject);
 		break;
 	}
 	case ItemModifyierDialog::EditState::ADD:
+		connect(this, &ItemModifyierDialog::addObjectToInventory, m_inventory, &Inventory::addObject);
 		emit addObjectToInventory(newObject, ui.areaComboBox->currentText());
-		break;
 	}
-
 	accept();
 }
 
 void ItemModifyierDialog::on_addAreaButton_clicked()
 {
-	QInputDialog dialog(this);
-	dialog.setWindowTitle("Nouvelle pièce");
-	dialog.setLabelText("Nom de la pièce :");
-	dialog.setTextValue("");
-	dialog.setInputMode(QInputDialog::TextInput);
+	QInputDialog* dialog{ makeAddAreaDialog() };
+	if (dialog->exec() == QDialog::Rejected)
+		return;
 
-	QLineEdit* lineEdit{ dialog.findChild<QLineEdit*>() };
-	if (lineEdit)
+	QString areaName{ dialog->textValue().trimmed().toLower() };
+	delete dialog;
+	if (areaName.isEmpty())
 	{
-		lineEdit->setMaxLength(20);
-		lineEdit->setPlaceholderText("Ex: Chambre 1, Salon principal...");
+		QMessageBox::warning(
+			this,
+			"Nom invalide",
+			"Le nom de la pièce ne peut pas être vide."
+		);
+		return;
 	}
 
-	if (dialog.exec() == QDialog::Accepted)
+	const auto& areas{ m_inventory->getAreas() };
+	const auto it{ areas.find(areaName) };
+	if (it != areas.end())
 	{
-		QString areaName{ dialog.textValue().trimmed().toLower() };
-
-		if (!areaName.isEmpty())
-		{
-			const auto& areas{ m_inventory->getAreas() };
-			const auto it{ areas.find(areaName) };
-			if (it == areas.end())
-			{
-				ui.areaComboBox->addItem(areaName);
-				int areaIndex{ ui.areaComboBox->findText(areaName) };
-				if (areaIndex != -1)
-					ui.areaComboBox->setCurrentIndex(areaIndex);
-
-				emit addAreaToInventory(std::move(areaName));
-			}
-
-			else
-				QMessageBox::warning(
-					this,
-					"Nom existant",
-					"Le nom de la pièce existe déjà\n Essayez avec un autre nom."
-				);
-		}
-
-		else
-		{
-			QMessageBox::warning(
-				this,
-				"Nom invalide",
-				"Le nom de la pièce ne peut pas être vide."
-			);
-		}
+		QMessageBox::warning(
+			this,
+			"Nom existant",
+			"Le nom de la pièce existe déjà\n Essayez avec un autre nom."
+		);
+		return;
 	}
+
+	ui.areaComboBox->addItem(areaName);
+	int areaIndex{ ui.areaComboBox->findText(areaName) };
+	if (areaIndex != -1)
+		ui.areaComboBox->setCurrentIndex(areaIndex);
+
+	connect(this, &ItemModifyierDialog::addAreaToInventory, m_inventory, &Inventory::addArea);
+	emit addAreaToInventory(std::move(areaName));
+}
+
+QInputDialog* ItemModifyierDialog::makeAddAreaDialog()
+{
+	QInputDialog* dialog{ new QInputDialog(this) };
+    dialog->setWindowTitle("Nouvelle pièce");
+    dialog->setLabelText("Nom de la pièce :");
+    dialog->setTextValue("");
+    dialog->setInputMode(QInputDialog::TextInput);
+
+    QLineEdit* lineEdit{ dialog->findChild<QLineEdit*>() };
+    if (lineEdit)
+    {
+        lineEdit->setMaxLength(20);
+        lineEdit->setPlaceholderText("Ex: Chambre 1, Salon principal...");
+    }
+
+    return dialog;
 }

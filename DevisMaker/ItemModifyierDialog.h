@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <QDialog>
 #include <QMessageBox>
 #include <QInputDialog>
@@ -38,5 +38,6 @@ private:
     const Inventory* m_inventory;
     const MovingObject* m_modifiedObject;
     const EditState m_state;
-    //void setupUi();
+
+    QInputDialog* makeAddAreaDialog();
 };

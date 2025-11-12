@@ -7,9 +7,11 @@ AIModel AIModel::makeDefaultModel(QObject* parent)
 
 void AIModel::initializationCheck()
 {
+	Q_ASSERT(!m_modelName.isEmpty());
 	if (m_modelName.isEmpty())
 		throw std::invalid_argument("AI model was initialized with an empty name.");
 
+	Q_ASSERT(!m_url.isEmpty());
 	if (m_url.isEmpty())
 		throw std::invalid_argument("AI model was initialized with an empty URL.");
 
