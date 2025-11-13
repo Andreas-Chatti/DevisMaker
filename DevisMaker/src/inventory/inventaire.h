@@ -45,7 +45,6 @@ public slots:
     void modifyObject(const MovingObject* objectToModify, MovingObject newObject);
 
     void addArea(QString areaName);
-    //void addArea(QString areaName, Area::AreaType areaType);
 
     void removeArea(const QString& areaName);
 

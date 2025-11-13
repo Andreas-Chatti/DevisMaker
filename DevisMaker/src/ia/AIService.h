@@ -34,8 +34,12 @@ public:
         : QObject(parent)
     {
         initializePrompts();
-        loadAllAIModels();
-        loadAIMainConfig();
+
+        if (!loadAllAIModels())
+            qCritical() << "[AIService::AIService] Loading AI Models FAILED";
+
+        if(!loadAIMainConfig())
+            qCritical() << "[AIService::AIService] Loading AI Main Config FAILED";
     }
 
     ~AIService() = default;
@@ -83,7 +87,7 @@ private:
     void saveAIMainConfigFile(QJsonObject& jsonBody);
     bool loadAllAIModels(int loadAttempts = 0, QString errorMessage = "");
     std::optional<AIModel> loadAIModelConfig(const QString& path);
-    void saveModelToConfig(QJsonObject& jsonBody, const AIModel* aiModel);
+    bool saveModelToConfig(QJsonObject& jsonBody, const AIModel* aiModel);
     bool createModelConfigFile(const AIModel* aiModel);
     bool addModelToList(AIModel model);
 };

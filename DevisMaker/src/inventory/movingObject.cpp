@@ -11,12 +11,18 @@ MovingObject::MovingObject(QString objectName, double unitaryVolume, QString are
     , m_heavy{ heavy }
     , m_note{ std::move(notes) }
 {
-    Q_ASSERT(!m_name.isEmpty());
+    Q_ASSERT(!m_name.isEmpty() && unitaryVolume <= 0);
 }
 
+/*
+    ONLY FOR QHASH
+    SHOULD NOT BE CALLED
+*/
 MovingObject::MovingObject()
-    : MovingObject("UNDEFINED", 0.0, "default", 0, false, false, false, "UNDEFINED")
+    : MovingObject("", 0.0, "default", 0, false, false, false, "UNDEFINED")
 {
+    Q_ASSERT(false);
+    qCritical() << "[MovingObject::MovingObject] DEFAULT CONSTRUCTOR WAS CALLED WHEN IT SHOULDN'T";
 }
 
 MovingObject::MovingObject(const MovingObject& object)

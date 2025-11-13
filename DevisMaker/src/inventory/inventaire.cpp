@@ -25,11 +25,12 @@ void Inventory::handleInventoryAnalysis(double listTotalVolume, QVector<MovingOb
     emit sendNewInventory(*this);
 }
 
+/*
+    ADD movingObject to areaName
+    If areaName doesn't exist, CREATE a new Area of areaName then ADD
+*/
 void Inventory::addObject(MovingObject movingObject, const QString& areaName)
 {
-    if (movingObject.getName().isEmpty())
-        return;
-
     auto area{ m_areas.find(areaName) };
     if (area == m_areas.end())
         addArea(areaName);
@@ -104,19 +105,6 @@ void Inventory::addArea(QString areaName)
     }
 }
 
-/*void Inventory::addArea(QString areaName, Area::AreaType areaType)
-{
-    auto area{ m_areas.find(areaName) };
-    if (area == m_areas.end())
-        m_areas[areaName] = Area{ std::move(areaName), areaType };
-
-    else
-    {
-        // TODO : Si une pièce existe déjà sous le nom areaName, ajouter "#2" en plus dans le nom pour pouvoir créer une pièce avec le même nom
-        // ou sinon, juste créer un QMessageBox prévenant l'utilisateur de choisir un autre nom car celui-ci est déjà pris
-    }
-}*/
-
 void Inventory::removeArea(const QString& areaName)
 {
     auto it{ m_areas.find(areaName) };
@@ -145,6 +133,11 @@ const Area* Inventory::findArea(const QString& areaKey) const
     return &(*areaIt);
 }
 
+/*
+    Modify Area currentName with a newName
+    Does nothing is an Area with newName already exist
+    Does nothing is currentName Area doesn't exist
+*/
 void Inventory::modifyAreaName(const QString& currentName, const QString& newName)
 {
     auto areaIt{ m_areas.find(currentName) };
@@ -168,26 +161,39 @@ void Inventory::modifyAreaName(const QString& currentName, const QString& newNam
     m_areas.insert(newName, std::move(areaCopy));
 }
 
-
+/*
+    Delete all Areas in the Inventory
+*/
 void Inventory::clear()
 {
     m_areas.clear();
 }
 
+/*
+    REMOVE movingObjectName FROM Area areaName
+    Does NOTHING if Area areaName doesn't EXIST
+    Does NOTHING if MovingObject movingObjectName doesn't EXIST in Area areaName
+*/
 void Inventory::removeObject(const QString& movingObjectName, const QString& areaName)
 {
     auto areaIt{ m_areas.find(areaName) };
     if (areaIt == m_areas.end())
+    {
+        qWarning() << "[Inventory::removeObject] Area '" << areaName << "' does not exist";
         return;
+    }
 
     const QHash<QString, MovingObject>& objectsList{ areaIt->getObjectsList() };
     const auto objectIt{ objectsList.find(movingObjectName) };
-    if (objectIt != objectsList.end())
+    if (objectIt == objectsList.end())
     {
-        m_totalVolume -= objectIt->getTotalVolume();
-        areaIt->removeObject(movingObjectName);
-
-        if (objectsList.isEmpty())
-            m_areas.erase(areaIt);
+        qWarning() << "[Inventory::removeObject] Moving Object '" << movingObjectName << "' doesn't EXIST in Area '" << areaName << "'";
+        return;
     }
+
+    m_totalVolume -= objectIt->getTotalVolume();
+    areaIt->removeObject(movingObjectName);
+
+    if (objectsList.isEmpty())
+        m_areas.erase(areaIt);
 }

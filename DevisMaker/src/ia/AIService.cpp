@@ -23,14 +23,13 @@ void AIService::initializePrompts()
         QFile promptFile(path);
         if (!promptFile.exists() && !savePrompt(defaultPrompt, path))
         {
-            qWarning() << "[AIService::initializePrompts] Cannot access to prompt file.";
-
             switch (requestType)
             {
-            case AIService::RequestType::CleanName: m_cleanListPrompt = getCleanListDefaultPrompt();
+            case AIService::RequestType::CleanName: m_cleanListPrompt = defaultPrompt;
                 break;
-            case AIService::RequestType::AnalyseInventory: m_analysePrompt = getAnalyseDefaultPrompt();
+            case AIService::RequestType::AnalyseInventory: m_analysePrompt = defaultPrompt;
             }
+            continue;
         }
 
         else
@@ -65,13 +64,10 @@ QString AIService::loadPrompt(const QString& path, RequestType requestType)
 
 bool AIService::savePrompt(const QString& promptContent, const QString& path)
 {
-    qInfo() << "[AIService::savePrompt] Saving prompt to " << path;
-
     QFile promptFile(path);
     if (!promptFile.open(QIODevice::WriteOnly | QIODevice::Text)) 
     {
         qCritical() << "[AIService::savePrompt] Cannot save " << path;
-        emit error("Couldn't create prompt_template.txt !");
         return false;
     }
 
@@ -80,7 +76,7 @@ bool AIService::savePrompt(const QString& promptContent, const QString& path)
     out << promptContent;
     promptFile.close();
 
-    qInfo() << "[AIService::savePrompt] File successfuly saved to " << path;
+    qInfo() << "Prompt successfuly saved to " << path;
     return true;
 }
 
@@ -234,7 +230,6 @@ EXEMPLES :
 bool AIService::reloadPrompt(const QString& path, RequestType type)
 {
     QFile promptFile(path);
-
     if (!promptFile.exists()) 
     {
         emit error("Couldn't reload prompt.\n Cannot find prompt file's path !");
@@ -243,7 +238,6 @@ bool AIService::reloadPrompt(const QString& path, RequestType type)
 
     QString newPrompt{ loadPrompt(path, type) };
     QString currentPrompt{ type == RequestType::AnalyseInventory ? m_analysePrompt : m_cleanListPrompt };
-
     if (newPrompt != currentPrompt)
     {
         switch (type)
@@ -321,10 +315,7 @@ bool AIService::loadAIMainConfig()
     if (!configFile.exists() || !configFile.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         if (!createAIMainConfigFile())
-        {
-            emit error("Error loading main ai config file. Aborted.");
             return false;
-        }
     }
 
     QByteArray data{ configFile.readAll() };
@@ -400,7 +391,7 @@ bool AIService::loadAllAIModels(int loadAttempts, QString errorMessage)
         addModelToList(std::move(*model));
     }
 
-    return m_AIModelList.get()->count() > 0;
+    return m_AIModelList.get()->size() > 0;
 }
 
 std::optional<AIModel> AIService::loadAIModelConfig(const QString& path)
@@ -427,10 +418,14 @@ std::optional<AIModel> AIService::loadAIModelConfig(const QString& path)
     return AIModel{ std::move(modelName), maxOutputTokens, temperature, std::move(url), this };
 }
 
-void AIService::saveModelToConfig(QJsonObject& jsonBody, const AIModel* aiModel)
+bool AIService::saveModelToConfig(QJsonObject& jsonBody, const AIModel* aiModel)
 {
+    Q_ASSERT(aiModel);
     if (!aiModel)
+    {
+        qCritical() << "[AIService::saveModelToConfig] aiModel is null or invalid";
         return;
+    }
 
     jsonBody["modelName"] = aiModel->getModelName();
     jsonBody["maxOutputTokens"] = aiModel->getMaxOutputTokens();
@@ -440,26 +435,30 @@ void AIService::saveModelToConfig(QJsonObject& jsonBody, const AIModel* aiModel)
 
 bool AIService::createModelConfigFile(const AIModel* aiModel)
 {
+    Q_ASSERT(aiModel);
     if (!aiModel)
     {
-        emit error("aiModel is null or invalid");
+        qWarning() << "[AIService::createModelConfigFile] aiModel is null or invalid";
         return false;
     }
 
     QJsonObject jsonBody;
-    saveModelToConfig(jsonBody, aiModel);
+    if (!saveModelToConfig(jsonBody, aiModel))
+    {
+        qWarning() << "Saving AI Model config file FAILED";
+        return false;
+    }
 
     QJsonDocument jsonDocument{ jsonBody };
-
     QFile jsonFile{ IA_MODEL_CONFIG_FILE_PATH + aiModel->getModelName() + ".json" };
-
     if (!jsonFile.open(QIODevice::WriteOnly))
     {
-        emit error("Cannot create model config file");
+        qCritical() << "[AIService::createModelConfigFile] Model config file creation FAILED";
         return false;
     }
 
     jsonFile.write(jsonDocument.toJson(QJsonDocument::Indented));
+    qInfo() << "AI config file successfully created : " << aiModel->getModelName() << ".json";
 
     return true;
 }
@@ -471,10 +470,12 @@ bool AIService::addModelToList(AIModel modelToAdd)
         
     if (it != m_AIModelList.get()->end())
     {
-        qDebug("Model already exist in the list ! Aborted.");
+        qWarning() << "Model already exist in the list ! Aborted.";
         return false;
     }
 
+    qInfo() << "AI Model successfully loaded: " << modelToAdd.getModelName();
     m_AIModelList.get()->emplace_back(std::move(modelToAdd));
+
     return true;
 }

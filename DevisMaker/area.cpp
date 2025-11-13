@@ -1,17 +1,22 @@
 ﻿#include "area.h"
 
-Area::Area()
-	: m_name{"UNDEFINED"}
-	, m_type{Area::AreaType::none}
-	, m_objects{}
-	, m_totalVolume{0.0}
+Area::Area(QString name)
+	: m_name{ std::move(name) }
 {
+	Q_ASSERT(!m_name.isEmpty());
+	if (m_name.isEmpty())
+		qCritical() << "[Area::Area] AREA NAME IS EMPTY";
 }
 
-Area::Area(QString name, AreaType type)
-	: m_name{ std::move(name) }
-	, m_type{ type }
+/*
+	Only for QHash
+	Should not be called
+*/
+Area::Area()
+	: Area("")
 {
+	Q_ASSERT(false);
+	qCritical() << "[Area::Area] DEFAULT CONSTRUCTOR WAS CALLED WHEN IT SHOULDN'T";
 }
 
 void Area::addObject(MovingObject object)
@@ -31,11 +36,14 @@ void Area::addObject(MovingObject object)
 void Area::removeObject(const QString& objectName)
 {
 	auto it{ m_objects.find(objectName) };
-	if (it != m_objects.end())
+	if (it == m_objects.end())
 	{
-		m_totalVolume -= it->getTotalVolume();
-		m_objects.erase(it);
+		qWarning() << "[Area::removeObject] Object '" << objectName << "' does not exist in Area '" << m_name << "'";
+		return;
 	}
+
+	m_totalVolume -= it->getTotalVolume();
+	m_objects.erase(it);
 }
 
 void Area::removeObject(const QString& objectName, int quantity)
