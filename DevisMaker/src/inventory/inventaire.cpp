@@ -94,14 +94,13 @@ void Inventory::modifyObject(const MovingObject* objectToModify, MovingObject ne
 
 void Inventory::addArea(QString areaName)
 {
-    auto area{ m_areas.find(areaName) };
-    if (area == m_areas.end())
-        m_areas[areaName] = Area{ areaName };
-    
-    else
+    auto [it, inserted] = m_areas.insert(areaName, Area{ areaName });
+
+    if (!inserted)
     {
-        // TODO : Si une pièce existe déjà sous le nom areaName, ajouter "#2" en plus dans le nom pour pouvoir créer une pièce avec le même nom
-        // ou sinon, juste créer un QMessageBox prévenant l'utilisateur de choisir un autre nom car celui-ci est déjà pris
+        // La clé existait déjà - gérer le cas ici
+        // TODO : Si une pièce existe déjà sous le nom areaName, ajouter "#2"
+        // ou afficher QMessageBox pour prévenir l'utilisateur
     }
 }
 

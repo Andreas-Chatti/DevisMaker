@@ -3,9 +3,6 @@
 Area::Area(QString name)
 	: m_name{ std::move(name) }
 {
-	Q_ASSERT(!m_name.isEmpty());
-	if (m_name.isEmpty())
-		qCritical() << "[Area::Area] AREA NAME IS EMPTY";
 }
 
 /*
@@ -15,8 +12,6 @@ Area::Area(QString name)
 Area::Area()
 	: Area("")
 {
-	Q_ASSERT(false);
-	qCritical() << "[Area::Area] DEFAULT CONSTRUCTOR WAS CALLED WHEN IT SHOULDN'T";
 }
 
 void Area::addObject(MovingObject object)
